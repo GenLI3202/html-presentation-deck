@@ -3,6 +3,8 @@
 A Claude Code skill that turns research material you already have (reports, interactive HTML pages, charts, data)
 into a talk delivered as an interactive HTML presentation.
 
+![Title slide of the starter template](docs/title.png)
+
 ## Install: send this to your agent
 
 Paste this message to Claude Code (or Codex, or any agent that reads skills):
@@ -35,6 +37,18 @@ a scratch folder when it needs it). The first build downloads the fonts once.
 The skill works with you at fixed gates: materials, storyline, slide text (ASD-STE100 English by default), motion,
 deliverables and PDF contents. It does not add pages or extras without asking.
 
+## Present like PowerPoint: a presenter view on a second screen
+
+Press **F** for full screen on the projector, then **P** to open the presenter window on your laptop, like the
+presenter view in PowerPoint or Keynote. The two windows stay in sync, and ← → in either window drives the deck.
+
+![Presenter window](docs/presenter.png)
+
+- **Notes:** Say, Points (with click cues) and End with, in large type (A− / A+); limits and sources folded, for questions.
+- **Now and next:** the current slide with its build step ("build 2 of 4") and a preview of the next step or slide.
+- **Timers:** this slide against its time budget, and the whole talk against the plan; amber near the limit, red over it.
+- Works from the offline file and on a claude.ai Artifact. If the browser blocks pop-ups, N shows the notes in the same window.
+
 ## Try it
 
 Open `assets/gallery/preview.html` in a browser and press →: seven content situations, each with the transition
@@ -62,6 +76,12 @@ that fits it (fake content).
 ```
 
 重启会话后，说“用 html-presentation-deck 把 ./research 里的报告做成一个 20 分钟的演讲”，或输入 `/html-presentation-deck`。
+
+![模板首页](docs/title.png)
+
+**像 PPT 一样演示（演讲者视图）：** 投影屏按 **F** 全屏，再按 **P**，在自己的笔记本上打开演讲者窗口。两个窗口同步翻页，在哪个窗口按 ← → 都行。窗口里有大字讲稿（开场、要点含点击提示、收尾，字号可调）、当前页和下一步预览、本页与全场计时（接近超时变黄、超时变红），以及折叠的局限与来源，供答问时用。
+
+![演讲者窗口](docs/presenter.png)
 
 **功能：** 离线单文件播放；备注与来源（N）；演讲者窗口（P）；参考图（R）；按内容选择的平静动效；页面内改字（E）并写回源文件；中英一键切换（L）；可选发布 Artifact、PDF 讲义和 A4 讲稿。skill 会在素材、故事线、文字、动效、交付物、PDF 内容几个节点停下来和你确认。
 
