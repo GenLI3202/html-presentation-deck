@@ -5,6 +5,17 @@ into a talk delivered as an interactive HTML presentation.
 
 ![Title slide of the starter template](docs/title.png)
 
+**Tired of agent-made slides that scream "AI" — bullet soup, random gradients, text spilling off the edge?**
+**Want a live map, a simulator or a draggable chart in your talk, and PowerPoint just says no?**
+**Spent the night before the talk fixing one word in 30 slides?**
+
+This skill builds the deck the way a careful analyst would: from **your** material, one finding per slide,
+a quiet house style, sources and evidence tags on every page. It stops and asks you at each step instead of
+guessing. Your existing interactive HTML pages go straight onto the slides, live. And you present it like
+PowerPoint — full screen on the projector, presenter view on your laptop — from **one offline file**.
+
+> Real material in. A talk you are not embarrassed to give out.
+
 ## Install: send this to your agent
 
 Paste this message to Claude Code (or Codex, or any agent that reads skills):
@@ -78,6 +89,14 @@ that fits it (fake content).
 重启会话后，说“用 html-presentation-deck 把 ./research 里的报告做成一个 20 分钟的演讲”，或输入 `/html-presentation-deck`。
 
 ![模板首页](docs/title.png)
+
+**受够了 agent 做出来 AI 味十足、排版凌乱、字都溢出边框的 PPT？**
+**想在演讲里放一张能点的地图、一个能拖的仿真图，PPT 却根本不支持？**
+**演讲前一晚还在 30 页里来回改一个词？**
+
+这个 skill 像一位细心的分析师那样做演讲：只用**你自己的**素材，一页一个结论，克制统一的版式，每页都有来源和证据标签；每一步都先停下来问你，不瞎猜。你已有的交互网页直接嵌进幻灯片，现场就能点、能拖。演讲时像 PPT 一样：投影屏全屏，笔记本上看演讲者视图——全部只靠**一个离线文件**。
+
+> 素材进去，出来的是一场你敢站上台讲的演讲。
 
 **像 PPT 一样演示（演讲者视图）：** 投影屏按 **F** 全屏，再按 **P**，在自己的笔记本上打开演讲者窗口。两个窗口同步翻页，在哪个窗口按 ← → 都行。窗口里有大字讲稿（开场、要点含点击提示、收尾，字号可调）、当前页和下一步预览、本页与全场计时（接近超时变黄、超时变红），以及折叠的局限与来源，供答问时用。
 
