@@ -1,0 +1,165 @@
+<!-- Starter slides. Each one shows one house pattern. Replace the text; keep the structure.
+     A slide: <section class="slide" data-title="…" data-act="…" data-time="minutes">. The first slide also has class "on".
+     Order inside a slide: .kick → h2.ttl → p.sub (optional) → .body → .take (optional) → .src footer.
+     Text rules: ASD-STE100. Titles state the finding, not the topic. -->
+
+<!-- ===================== 1 · TITLE ===================== -->
+<section class="slide s-title on" data-title="Deck title" data-act="Opening" data-time="0.5">
+  <div class="kick">Group sharing<i>·</i>1 January 2027</div>
+  <div class="main">
+    <h1>Main title<br><span>key phrase</span></h1>
+    <p class="tag">One line that says what the talk is about</p>
+  </div>
+  <div class="who"><b>Speaker name</b><br><span class="mut">Team or co-authors</span></div>
+  <div class="pull">One sentence that the audience must remember.</div>
+</section>
+
+<!-- ===================== 2 · ARGUMENT AND ROUTE ===================== -->
+<section class="slide" data-title="One argument, three acts" data-act="Opening" data-time="1">
+  <div class="kick">The argument</div>
+  <h2 class="ttl">One argument, three acts, one main line</h2>
+  <div class="body with-take">
+    <div class="argue">
+      <ol>
+        <li><span class="n">1</span><span>First claim. Put the <b>key words</b> in bold.</span></li>
+        <li><span class="n">2</span><span>Second claim. It follows from the first.</span></li>
+        <li><span class="n">3</span><span>Third claim: <span class="hl"><b>what we do about it</b></span>.</span></li>
+      </ol>
+    </div>
+    <div class="route">
+      <div class="grp"><span class="g-l">The world</span>
+        <div class="act"><div class="a-h">Act 1<em>SLIDES 3–4</em></div><div class="a-d">What happens and why it matters.</div></div>
+      </div>
+      <div class="grp"><span class="g-l">The gap</span>
+        <div class="act"><div class="a-h">Act 2<em>SLIDE 5</em></div><div class="a-d">Where the public work stops.</div></div>
+      </div>
+      <div class="grp our"><span class="g-l">Our work</span>
+        <div class="act"><div class="a-h">Act 3<em>SLIDES 6–9</em></div><div class="a-d">Our questions and next steps.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Our main line</span><p>One sentence with the <b>main message</b>.</p></div>
+  <div class="src"><span>Evidence tags in footers:</span><span class="ev p">Primary</span><span class="ev a">Academic</span><span class="ev m">Media / company claim</span><span class="ev i">Inference</span><span class="ev v">To verify</span></div>
+</section>
+
+<!-- ===================== 3 · EMBEDDED INTERACTIVE PAGE ===================== -->
+<section class="slide" data-title="An existing interactive page, embedded" data-act="1 · The world" data-time="2">
+  <div class="kick">Act 1<i>·</i>The world</div>
+  <h2 class="ttl">The title states the finding that the page shows</h2>
+  <p class="sub">The page below is a material file in embed/. deck.config.json sets its scale and hides its own header.</p>
+  <div class="body"><div class="frame" data-embed="example" data-title="Example interactive chart"></div></div>
+  <div class="src"><b>Sources</b><span>Source A 2026 · Source B 2026</span><span class="ev p">Primary</span></div>
+</section>
+
+<!-- ===================== 4 · ROWS THAT ENTER ONE BY ONE ===================== -->
+<section class="slide" data-title="Rules and their results, step by step" data-act="1 · The world" data-time="2">
+  <div class="kick">Act 1<i>·</i>The world</div>
+  <h2 class="ttl">Each rule has one clear result</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="card" data-b="1" data-fx="left"><div class="label">Rule 1</div><p class="body-l">Short statement of the rule.</p><p class="body-m mut">Its result for us.</p></div>
+      <div class="card" data-b="2" data-fx="left"><div class="label">Rule 2</div><p class="body-l">Short statement of the rule.</p><p class="body-m mut">Its result for us.</p></div>
+      <div class="card" data-b="3" data-fx="left"><div class="label">Rule 3</div><p class="body-l">Short statement of the rule.</p><p class="body-m mut">Its result for us.</p></div>
+    </div>
+  </div>
+  <div class="take" data-b="4" data-fx="push"><span class="tk-l">So</span><p>The three rules ask for the <b>same capability</b>.</p></div>
+  <div class="src"><b>Sources</b><span>Rule documents, 2026</span><span class="ev p">Primary</span><span class="ev i">Results: inference</span></div>
+</section>
+
+<!-- ===================== 5 · BREAK CARDS WITH ZOOM DETAILS ===================== -->
+<section class="slide" data-title="Where the public work stops" data-act="2 · The gap" data-time="2">
+  <div class="kick">Act 2<i>·</i>The gap</div>
+  <h2 class="ttl">The public work stops in two places. Our work targets both.</h2>
+  <div class="body with-take">
+    <div class="grid2 fill">
+      <div class="bk" data-zoom="z-gap1">
+        <div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3><span class="brk">1</span>First gap</h3>
+          <p>What exists, in one sentence with a <b>number</b>.</p><p class="mut">What is missing.</p></div>
+        <div class="bk-our"><b class="tag">Our work</b><h4>Our answer to gap 1</h4><p>One sentence.</p></div>
+      </div>
+      <div class="bk opp" data-zoom="z-gap2">
+        <div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3><span class="brk">2</span>Second gap</h3>
+          <p>What exists.</p><p class="mut">What is missing.</p></div>
+        <div class="bk-our"><b class="tag">Our opportunity</b><h4>Our answer to gap 2</h4><p>One sentence.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Our main line</span><p>One sentence that links the gaps to <b>our work</b>.</p></div>
+  <div class="src"><span><b>“Gap” means:</b> not found in the public sources searched.</span><span class="ev i">Inference</span></div>
+
+  <template id="z-gap1"><div class="zd">
+    <div class="zd-h"><span class="brk">1</span><h3>First gap in detail</h3></div>
+    <div class="zd-g">
+      <div><b class="zt">What exists</b><p>Fact one.</p><p>Fact two.</p></div>
+      <div class="miss"><b class="zt">What is missing</b><p>The missing case or data.</p></div>
+      <div class="our"><b class="zt">Our work</b><p>What we do and how we check it.</p></div>
+    </div>
+    <div class="zd-f"><span>Sources: …</span><button type="button" class="zgo" data-goto="7">Go to part 1 →</button></div>
+  </div></template>
+  <template id="z-gap2"><div class="zd">
+    <div class="zd-h"><span class="brk">2</span><h3>Second gap in detail</h3></div>
+    <div class="zd-g">
+      <div><b class="zt">What exists</b><p>Fact one.</p></div>
+      <div class="miss"><b class="zt">What is missing</b><p>The missing case or data.</p></div>
+      <div class="our opp"><b class="zt">Our opportunity</b><p>What we can bring.</p></div>
+    </div>
+    <div class="zd-f"><span>Sources: …</span><button type="button" class="zgo" data-goto="8">Go to part 2 →</button></div>
+  </div></template>
+</section>
+
+<!-- ===================== 6 · OVERVIEW (→ morphs the Q1 card into the header of slide 7) ===================== -->
+<section class="slide" data-title="Two research questions" data-act="3 · Our work" data-time="1">
+  <div class="kick">Act 3<i>·</i>Our work</div>
+  <h2 class="ttl">Two research questions</h2>
+  <div class="body with-take">
+    <div class="grid2 fill">
+      <div class="col" data-morph="q1"><h3>Q1 · Short name</h3><p class="body-m">The question in one sentence.</p></div>
+      <div class="col" data-morph="q2"><h3>Q2 · Short name</h3><p class="body-m">The question in one sentence.</p></div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Why it is hard</span><p>One sentence with the <b>tight number</b>.</p></div>
+  <div class="src"><b>Sources</b><span>…</span><span class="ev i">Inference</span></div>
+</section>
+
+<!-- ===================== 7 · PART 1: MOTIVATION / MEASURES / OPPORTUNITY ===================== -->
+<section class="slide" data-strip="qs" data-strip-label="Q1" data-title="Q1 · Short name" data-act="3 · Our work" data-time="1.5">
+  <div class="kick">Act 3<i>·</i>Our work<i>·</i>Question 1 of 2</div>
+  <div class="part-head" data-morph="q1"><b>Q1</b><span>Short name</span></div>
+  <p class="sub">The question in one sentence.</p>
+  <div class="body qd">
+    <div class="qd-left"><div class="card fill"><div class="label">Figure (synthetic)</div><p class="body-m mut">Put an SVG figure here. Draw it with the diagram rules.</p></div></div>
+    <div class="qd-right">
+      <div class="ly mot" data-b="1"><div class="ly-h">Motivation</div><div class="ly-c"><ul><li>Why the question matters.</li><li>A <b>number</b> that shows it.</li></ul></div></div>
+      <div class="ly mea" data-b="2"><div class="ly-h">Measures<small>Our work</small></div><div class="ly-c"><ol><li>Step one.</li><li>Step two.</li></ol></div></div>
+      <div class="ly opp" data-b="3"><div class="ly-h">Opportunity</div><div class="ly-c"><ul><li>What nobody has published. <i class="inf">inference</i></li></ul></div></div>
+    </div>
+  </div>
+  <div class="src"><b>Sources</b><span>…</span><span class="ev p">Rules</span><span class="ev i">Approach: inference</span></div>
+</section>
+
+<!-- ===================== 8 · PART 2: CHAIN ===================== -->
+<section class="slide" data-strip="qs" data-strip-label="Q2" data-enter="push" data-title="Q2 · Short name" data-act="3 · Our work" data-time="1.5">
+  <div class="kick">Act 3<i>·</i>Our work<i>·</i>Question 2 of 2</div>
+  <div class="part-head" data-morph="q2"><b>Q2</b><span>Short name</span></div>
+  <p class="sub">The question in one sentence.</p>
+  <div class="body">
+    <div class="chain stagger" data-b="1"><span>Cause<small>detail</small></span><i>→</i><span>Effect<small>detail</small></span><i>→</i><span class="hot">Our control point<small>detail</small></span><i>→</i><span>Result<small>detail</small></span></div>
+  </div>
+  <div class="src"><b>Sources</b><span>…</span><span class="ev i">Inference</span></div>
+</section>
+
+<!-- ===================== 9 · CLOSING ===================== -->
+<section class="slide" data-enter="fade" data-title="Next steps" data-act="3 · Our work" data-time="1.5">
+  <div class="kick">Act 3<i>·</i>Next steps</div>
+  <h2 class="ttl">The title states the decision or the ask</h2>
+  <div class="body with-take">
+    <div class="tline">
+      <div class="tl-i"><b>Q1 2027</b>First step.</div>
+      <div class="tl-i"><b>Q2 2027</b>Second step.</div>
+      <div class="tl-i hot"><b>Q3 2027</b>Key milestone.</div>
+      <div class="tl-i"><b>2028</b>Window closes.</div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Ask</span><p>One clear request to the room: <b>who can help with what</b>.</p></div>
+  <div class="src"><b>Sources</b><span>…</span><span class="ev i">Timing: inference</span></div>
+</section>

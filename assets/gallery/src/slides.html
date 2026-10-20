@@ -1,0 +1,242 @@
+<!-- Motion gallery: seven content situations, each with the calm transition that suits it.
+     All numbers are fake. Press → through it; the kick line of each slide names the situation and the effect. -->
+
+<!-- ===================== 1 · TITLE ===================== -->
+<section class="slide s-title on" data-title="Motion gallery" data-act="Opening" data-time="0.5">
+  <div class="kick">Reference deck<i>·</i>html-presentation-deck</div>
+  <div class="main">
+    <h1>Motion<br><span>gallery</span></h1>
+    <p class="tag">Seven content situations, seven calm transitions</p>
+  </div>
+  <div class="who"><b>Fake content</b><br><span class="mut">All numbers on these slides are invented.</span></div>
+  <div class="pull">The screen stays still. Only what changes moves.</div>
+</section>
+
+<!-- ===================== 2 · INDEX ===================== -->
+<section class="slide" data-title="Which effect for which situation" data-act="Opening" data-time="1">
+  <div class="kick">Index</div>
+  <h2 class="ttl">Pick the effect from the content, not from taste</h2>
+  <div class="body">
+    <div class="gx-index">
+      <div class="gx-row"><b>1</b><span>An overview, then one slide per part</span><em>Morph into the part · progress strip · push · morph back once</em><small>Slides 3–7</small></div>
+      <div class="gx-row"><b>2</b><span>Options side by side, discussed one by one</span><em>Spotlight · then fade to the chosen option</em><small>Slides 8–9</small></div>
+      <div class="gx-row"><b>3</b><span>A card with backup detail for questions</span><em>Expand in place (zoom detail)</em><small>Slide 10</small></div>
+      <div class="gx-row"><b>4</b><span>One part of a picture gets its own slide</span><em>Gentle zoom around the part</em><small>Slides 11–12</small></div>
+      <div class="gx-row"><b>5</b><span>A process the speaker explains step by step</span><em>Builds, one step per press</em><small>Slide 13</small></div>
+      <div class="gx-row"><b>6</b><span>The same chart with new numbers</span><em>Morph: bars and values move to the new values</em><small>Slides 14–15</small></div>
+      <div class="gx-row"><b>7</b><span>A new act or topic starts</span><em>Fade</em><small>Slides 16–17</small></div>
+    </div>
+  </div>
+  <div class="src"><span>Not shown: the camera tour. It moves the whole screen and can make people dizzy. Use it only when asked.</span></div>
+</section>
+
+<!-- ===================== 3–7 · SITUATION 1: OVERVIEW → PARTS ===================== -->
+<section class="slide" data-title="Three research questions" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick">Situation 1<i>·</i>Overview → parts<i>·</i>→ morphs Q1 into the next slide</div>
+  <h2 class="ttl">Three research questions, one test to pass</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="col" data-morph="q1"><h3>Q1 · Reserve rules</h3><p class="body-m">How to split one battery between buffer, DR, ride-through and backup?</p></div>
+      <div class="col" data-morph="q2"><h3>Q2 · Supervisory logic</h3><p class="body-m">When to move to backup, and how to return in batches?</p></div>
+      <div class="col" data-morph="q3"><h3>Q3 · Allocation</h3><p class="body-m">How to split power between battery racks and keep the port reserve?</p></div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Why it is tight</span><p>On a 2 h system, ±5% of energy is about <b>6 minutes</b> at rated power.</p></div>
+  <div class="src"><span>Fake content</span><span class="ev i">Inference</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q1" data-title="Q1 · Reserve rules" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick">Situation 1<i>·</i>Part 1 of 3<i>·</i>the strip shows where we are</div>
+  <div class="part-head" data-morph="q1"><b>Q1</b><span>Reserve rules: one battery, many tasks</span></div>
+  <div class="body">
+    <div class="qd-right fill">
+      <div class="ly mot"><div class="ly-h">Motivation</div><div class="ly-c"><ul><li>Four tasks share one energy store.</li><li>The test checks drift over <b>24 h</b>.</li></ul></div></div>
+      <div class="ly mea"><div class="ly-h">Measures<small>Our work</small></div><div class="ly-c"><ol><li>Write each task as a range that depends on SOC.</li><li>Recompute the reserves every period.</li></ol></div></div>
+      <div class="ly opp"><div class="ly-h">Opportunity</div><div class="ly-c"><ul><li>No published method proves the drift limit. <i class="inf">inference</i></li></ul></div></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q2" data-enter="push" data-title="Q2 · Supervisory logic" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick">Situation 1<i>·</i>Part 2 of 3<i>·</i>push: the next item of a series</div>
+  <div class="part-head" data-morph="q2"><b>Q2</b><span>Supervisory logic: when to switch, how to return</span></div>
+  <div class="body">
+    <div class="chain"><span>Normal<small>grid OK</small></span><i>→</i><span class="hot">Ride-through<small>fault &lt; 500 ms</small></span><i>→</i><span>Backup<small>fault &gt; 500 ms</small></span><i>→</i><span>Staged return<small>4 batches</small></span></div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q3" data-enter="push" data-title="Q3 · Allocation" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick">Situation 1<i>·</i>Part 3 of 3</div>
+  <div class="part-head" data-morph="q3"><b>Q3</b><span>Allocation: the weakest battery rack sets the reserve</span></div>
+  <div class="body">
+    <div class="grid2 fill">
+      <div class="card"><div class="label">Equal SOC</div><p class="num" style="font-size:96px">48 min</p><p class="body-m mut">at full power, four racks at 60%</p></div>
+      <div class="card"><div class="label">Spread SOC</div><p class="num hl" style="font-size:96px">24 min</p><p class="body-m mut">the same mean, one rack at 30%</p></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<section class="slide" data-title="Three questions covered" data-act="1 · Overview → parts" data-time="0.5">
+  <div class="kick">Situation 1<i>·</i>Back once, at the end<i>·</i>Q3 morphs back into its card</div>
+  <h2 class="ttl">Three research questions, one test to pass</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="col" data-morph="q1"><span class="done-chip">✓ Covered</span><h3>Q1 · Reserve rules</h3><p class="body-m">How to split one battery between buffer, DR, ride-through and backup?</p></div>
+      <div class="col" data-morph="q2"><span class="done-chip">✓ Covered</span><h3>Q2 · Supervisory logic</h3><p class="body-m">When to move to backup, and how to return in batches?</p></div>
+      <div class="col" data-morph="q3"><span class="done-chip">✓ Covered</span><h3>Q3 · Allocation</h3><p class="body-m">How to split power between battery racks and keep the port reserve?</p></div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">So</span><p>All three answer <b>one test</b>: control, not capacity.</p></div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<!-- ===================== 8–9 · SITUATION 2: OPTIONS, ONE BY ONE ===================== -->
+<section class="slide" data-enter="fade" data-title="Three ways to buffer a swing" data-act="2 · Options" data-time="1.5">
+  <div class="kick">Situation 2<i>·</i>Options side by side<i>·</i>→ lights one option at a time</div>
+  <h2 class="ttl">Three ways to buffer a 100 MW swing</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="card" data-spot="1"><div class="label">Option A</div><p class="lead">Capacitors in each compute rack</p><p class="num" style="font-size:64px">0.2 s</p><p class="body-m mut">fast, small energy</p></div>
+      <div class="card" data-spot="2"><div class="label">Option B</div><p class="lead">A campus BESS with a local EMS</p><p class="num hl" style="font-size:64px">2 h</p><p class="body-m mut">slower, large energy</p></div>
+      <div class="card" data-spot="3"><div class="label">Option C</div><p class="lead">GPU power capping in firmware</p><p class="num" style="font-size:64px">−15%</p><p class="body-m mut">no hardware, costs compute</p></div>
+    </div>
+  </div>
+  <div class="take" data-b="4" data-fx="push"><span class="tk-l">Pick</span><p>Only <b>Option B</b> also earns grid credit.</p></div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<section class="slide" data-enter="fade" data-title="Option B in detail" data-act="2 · Options" data-time="1">
+  <div class="kick">Situation 2<i>·</i>Fade to the chosen option</div>
+  <h2 class="ttl">Option B: a campus BESS with a local EMS</h2>
+  <div class="body">
+    <div class="grid3 fill">
+      <div class="card flat"><div class="label">Size</div><p class="num" style="font-size:72px">200 MWh</p></div>
+      <div class="card flat"><div class="label">Response</div><p class="num" style="font-size:72px">&lt; 200 ms</p></div>
+      <div class="card flat"><div class="label">Grid credit</div><p class="num hl" style="font-size:72px">+60 MW</p></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<!-- ===================== 10 · SITUATION 3: BACKUP DETAIL ===================== -->
+<section class="slide" data-enter="fade" data-title="Two gaps with backup detail" data-act="3 · Backup detail" data-time="1">
+  <div class="kick">Situation 3<i>·</i>Backup detail<i>·</i>click a card, Esc closes</div>
+  <h2 class="ttl">Two gaps; the detail opens only when someone asks</h2>
+  <div class="body">
+    <div class="grid2 fill">
+      <div class="bk" data-zoom="gx-z1"><div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3><span class="brk">1</span>Modeling</h3><p>Two model worlds meet between <b>100 ms and 1 s</b>.</p></div>
+        <div class="bk-our"><b class="tag">Our work</b><h4>Link the two models</h4></div></div>
+      <div class="bk opp" data-zoom="gx-z2"><div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3><span class="brk">2</span>Data</h3><p>No data shows how long the cooling loop <b>carries a cut</b>.</p></div>
+        <div class="bk-our"><b class="tag">Our opportunity</b><h4>Use our field data</h4></div></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+  <template id="gx-z1"><div class="zd"><div class="zd-h"><span class="brk">1</span><h3>Modeling: where the two worlds meet</h3></div>
+    <div class="zd-g"><div><b class="zt">What exists</b><p>Fast models cover microseconds to 1 s.</p></div><div class="miss"><b class="zt">What is missing</b><p>A public case that runs both on one site.</p></div><div class="our"><b class="zt">Our work</b><p>Run both and compare at 100 ms.</p></div></div></div></template>
+  <template id="gx-z2"><div class="zd"><div class="zd-h"><span class="brk">2</span><h3>Data: the thermal buffer</h3></div>
+    <div class="zd-g"><div><b class="zt">What exists</b><p>Design values for tanks and loops.</p></div><div class="miss"><b class="zt">What is missing</b><p>Measured hold times after a load cut.</p></div><div class="our opp"><b class="zt">Our opportunity</b><p>Field data from our own sites.</p></div></div></div></template>
+</section>
+
+<!-- ===================== 11–12 · SITUATION 4: PART OF A PICTURE ===================== -->
+<section class="slide" data-enter="fade" data-title="The power path of a campus" data-act="4 · Part of a picture" data-time="1">
+  <div class="kick">Situation 4<i>·</i>Part of a picture<i>·</i>→ zooms gently into the PCS</div>
+  <h2 class="ttl">One power path; the PCS sets the response time</h2>
+  <div class="body">
+    <svg class="gx-path" viewBox="0 0 1728 520" width="100%" role="img" aria-labelledby="gxp-t"><title id="gxp-t">Grid, transformer, PCS, battery racks and EMS in one row; the PCS is marked</title>
+      <g fill="none" stroke="#46515e" stroke-width="3"><path d="M 300 220 H 380"/><path d="M 640 220 H 720"/><path d="M 1000 220 H 1080"/><path d="M 860 300 V 380"/></g>
+      <g><rect x="40" y="140" width="260" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="170" y="230" font-size="32" font-weight="600" text-anchor="middle">Grid</text></g>
+      <g><rect x="380" y="140" width="260" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="510" y="230" font-size="32" font-weight="600" text-anchor="middle">Transformer</text></g>
+      <g data-focus=""><rect x="720" y="140" width="280" height="160" rx="12" fill="#fbe9e5" stroke="#c2412d" stroke-width="4"/><text x="860" y="222" font-size="34" font-weight="700" text-anchor="middle" fill="#c2412d">PCS</text><text x="860" y="262" font-size="22" text-anchor="middle" fill="#46515e">power conversion</text></g>
+      <g><rect x="1080" y="140" width="300" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="1230" y="230" font-size="32" font-weight="600" text-anchor="middle">Battery racks</text></g>
+      <g><rect x="720" y="380" width="280" height="110" rx="12" fill="#f0f3f6" stroke="#7a8794" stroke-width="2" stroke-dasharray="7 5"/><text x="860" y="445" font-size="28" font-weight="600" text-anchor="middle">Local EMS</text></g>
+    </svg>
+  </div>
+  <div class="src"><span>Fake content · schematic</span></div>
+</section>
+
+<section class="slide" data-enter="zoom" data-title="Inside the PCS" data-act="4 · Part of a picture" data-time="1">
+  <div class="kick">Situation 4<i>·</i>The part, on its own slide<i>·</i>← zooms back out</div>
+  <h2 class="ttl">Inside the PCS: three loops, three speeds</h2>
+  <div class="body">
+    <div class="grid3 fill">
+      <div class="card"><div class="label">Current loop</div><p class="num" style="font-size:80px">1 ms</p><p class="body-m mut">holds the AC current</p></div>
+      <div class="card"><div class="label">Grid-forming loop</div><p class="num hl" style="font-size:80px">20 ms</p><p class="body-m mut">holds voltage and frequency</p></div>
+      <div class="card"><div class="label">EMS set point</div><p class="num" style="font-size:80px">1 s</p><p class="body-m mut">follows the dispatch</p></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<!-- ===================== 13 · SITUATION 5: A PROCESS STEP BY STEP ===================== -->
+<section class="slide" data-enter="fade" data-title="Commissioning in five steps" data-act="5 · Process" data-time="1.5">
+  <div class="kick">Situation 5<i>·</i>A process<i>·</i>→ adds one step</div>
+  <h2 class="ttl">Commissioning a site in five steps</h2>
+  <div class="body with-take">
+    <div class="gx-steps">
+      <div class="card" data-b="1" data-fx="left"><b class="num">1</b><p>Model the site</p></div>
+      <div class="card" data-b="2" data-fx="left"><b class="num">2</b><p>Test the PCS alone</p></div>
+      <div class="card" data-b="3" data-fx="left"><b class="num">3</b><p>Test with the EMS</p></div>
+      <div class="card" data-b="4" data-fx="left"><b class="num">4</b><p>Ride-through test</p></div>
+      <div class="card" data-b="5" data-fx="left"><b class="num">5</b><p>Grid operator sign-off</p></div>
+    </div>
+  </div>
+  <div class="take" data-b="6" data-fx="push"><span class="tk-l">So</span><p>Step 4 is where most sites <b>lose weeks</b>.</p></div>
+  <div class="src"><span>Fake content</span></div>
+</section>
+
+<!-- ===================== 14–15 · SITUATION 6: SAME CHART, NEW NUMBERS ===================== -->
+<section class="slide" data-enter="fade" data-title="Share of national power, 2024" data-act="6 · New numbers" data-time="1">
+  <div class="kick">Situation 6<i>·</i>Same chart, new numbers<i>·</i>→ moves the bars to 2030</div>
+  <h2 class="ttl" data-morph="gx-t">Data-center share of national power, 2024</h2>
+  <div class="body">
+    <div class="gx-bars">
+      <div class="gx-c"><span class="gx-v" data-morph="v1">22%</span><i class="gx-b" data-morph="b1" style="height:330px"></i><span class="gx-l">Country A</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v2">8%</span><i class="gx-b" data-morph="b2" style="height:120px"></i><span class="gx-l">Country B</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v3">5%</span><i class="gx-b" data-morph="b3" style="height:75px"></i><span class="gx-l">Country C</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v4">4%</span><i class="gx-b" data-morph="b4" style="height:60px"></i><span class="gx-l">Country D</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v5">3%</span><i class="gx-b" data-morph="b5" style="height:45px"></i><span class="gx-l">Country E</span></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake numbers</span></div>
+</section>
+
+<section class="slide" data-title="Share of national power, 2030" data-act="6 · New numbers" data-time="1">
+  <div class="kick">Situation 6<i>·</i>Same chart, new numbers<i>·</i>← moves them back</div>
+  <h2 class="ttl" data-morph="gx-t">Data-center share of national power, 2030</h2>
+  <div class="body">
+    <div class="gx-bars">
+      <div class="gx-c"><span class="gx-v hl" data-morph="v1">30%</span><i class="gx-b hot" data-morph="b1" style="height:450px"></i><span class="gx-l">Country A</span></div>
+      <div class="gx-c"><span class="gx-v hl" data-morph="v2">14%</span><i class="gx-b hot" data-morph="b2" style="height:210px"></i><span class="gx-l">Country B</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v3">6%</span><i class="gx-b" data-morph="b3" style="height:90px"></i><span class="gx-l">Country C</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v4">5%</span><i class="gx-b" data-morph="b4" style="height:75px"></i><span class="gx-l">Country D</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v5">4%</span><i class="gx-b" data-morph="b5" style="height:60px"></i><span class="gx-l">Country E</span></div>
+    </div>
+  </div>
+  <div class="src"><span>Fake numbers</span></div>
+</section>
+
+<!-- ===================== 16–17 · SITUATION 7: A NEW ACT ===================== -->
+<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="7 · New act" data-time="0.5">
+  <div class="kick">Situation 7<i>·</i>A new act<i>·</i>fade</div>
+  <div class="gx-act"><b>Act 3</b><span>Our work</span></div>
+  <div class="src"><span>A divider slide: one fade, nothing moves</span></div>
+</section>
+
+<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="7 · New act" data-time="1">
+  <div class="kick">Closing</div>
+  <h2 class="ttl">Pick the calmest effect that still tells the story</h2>
+  <div class="body with-take">
+    <ul class="ste" style="font-size:30px;gap:14px">
+      <li>Keep the screen still. Move only what changes.</li>
+      <li>Never zoom more than about 12% across the whole screen.</li>
+      <li>Do not go back and forth between an overview and its parts. Go back once, at the end.</li>
+      <li>Use motion on three to five slides of a talk, not on every slide.</li>
+      <li>Jumps (overview, links) and reduced-motion settings always switch at once.</li>
+    </ul>
+  </div>
+  <div class="take"><span class="tk-l">Test</span><p>If someone looks away, they must still <b>know where they are</b>.</p></div>
+  <div class="src"><span>Not shown: the camera tour (legacy). It moves the whole screen; use it only when asked.</span></div>
+</section>

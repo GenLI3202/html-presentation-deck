@@ -1,0 +1,2235 @@
+<title>Motion Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+/* Base: tokens, the fixed 1920 × 1080 stage, slide chrome and the house components.
+   Colours and fonts are tokens on :root. deck.config.json "tokens" overrides them (domain colours d1–d4). */
+:root{
+  --paper:#fbfcfd; --ink:#141b24; --ink2:#46515e; --ink3:#7a8794;
+  --rule:#d9dfe5; --tint:#f0f3f6; --tint2:#e6ebf0;
+  --accent:#c2412d; --accent-soft:#fbe9e5;     /* our work and key messages */
+  --amber:#9a5b00; --amber-soft:#f7ebd3;       /* opportunity */
+  --ok:#2c7a4b; --ground:#0f141a;
+  --d1:#2f67a6; --d2:#6b4aa8; --d3:#d9691c; --d4:#6b7785;   /* domain colours, renamed per deck */
+  --academic:var(--d1);
+  --sans:"IBM Plex Sans","Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --num:"Barlow Condensed","IBM Plex Sans",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+p{margin:0}
+
+#viewport{position:fixed;inset:0;display:flex;flex-direction:row}
+#stageWrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;background:var(--paper);transform-origin:0 0;overflow:hidden}
+
+/* ---------- slide chrome: kick, title, sub, body, footer ---------- */
+.slide{position:absolute;inset:0;padding:64px 96px 0;display:none;flex-direction:column}
+.slide.on{display:flex}
+.kick{font-family:var(--mono);font-size:20px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;gap:18px;align-items:center;height:28px}
+.kick i{font-style:normal;color:var(--ink3)}
+.pg{position:absolute;right:96px;top:64px;font-family:var(--mono);font-size:20px;color:var(--ink3);letter-spacing:.06em}
+h2.ttl{font-size:60px;line-height:1.08;font-weight:600;letter-spacing:-.012em;margin:18px 0 0;max-width:1560px;text-wrap:balance}
+.sub{font-size:28px;line-height:1.4;color:var(--ink2);margin:14px 0 0;max-width:1500px}
+.body{flex:1 1 auto;min-height:0;position:relative;margin-top:28px;margin-bottom:84px}
+.body.with-take{margin-bottom:220px}
+.src{position:absolute;left:96px;right:96px;bottom:34px;font-family:var(--mono);font-size:16px;line-height:1.45;color:var(--ink3);display:flex;gap:10px 18px;flex-wrap:wrap;align-items:baseline}
+.src b{font-weight:500;color:var(--ink2)}
+.progress{position:absolute;left:0;top:0;height:5px;background:var(--accent);width:0;transition:width .25s}
+
+/* evidence tags: p primary, a academic, m media or company claim, i inference, v to verify, n internal */
+.ev{font-family:var(--mono);font-size:14px;letter-spacing:.04em;text-transform:uppercase;padding:1px 8px;border:1.5px solid currentColor;border-radius:99px;white-space:nowrap}
+.ev.p{color:var(--ink)} .ev.a{color:var(--academic)} .ev.m{color:var(--ink3)} .ev.i{color:var(--ink2);border-style:dashed} .ev.v{color:var(--amber)} .ev.n{color:var(--ink3);border-style:dotted}
+
+/* ---------- type helpers ---------- */
+.t-mono{font-family:var(--mono)}
+.num{font-family:var(--num);font-weight:600;font-variant-numeric:tabular-nums}
+.hl{color:var(--accent)}
+.mut{color:var(--ink2)}
+.lead{font-size:32px;line-height:1.38}
+.body-l{font-size:28px;line-height:1.4}
+.body-m{font-size:24px;line-height:1.42}
+.body-s{font-size:21px;line-height:1.4}
+.label{font-family:var(--mono);font-size:17px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ste{margin:6px 0 0;padding-left:1.15em;font-size:24px;line-height:1.32;display:flex;flex-direction:column;gap:6px}
+.ste li::marker{color:var(--ink3)}
+
+/* ---------- simple blocks ---------- */
+.card{background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:24px 28px}
+.card.flat{background:var(--tint);border-color:transparent}
+.gapnote{border:2px dashed var(--accent);background:var(--accent-soft);border-radius:10px;padding:16px 24px;font-size:23px;line-height:1.4}
+.gapnote b{color:var(--accent);font-family:var(--mono);font-size:17px;letter-spacing:.1em;text-transform:uppercase;margin-right:12px}
+.pill{display:inline-block;font-family:var(--mono);font-size:16px;letter-spacing:.06em;padding:3px 12px;border-radius:99px;background:var(--tint2);color:var(--ink2);white-space:nowrap}
+.pill.red{background:var(--accent-soft);color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.fill{height:100%}
+
+/* ---------- title slide ---------- */
+.s-title{padding-top:0}
+.s-title .kick{position:absolute;left:96px;top:64px}
+.s-title .main{position:absolute;left:96px;top:250px;width:1500px}
+.s-title h1{font-size:132px;line-height:1.0;font-weight:600;letter-spacing:-.025em;margin:0}
+.s-title h1 span{color:var(--accent)}
+.s-title .tag{font-size:44px;line-height:1.25;color:var(--ink2);margin-top:36px;max-width:1300px}
+.s-title .who{position:absolute;left:96px;bottom:150px;font-size:28px;line-height:1.5}
+.s-title .who b{font-weight:600}
+.s-title .pull{position:absolute;right:96px;bottom:150px;width:640px;font-size:32px;line-height:1.35;border-left:5px solid var(--accent);padding-left:26px}
+
+/* ---------- argument + route (slide 2 pattern) ---------- */
+.argue{width:830px}
+.argue ol{margin:0;padding:0;display:flex;flex-direction:column;gap:56px}
+.argue li{list-style:none;display:grid;grid-template-columns:70px 1fr;gap:22px;align-items:start;font-size:40px;line-height:1.3}
+.argue .n{font-family:var(--num);font-size:84px;font-weight:600;line-height:.9;color:var(--accent)}
+.route{position:absolute;right:0;top:0;width:800px;display:flex;flex-direction:column;gap:18px}
+.grp{position:relative;border-left:2px solid var(--rule)}
+.grp .g-l{position:absolute;left:30px;top:-2px;font-family:var(--mono);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.act{position:relative;padding:10px 0 10px 30px}
+.grp .g-l + .act{padding-top:28px}
+.act::before{content:"";position:absolute;left:-9px;top:20px;width:16px;height:16px;border-radius:50%;background:var(--paper);border:3px solid var(--ink)}
+.grp .g-l + .act::before{top:38px}
+.act .a-h{font-size:32px;font-weight:600;display:flex;gap:16px;align-items:baseline}
+.act .a-h em{font-style:normal;font-family:var(--mono);font-size:18px;color:var(--ink3);letter-spacing:.06em;font-weight:400}
+.act .a-d{font-size:23px;color:var(--ink2);margin-top:4px;line-height:1.35}
+.grp.our{border-left:4px solid var(--accent)}
+.grp.our .g-l{color:var(--accent)}
+.grp.our .act::before{left:-11px;border-color:var(--accent);background:var(--accent)}
+
+/* ---------- embed frames ---------- */
+.frame{position:absolute;inset:0;border:1.5px solid var(--rule);border-radius:10px;overflow:hidden;background:#fff}
+.frame iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+.frame .loading{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:22px;color:var(--ink3)}
+.frame .loading a{color:var(--accent)}
+.tabs{display:flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden;width:max-content}
+.tabs button{background:transparent;border:0;padding:8px 22px;font-size:21px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+/* ---------- columns and break cards: finding (white) above our work (red) ---------- */
+.brk{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;font-weight:600;font-size:26px;display:inline-grid;place-items:center;flex:none;font-family:var(--sans)}
+.col{background:#fff;border:1.5px solid var(--rule);border-radius:12px;padding:30px 32px;display:flex;flex-direction:column;gap:18px}
+.col h3{margin:0;font-size:38px;font-weight:600;display:flex;gap:16px;align-items:center}
+.bk{display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:1.5px solid var(--rule);background:#fff;min-height:0}
+.bk-top{padding:24px 28px;flex:1 1 auto;display:flex;flex-direction:column;gap:14px}
+.bk-top h3{margin:0;font-size:38px;font-weight:600;display:flex;gap:16px;align-items:center}
+.bk-top p{font-size:26px;line-height:1.36}
+.bk-top p.mut{font-size:23px}
+.bk-our{padding:20px 28px 24px;background:var(--accent-soft);border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:8px}
+.bk-our .tag{font-family:var(--mono);font-size:17px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.bk-our h4{margin:0;font-size:32px;font-weight:600;line-height:1.15}
+.bk-our p{font-size:25px;line-height:1.35}
+.bk.main{border:3px solid var(--accent)}
+.bk.main .bk-our{background:var(--accent);color:#fff}
+.bk.main .bk-our .tag{color:#ffd6cc}
+.bk.opp .bk-our{background:var(--amber-soft);border-top-color:var(--amber)}
+.bk.opp .bk-our .tag{color:var(--amber)}
+
+/* ---------- Motivation / Measures / Opportunity cards ---------- */
+.qd{display:grid;grid-template-columns:810px 1fr;gap:36px}
+.qd-left,.qd-right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ly{display:grid;grid-template-columns:170px 1fr;border-radius:12px;overflow:hidden;border:1.5px solid var(--rule)}
+.ly-h{padding:16px 18px;font-family:var(--mono);font-size:19px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;display:flex;flex-direction:column;justify-content:center;gap:8px;line-height:1.2}
+.ly-h small{font-size:13px;letter-spacing:.1em;background:#fff;color:var(--accent);border-radius:99px;padding:2px 9px;width:max-content}
+.ly-c{padding:12px 22px;font-size:24px;line-height:1.3}
+.ly-c ul,.ly-c ol{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:7px}
+.ly-c li::marker{color:var(--ink3)}
+.ly.mot .ly-h{background:var(--ink2);color:#fff}
+.ly.mot .ly-c{background:#fff}
+.ly.mea{border:3px solid var(--accent);flex:1.25}
+.ly.mea .ly-h{background:var(--accent);color:#fff}
+.ly.mea .ly-c{background:var(--accent-soft)}
+.ly.mea .ly-c li::marker{color:var(--accent);font-weight:700}
+.ly.opp .ly-h{background:var(--amber);color:#fff}
+.ly.opp .ly-c{background:var(--amber-soft)}
+.ly.mot,.ly.opp{flex:1}
+.inf{font-style:normal;font-family:var(--mono);font-size:14px;color:var(--ink3);border:1.5px dashed var(--ink3);border-radius:99px;padding:0 8px;margin-left:4px;white-space:nowrap}
+
+/* ---------- chain and timeline ---------- */
+.chain{display:flex;align-items:stretch;gap:8px}
+.chain span{flex:1;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-size:21px;font-weight:600;line-height:1.2;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.chain span small{display:block;font-size:15px;font-weight:400;color:var(--ink2);margin-top:3px;font-family:var(--mono)}
+.chain span.hot{border-color:var(--accent);background:var(--accent-soft)}
+.chain i{font-style:normal;align-self:center;font-size:28px;color:var(--ink2)}
+.tline{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-top:30px}
+.tline::before{content:"";position:absolute;left:0;right:0;top:11px;height:4px;background:var(--rule)}
+.tl-i{position:relative;font-size:22px;line-height:1.3;color:var(--ink2)}
+.tl-i::before{content:"";position:absolute;left:0;top:-27px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--ink)}
+.tl-i b{display:block;font-family:var(--num);font-size:34px;font-weight:600;color:var(--ink);line-height:1.1;margin-bottom:2px}
+.tl-i.hot::before{background:var(--accent);border-color:var(--accent)}
+.tl-i.hot b{color:var(--accent)}
+
+/* ---------- conclusion callout: large type on a light red field, never a dark bar ---------- */
+.take{position:absolute;left:96px;right:96px;bottom:78px;display:grid;grid-template-columns:190px 1fr;gap:30px;align-items:center;background:var(--accent-soft);border-left:12px solid var(--accent);border-radius:0 14px 14px 0;padding:20px 40px 22px 34px;z-index:3}
+.take .tk-l{font-family:var(--mono);font-size:19px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:500;line-height:1.3}
+.take p{font-size:39px;line-height:1.24;font-weight:600;color:var(--ink);letter-spacing:-.005em}
+.take p b{color:var(--accent);font-weight:700}
+.take .tk-s{display:block;font-size:25px;font-weight:400;color:var(--ink2);margin-top:6px;line-height:1.3}
+
+/* ---------- SVG text: an inherited default, so fill and font-family attributes on elements still win ---------- */
+svg{font-family:var(--sans);fill:var(--ink)}
+svg .m{font-family:var(--mono)}
+svg .mut{fill:var(--ink2)} svg .mut3{fill:var(--ink3)}
+
+/* ---------- part header: the band an overview card turns into (morph), on each slide of a series ---------- */
+.part-head{display:flex;align-items:center;gap:22px;margin-top:18px;padding:16px 26px;border-radius:12px;background:var(--accent);color:#fff;max-width:1560px}
+.part-head b{font-family:var(--num);font-size:56px;line-height:1;font-weight:600}
+.part-head span{font-size:40px;line-height:1.15;font-weight:600}
+.part-head.opp{background:var(--amber)}
+.done-chip{display:inline-block;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--ok);color:#fff;border-radius:99px;padding:4px 14px;width:max-content}
+
+:root{--d1:#2f67a6;--d2:#6b4aa8;--d3:#d9691c;--d4:#6b7785;}
+/* Chrome outside the slides: toolbar, notes and sources panel, reference-figure viewer, overview, key hint. */
+.dctl{position:fixed;right:18px;bottom:14px;display:flex;gap:6px;opacity:.0;transition:opacity .2s;z-index:50}
+body:hover .dctl,.dctl:focus-within{opacity:.9}
+body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
+.dctl button{white-space:nowrap;background:rgba(15,20,26,.86);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 12px;font-size:15px;font-family:var(--mono);cursor:pointer}
+.dctl button:hover{background:#000}
+/* Notes and sources panel: docked on the right, the stage shrinks to fit */
+#notes{flex:0 0 auto;width:0;overflow:hidden;background:#10161d;color:#e8edf2}
+#notes.open{width:min(560px,42vw);border-left:3px solid var(--accent)}
+#notes .in{width:min(560px,42vw);height:100%;overflow:auto;padding:22px 26px 32px;font-size:16px;line-height:1.5}
+.np-h{display:flex;gap:14px;justify-content:space-between;align-items:flex-start}
+.np-t{display:flex;flex-direction:column;gap:6px;min-width:0}
+.np-n{font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:#ff9b88}
+.np-t b{font-size:20px;line-height:1.3;font-weight:600;color:#fff}
+.np-x{flex:none;background:transparent;border:1px solid #3a4856;border-radius:8px;color:#c5d0da;font:inherit;font-size:13px;padding:4px 10px;cursor:pointer}
+.np-x:hover{border-color:#8fa0b0;color:#fff}
+.np-meta{font-family:var(--mono);font-size:13px;color:#9fb0c0;margin:10px 0 4px}
+.np-sec{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#9fb0c0;margin:24px 0 8px;display:flex;align-items:center;gap:10px}
+.np-sec:after{content:"";flex:1;height:1px;background:#26313c}
+.np-say{margin:16px 0 0;padding:12px 16px 12px 18px;background:#2a1a18;border-left:4px solid var(--accent);border-radius:0 10px 10px 0}
+.np-say.land{margin-top:18px}
+.np-lab{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#ff9b88}
+.np-say p{margin:4px 0 0;font-size:19px;line-height:1.45;color:#ffe3dd;font-weight:500}
+.np-cue,.np-lim,.np-src{margin:0;padding:0;list-style:none}
+.np-cue li{position:relative;padding:0 0 8px 20px}
+.np-cue li:before{content:"";position:absolute;left:3px;top:.62em;width:6px;height:6px;border-radius:50%;background:#5f7080}
+.np-lim li,.np-src li{display:grid;grid-template-columns:128px 1fr;gap:10px;align-items:baseline;padding:0 0 9px}
+.np-ev{display:inline-block;justify-self:start;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:1px 8px;border:1.5px solid currentColor;border-radius:99px;white-space:nowrap;color:#e8edf2}
+.np-ev.m{color:#9fb0c0} .np-ev.i{color:#c5d0da;border-style:dashed} .np-ev.v{color:#f0b45a} .np-ev.a{color:#7fb2ea} .np-ev.n{color:#9fb0c0;border-style:dotted}
+.np-st{display:flex;flex-direction:column;gap:1px}
+.np-st a{color:#fff;text-decoration:underline;text-decoration-color:#5f7080;text-underline-offset:3px}
+.np-st a:hover{text-decoration-color:var(--accent);color:#ffd9d1}
+.np-st a:after{content:" ↗";color:#9fb0c0;font-size:.9em}
+.np-st small{font-size:13px;color:#9fb0c0}
+.np-nolink{color:#e8edf2}
+.np-figs{display:grid;gap:8px}
+.np-fig{display:flex;gap:12px;align-items:center;text-align:left;background:#18212b;border:1px solid #2c3743;border-radius:10px;color:#fff;padding:10px 14px;cursor:pointer;font:inherit}
+.np-fig:hover{border-color:var(--accent);background:#1f2a36}
+.np-fi{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:#2a1a18;color:#ff9b88;font-size:18px}
+.np-ft{display:flex;flex-direction:column;gap:1px;min-width:0}
+.np-ft b{font-weight:600;font-size:16px}
+.np-ft small{font-size:13px;color:#9fb0c0}
+.np-none{margin:0;color:#9fb0c0;font-size:15px}
+.np-keys{margin:26px 0 0;font-family:var(--mono);font-size:12px;color:#7d8e9e;line-height:1.7}
+@media (max-width:900px){#notes.open{position:fixed;top:0;right:0;bottom:0;width:min(94vw,520px);z-index:70} #notes .in{width:100%}}
+
+/* Reference-figure viewer */
+#viewer{position:fixed;inset:0;z-index:90;background:rgba(10,14,19,.975);display:flex;flex-direction:column}
+#viewer[hidden]{display:none}
+.vw-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid #26313c;color:#e8edf2}
+.vw-t{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline;min-width:0}
+.vw-k{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#ff9b88}
+.vw-name{font-size:19px;font-weight:600;color:#fff}
+.vw-desc{font-size:14px;color:#9fb0c0}
+.vw-btns{display:flex;gap:8px;align-items:center;flex:none}
+.vw-btns button,.vw-open{background:transparent;border:1px solid #3a4856;border-radius:8px;color:#c5d0da;font:inherit;font-size:14px;padding:5px 12px;cursor:pointer;text-decoration:none}
+.vw-btns button:hover,.vw-open:hover{border-color:#8fa0b0;color:#fff}
+.vw-btns [hidden]{display:none}
+.vw-n{font-family:var(--mono);font-size:13px;color:#9fb0c0;min-width:42px;text-align:center}
+.vw-stage{flex:1 1 auto;min-height:0;display:grid;place-items:center;overflow:hidden;padding:20px}
+.vw-card{position:relative;background:#fff;border-radius:12px;overflow:hidden;color:var(--ink)}
+.vw-card.embed{width:100%;height:100%}
+.vw-fig{width:1200px;padding:32px 36px 28px;background:#fff;color:var(--ink);font-family:var(--sans)}
+.vw-fig svg{display:block;font-family:var(--sans)}
+.vw-fig svg .m{font-family:var(--mono)}
+.vw-fig svg .num{font-family:var(--num)}
+.vw-miss{padding:40px;font-size:20px;color:var(--ink2)}
+/* backup table figure */
+.fig-html{display:flex;flex-direction:column;gap:18px}
+.fh-top{display:flex;gap:18px;align-items:center}
+.fh-sub{font-family:var(--mono);font-size:16px;color:var(--ink3)}
+.ptab{width:100%;border-collapse:collapse;font-size:20px;line-height:1.4}
+.ptab th,.ptab td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1.5px solid var(--rule)}
+.ptab thead th{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);border-bottom:2px solid var(--ink)}
+.ptab tbody th{font-weight:600;white-space:nowrap;width:210px}
+
+
+.ptab tbody tr:last-child th,.ptab tbody tr:last-child td{border-bottom:0}
+
+#overview{position:fixed;inset:0;background:rgba(15,20,26,.97);z-index:80;display:none;overflow:auto;padding:40px 56px}
+#overview.open{display:block}
+#overview h3{font-family:var(--mono);color:#9fb0c0;font-weight:400;font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 18px}
+#overview .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+#overview button{text-align:left;background:#18212b;border:1px solid #2c3743;border-radius:10px;color:#fff;padding:14px 16px;cursor:pointer;display:grid;gap:6px;min-height:118px;align-content:start}
+#overview button:hover,#overview button.cur{border-color:var(--accent);background:#1f2a36}
+#overview .n{font-family:var(--num);font-size:30px;color:#ff9b88;line-height:1}
+#overview .a{font-family:var(--mono);font-size:13px;color:#9fb0c0;letter-spacing:.08em;text-transform:uppercase}
+#overview .t{font-size:17px;line-height:1.3}
+#overview .f{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#ff9b88;margin-top:2px}
+#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(15,20,26,.92);color:#fff;font-family:var(--mono);font-size:16px;padding:10px 20px;border-radius:99px;z-index:60;transition:opacity .6s;pointer-events:none}
+
+@media (prefers-reduced-motion:reduce){.progress,.dctl{transition:none}}
+
+/* Edit mode (editor.js): words only, the layout stays */
+body.editing [contenteditable]{outline:1.5px dashed rgba(194,65,45,.45);outline-offset:3px;cursor:text;border-radius:2px}
+body.editing [contenteditable]:hover{outline-color:var(--accent)}
+body.editing [contenteditable]:focus{outline:2.5px solid var(--accent);background:rgba(255,255,255,.75)}
+body.editing #notes [contenteditable]{outline-color:rgba(255,155,136,.45)}
+body.editing #notes [contenteditable]:focus{outline-color:#ff9b88;background:rgba(255,255,255,.06)}
+body.editing text[data-eid]{cursor:text}
+body.editing text[data-eid]:hover{text-decoration:underline dashed;fill:var(--accent)}
+body.editing .edited{box-shadow:inset 0 -4px 0 rgba(154,91,0,.35)}
+body.editing text.edited{text-decoration:underline}
+#edbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:95;display:flex;gap:12px;align-items:center;background:rgba(15,20,26,.94);color:#fff;font-family:var(--mono);font-size:14px;padding:8px 10px 8px 18px;border-radius:99px;border:1.5px solid var(--accent)}
+#edbar[hidden]{display:none}
+#edbar b{color:#ff9b88;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+#edbar .ed-where{color:#9fb0c0}
+#edbar button{background:transparent;border:1px solid #3a4856;border-radius:99px;color:#e8edf2;font:inherit;padding:4px 12px;cursor:pointer}
+#edbar button:hover{border-color:#8fa0b0}
+#edbar button[hidden]{display:none}
+#edbar .ed-done{background:var(--accent);border-color:var(--accent)}
+.ed-svg{position:fixed;z-index:96;font:16px var(--sans);padding:6px 8px;border:2px solid var(--accent);border-radius:6px;background:#fff;color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+/* Motion: builds (anim.js), zoom details (anim.js) and the camera tour (tour.js). */
+
+/* ---------- builds: an element with data-b="n" is hidden until step n; .b-instant skips the motion ---------- */
+.has-b [data-b]{transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.has-b [data-b]:not(.in){opacity:0;transform:translateY(28px);pointer-events:none}
+.has-b [data-b][data-fx=left]:not(.in){transform:translateX(-70px)}
+.has-b [data-b][data-fx=right]:not(.in){transform:translateX(70px)}
+.has-b [data-b][data-fx=push]:not(.in){transform:translateY(90px)}
+.has-b [data-b][data-fx=zoom]:not(.in){transform:scale(.9)}
+.has-b [data-b][data-fx=fade]:not(.in){transform:none}
+.b-instant [data-b],.b-instant [data-b] *,.b-instant *::before,.b-instant *::after{transition:none!important}
+.bdots{position:absolute;right:96px;top:100px;display:flex;gap:8px}
+.bdots i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink3)}
+.bdots i.on{background:var(--accent);border-color:var(--accent)}
+/* Children of a build enter one after another: put class "stagger" on the build element. */
+.has-b .stagger>*{transition:opacity .35s ease,transform .4s ease}
+.has-b .stagger:not(.in)>*{opacity:0;transform:translateX(-18px)}
+.stagger>:nth-child(1){transition-delay:.2s} .stagger>:nth-child(2){transition-delay:.35s} .stagger>:nth-child(3){transition-delay:.5s}
+.stagger>:nth-child(4){transition-delay:.65s} .stagger>:nth-child(5){transition-delay:.8s} .stagger>:nth-child(6){transition-delay:.95s}
+
+/* ---------- zoom details: data-zoom="templateId" on a card opens the template in a card that grows out of it ---------- */
+[data-zoom]{position:relative;cursor:zoom-in;transition:border-color .2s,transform .2s}
+[data-zoom]:hover{transform:translateY(-3px)}
+.zchip{position:absolute;right:18px;top:18px;font-family:var(--mono);font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border:1.5px solid var(--rule);border-radius:99px;padding:2px 10px;background:#fff}
+[data-zoom]:hover .zchip{color:var(--accent);border-color:var(--accent)}
+.zl{position:absolute;inset:0;z-index:40}
+.zl-bg{position:absolute;inset:0;background:rgba(251,252,253,.84);opacity:0;transition:opacity .35s}
+.zl.open .zl-bg{opacity:1}
+.zl-card{position:absolute;background:#fff;border:3px solid var(--accent);border-radius:16px;overflow:hidden;transform-origin:0 0;transition:transform .5s cubic-bezier(.2,.7,.2,1);box-shadow:0 30px 90px rgba(20,27,36,.18)}
+.zl-in{position:relative;height:100%;opacity:0;transition:opacity .2s}
+.zl.open .zl-in{opacity:1;transition:opacity .3s .28s}
+.zl-x{position:absolute;right:28px;top:26px;font-family:var(--mono);font-size:17px;background:#fff;border:1.5px solid var(--ink3);border-radius:8px;padding:5px 14px;cursor:pointer;color:var(--ink2)}
+.zl-x:hover{border-color:var(--ink);color:var(--ink)}
+/* the detail page inside the card */
+.zd{height:100%;display:flex;flex-direction:column;gap:26px;padding:36px 48px 32px}
+.zd-h{display:flex;align-items:center;gap:20px;padding-right:180px}
+.zd-h h3{margin:0;font-size:44px;font-weight:600;letter-spacing:-.01em}
+.zd-g{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:22px;flex:1 1 auto;min-height:0}
+.zd-g>div{border-radius:12px;border:1.5px solid var(--rule);padding:18px 22px;display:flex;flex-direction:column;gap:10px}
+.zd-g p{font-size:26px;line-height:1.36}
+.zd-g .miss{border:2px dashed var(--accent)}
+.zd-g .our{background:var(--accent-soft);border:2px solid var(--accent)}
+.zd-g .our.opp{background:var(--amber-soft);border-color:var(--amber)}
+.zt{font-family:var(--mono);font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:500}
+.zd-g .miss .zt,.zd-g .our .zt{color:var(--accent)} .zd-g .our.opp .zt{color:var(--amber)}
+.zd-f{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:16px;color:var(--ink3)}
+.zgo{margin-left:auto;font-family:var(--sans);font-size:21px;font-weight:600;background:var(--ink);color:#fff;border:0;border-radius:10px;padding:10px 20px;cursor:pointer;text-decoration:none}
+.zgo:hover{background:var(--accent)}
+
+/* ---------- slide transitions (transition.js): both slides stay shown while they cross ---------- */
+.slide.tr-leave{display:flex;z-index:1;pointer-events:none}
+.slide.tr-enter{z-index:2}
+
+/* ---------- spotlight: data-spot="n" is lit at step n, its siblings dim ---------- */
+[data-spot]{transition:opacity .35s ease,filter .35s ease,transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease}
+.spot-dim{opacity:.32;filter:grayscale(.7)}
+.spot-on{transform:translateY(-6px);box-shadow:0 0 0 4px var(--accent),0 18px 40px rgba(20,27,36,.12)}
+.b-instant [data-spot]{transition:none!important}
+
+/* ---------- progress strip on the slides of a series (data-strip) ---------- */
+.strip{position:absolute;top:60px;right:200px;display:flex;gap:6px;margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:16px;letter-spacing:.04em}
+.strip li{padding:4px 12px;border-radius:99px;border:1.5px solid var(--rule);color:var(--ink3);background:#fff;white-space:nowrap}
+.strip li.done{color:var(--ok);border-color:var(--ok)}
+.strip li.done::before{content:"✓ "}
+.strip li.now{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ---------- camera tour (legacy, it can make people dizzy): an overview slide with data-tour; items data-tour-to ---------- */
+.slide.cam{display:flex;will-change:transform,opacity}
+.slide.cam-in{background:var(--paper);box-shadow:0 0 0 7px var(--accent);border-radius:6px}
+[data-tour-to]{position:relative;transition:opacity .45s ease,box-shadow .45s ease}
+.slide[data-tour]:not(.t-all) [data-tour-to].t-done{opacity:.45}
+[data-tour-to].t-done::after{content:"✓ Covered";position:absolute;top:-16px;right:20px;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--ok);color:#fff;border-radius:99px;padding:4px 14px}
+[data-tour-to].t-next{box-shadow:0 0 0 4px var(--accent);animation:tpulse 1.4s ease-in-out infinite}
+[data-tour-to].t-next::after{content:"Next";position:absolute;top:-16px;right:20px;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--accent);color:#fff;border-radius:99px;padding:4px 14px}
+@keyframes tpulse{50%{box-shadow:0 0 0 10px rgba(194,65,45,.25)}}
+
+@media (prefers-reduced-motion:reduce){
+  [data-spot]{transition:none!important}
+  .has-b [data-b],.has-b [data-b] *,.zl-card,.zl-bg,.zl-in{transition:none!important}
+  [data-tour-to].t-next{animation:none}
+}
+
+/* Motion gallery: slide-specific styles (prefix gx-). */
+.gx-index{display:flex;flex-direction:column;gap:10px}
+.gx-row{display:grid;grid-template-columns:56px 1fr 1fr 150px;gap:20px;align-items:center;padding:12px 20px;background:#fff;border:1.5px solid var(--rule);border-radius:10px}
+.gx-row b{font-family:var(--num);font-size:40px;color:var(--accent);line-height:1}
+.gx-row span{font-size:25px;font-weight:600;line-height:1.25}
+.gx-row em{font-style:normal;font-size:22px;color:var(--ink2);line-height:1.3}
+.gx-row small{font-family:var(--mono);font-size:16px;color:var(--ink3);text-align:right}
+.gx-path{display:block;margin-top:20px}
+.gx-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
+.gx-steps .card{display:flex;flex-direction:column;gap:12px;min-height:220px}
+.gx-steps .num{font-size:64px;color:var(--accent);line-height:1}
+.gx-steps p{font-size:28px;line-height:1.25;font-weight:600}
+.gx-bars{position:absolute;inset:0 0 50px;display:flex;align-items:flex-end;justify-content:space-around;border-bottom:3px solid var(--ink)}
+.gx-c{display:flex;flex-direction:column;align-items:center;gap:10px;width:200px;position:relative}
+.gx-v{font-family:var(--num);font-size:44px;font-weight:600;line-height:1}
+.gx-b{display:block;width:120px;background:var(--d1);border-radius:6px 6px 0 0}
+.gx-b.hot{background:var(--accent)}
+.gx-l{position:absolute;top:100%;margin-top:14px;font-size:22px;color:var(--ink2);white-space:nowrap}
+.gx-act{position:absolute;left:96px;top:330px;display:flex;flex-direction:column;gap:10px}
+.gx-act b{font-family:var(--mono);font-size:28px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.gx-act span{font-size:120px;font-weight:600;letter-spacing:-.02em;line-height:1}
+
+</style>
+<div id="viewport">
+  <div id="stageWrap">
+    <div id="stage">
+      <div class="progress"></div>
+<!-- Motion gallery: seven content situations, each with the calm transition that suits it.
+     All numbers are fake. Press → through it; the kick line of each slide names the situation and the effect. -->
+
+<!-- ===================== 1 · TITLE ===================== -->
+<section class="slide s-title on" data-title="Motion gallery" data-act="Opening" data-time="0.5">
+  <div class="kick" data-eid="s1-1">Reference deck<i>·</i>html-presentation-deck</div>
+  <div class="main">
+    <h1 data-eid="s1-2">Motion<br><span>gallery</span></h1>
+    <p class="tag" data-eid="s1-3">Seven content situations, seven calm transitions</p>
+  </div>
+  <div class="who"><b data-eid="s1-4">Fake content</b><br><span class="mut" data-eid="s1-5">All numbers on these slides are invented.</span></div>
+  <div class="pull" data-eid="s1-6">The screen stays still. Only what changes moves.</div>
+</section>
+
+<!-- ===================== 2 · INDEX ===================== -->
+<section class="slide" data-title="Which effect for which situation" data-act="Opening" data-time="1">
+  <div class="kick" data-eid="s2-1">Index</div>
+  <h2 class="ttl" data-eid="s2-2">Pick the effect from the content, not from taste</h2>
+  <div class="body">
+    <div class="gx-index">
+      <div class="gx-row"><b data-eid="s2-3">1</b><span data-eid="s2-4">An overview, then one slide per part</span><em data-eid="s2-5">Morph into the part · progress strip · push · morph back once</em><small data-eid="s2-6">Slides 3–7</small></div>
+      <div class="gx-row"><b data-eid="s2-7">2</b><span data-eid="s2-8">Options side by side, discussed one by one</span><em data-eid="s2-9">Spotlight · then fade to the chosen option</em><small data-eid="s2-10">Slides 8–9</small></div>
+      <div class="gx-row"><b data-eid="s2-11">3</b><span data-eid="s2-12">A card with backup detail for questions</span><em data-eid="s2-13">Expand in place (zoom detail)</em><small data-eid="s2-14">Slide 10</small></div>
+      <div class="gx-row"><b data-eid="s2-15">4</b><span data-eid="s2-16">One part of a picture gets its own slide</span><em data-eid="s2-17">Gentle zoom around the part</em><small data-eid="s2-18">Slides 11–12</small></div>
+      <div class="gx-row"><b data-eid="s2-19">5</b><span data-eid="s2-20">A process the speaker explains step by step</span><em data-eid="s2-21">Builds, one step per press</em><small data-eid="s2-22">Slide 13</small></div>
+      <div class="gx-row"><b data-eid="s2-23">6</b><span data-eid="s2-24">The same chart with new numbers</span><em data-eid="s2-25">Morph: bars and values move to the new values</em><small data-eid="s2-26">Slides 14–15</small></div>
+      <div class="gx-row"><b data-eid="s2-27">7</b><span data-eid="s2-28">A new act or topic starts</span><em data-eid="s2-29">Fade</em><small data-eid="s2-30">Slides 16–17</small></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s2-31">Not shown: the camera tour. It moves the whole screen and can make people dizzy. Use it only when asked.</span></div>
+</section>
+
+<!-- ===================== 3–7 · SITUATION 1: OVERVIEW → PARTS ===================== -->
+<section class="slide" data-title="Three research questions" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick" data-eid="s3-1">Situation 1<i>·</i>Overview → parts<i>·</i>→ morphs Q1 into the next slide</div>
+  <h2 class="ttl" data-eid="s3-2">Three research questions, one test to pass</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="col" data-morph="q1"><h3 data-eid="s3-3">Q1 · Reserve rules</h3><p class="body-m" data-eid="s3-4">How to split one battery between buffer, DR, ride-through and backup?</p></div>
+      <div class="col" data-morph="q2"><h3 data-eid="s3-5">Q2 · Supervisory logic</h3><p class="body-m" data-eid="s3-6">When to move to backup, and how to return in batches?</p></div>
+      <div class="col" data-morph="q3"><h3 data-eid="s3-7">Q3 · Allocation</h3><p class="body-m" data-eid="s3-8">How to split power between battery racks and keep the port reserve?</p></div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l" data-eid="s3-9">Why it is tight</span><p data-eid="s3-10">On a 2 h system, ±5% of energy is about <b>6 minutes</b> at rated power.</p></div>
+  <div class="src"><span data-eid="s3-11">Fake content</span><span class="ev i" data-eid="s3-12">Inference</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q1" data-title="Q1 · Reserve rules" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick" data-eid="s4-1">Situation 1<i>·</i>Part 1 of 3<i>·</i>the strip shows where we are</div>
+  <div class="part-head" data-morph="q1"><b data-eid="s4-2">Q1</b><span data-eid="s4-3">Reserve rules: one battery, many tasks</span></div>
+  <div class="body">
+    <div class="qd-right fill">
+      <div class="ly mot"><div class="ly-h" data-eid="s4-4">Motivation</div><div class="ly-c"><ul><li data-eid="s4-5">Four tasks share one energy store.</li><li data-eid="s4-6">The test checks drift over <b>24 h</b>.</li></ul></div></div>
+      <div class="ly mea"><div class="ly-h" data-eid="s4-7">Measures<small>Our work</small></div><div class="ly-c"><ol><li data-eid="s4-8">Write each task as a range that depends on SOC.</li><li data-eid="s4-9">Recompute the reserves every period.</li></ol></div></div>
+      <div class="ly opp"><div class="ly-h" data-eid="s4-10">Opportunity</div><div class="ly-c"><ul><li data-eid="s4-11">No published method proves the drift limit. <i class="inf">inference</i></li></ul></div></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s4-12">Fake content</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q2" data-enter="push" data-title="Q2 · Supervisory logic" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick" data-eid="s5-1">Situation 1<i>·</i>Part 2 of 3<i>·</i>push: the next item of a series</div>
+  <div class="part-head" data-morph="q2"><b data-eid="s5-2">Q2</b><span data-eid="s5-3">Supervisory logic: when to switch, how to return</span></div>
+  <div class="body">
+    <div class="chain"><span data-eid="s5-4">Normal<small>grid OK</small></span><i data-eid="s5-5">→</i><span class="hot" data-eid="s5-6">Ride-through<small>fault &lt; 500 ms</small></span><i data-eid="s5-7">→</i><span data-eid="s5-8">Backup<small>fault &gt; 500 ms</small></span><i data-eid="s5-9">→</i><span data-eid="s5-10">Staged return<small>4 batches</small></span></div>
+  </div>
+  <div class="src"><span data-eid="s5-11">Fake content</span></div>
+</section>
+
+<section class="slide" data-strip="qs" data-strip-label="Q3" data-enter="push" data-title="Q3 · Allocation" data-act="1 · Overview → parts" data-time="1">
+  <div class="kick" data-eid="s6-1">Situation 1<i>·</i>Part 3 of 3</div>
+  <div class="part-head" data-morph="q3"><b data-eid="s6-2">Q3</b><span data-eid="s6-3">Allocation: the weakest battery rack sets the reserve</span></div>
+  <div class="body">
+    <div class="grid2 fill">
+      <div class="card"><div class="label" data-eid="s6-4">Equal SOC</div><p class="num" style="font-size:96px" data-eid="s6-5">48 min</p><p class="body-m mut" data-eid="s6-6">at full power, four racks at 60%</p></div>
+      <div class="card"><div class="label" data-eid="s6-7">Spread SOC</div><p class="num hl" style="font-size:96px" data-eid="s6-8">24 min</p><p class="body-m mut" data-eid="s6-9">the same mean, one rack at 30%</p></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s6-10">Fake content</span></div>
+</section>
+
+<section class="slide" data-title="Three questions covered" data-act="1 · Overview → parts" data-time="0.5">
+  <div class="kick" data-eid="s7-1">Situation 1<i>·</i>Back once, at the end<i>·</i>Q3 morphs back into its card</div>
+  <h2 class="ttl" data-eid="s7-2">Three research questions, one test to pass</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="col" data-morph="q1"><span class="done-chip" data-eid="s7-3">✓ Covered</span><h3 data-eid="s7-4">Q1 · Reserve rules</h3><p class="body-m" data-eid="s7-5">How to split one battery between buffer, DR, ride-through and backup?</p></div>
+      <div class="col" data-morph="q2"><span class="done-chip" data-eid="s7-6">✓ Covered</span><h3 data-eid="s7-7">Q2 · Supervisory logic</h3><p class="body-m" data-eid="s7-8">When to move to backup, and how to return in batches?</p></div>
+      <div class="col" data-morph="q3"><span class="done-chip" data-eid="s7-9">✓ Covered</span><h3 data-eid="s7-10">Q3 · Allocation</h3><p class="body-m" data-eid="s7-11">How to split power between battery racks and keep the port reserve?</p></div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l" data-eid="s7-12">So</span><p data-eid="s7-13">All three answer <b>one test</b>: control, not capacity.</p></div>
+  <div class="src"><span data-eid="s7-14">Fake content</span></div>
+</section>
+
+<!-- ===================== 8–9 · SITUATION 2: OPTIONS, ONE BY ONE ===================== -->
+<section class="slide" data-enter="fade" data-title="Three ways to buffer a swing" data-act="2 · Options" data-time="1.5">
+  <div class="kick" data-eid="s8-1">Situation 2<i>·</i>Options side by side<i>·</i>→ lights one option at a time</div>
+  <h2 class="ttl" data-eid="s8-2">Three ways to buffer a 100 MW swing</h2>
+  <div class="body with-take">
+    <div class="grid3 fill">
+      <div class="card" data-spot="1"><div class="label" data-eid="s8-3">Option A</div><p class="lead" data-eid="s8-4">Capacitors in each compute rack</p><p class="num" style="font-size:64px" data-eid="s8-5">0.2 s</p><p class="body-m mut" data-eid="s8-6">fast, small energy</p></div>
+      <div class="card" data-spot="2"><div class="label" data-eid="s8-7">Option B</div><p class="lead" data-eid="s8-8">A campus BESS with a local EMS</p><p class="num hl" style="font-size:64px" data-eid="s8-9">2 h</p><p class="body-m mut" data-eid="s8-10">slower, large energy</p></div>
+      <div class="card" data-spot="3"><div class="label" data-eid="s8-11">Option C</div><p class="lead" data-eid="s8-12">GPU power capping in firmware</p><p class="num" style="font-size:64px" data-eid="s8-13">−15%</p><p class="body-m mut" data-eid="s8-14">no hardware, costs compute</p></div>
+    </div>
+  </div>
+  <div class="take" data-b="4" data-fx="push"><span class="tk-l" data-eid="s8-15">Pick</span><p data-eid="s8-16">Only <b>Option B</b> also earns grid credit.</p></div>
+  <div class="src"><span data-eid="s8-17">Fake content</span></div>
+</section>
+
+<section class="slide" data-enter="fade" data-title="Option B in detail" data-act="2 · Options" data-time="1">
+  <div class="kick" data-eid="s9-1">Situation 2<i>·</i>Fade to the chosen option</div>
+  <h2 class="ttl" data-eid="s9-2">Option B: a campus BESS with a local EMS</h2>
+  <div class="body">
+    <div class="grid3 fill">
+      <div class="card flat"><div class="label" data-eid="s9-3">Size</div><p class="num" style="font-size:72px" data-eid="s9-4">200 MWh</p></div>
+      <div class="card flat"><div class="label" data-eid="s9-5">Response</div><p class="num" style="font-size:72px" data-eid="s9-6">&lt; 200 ms</p></div>
+      <div class="card flat"><div class="label" data-eid="s9-7">Grid credit</div><p class="num hl" style="font-size:72px" data-eid="s9-8">+60 MW</p></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s9-9">Fake content</span></div>
+</section>
+
+<!-- ===================== 10 · SITUATION 3: BACKUP DETAIL ===================== -->
+<section class="slide" data-enter="fade" data-title="Two gaps with backup detail" data-act="3 · Backup detail" data-time="1">
+  <div class="kick" data-eid="s10-1">Situation 3<i>·</i>Backup detail<i>·</i>click a card, Esc closes</div>
+  <h2 class="ttl" data-eid="s10-2">Two gaps; the detail opens only when someone asks</h2>
+  <div class="body">
+    <div class="grid2 fill">
+      <div class="bk" data-zoom="gx-z1"><div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3 data-eid="s10-3"><span class="brk">1</span>Modeling</h3><p data-eid="s10-4">Two model worlds meet between <b>100 ms and 1 s</b>.</p></div>
+        <div class="bk-our"><b class="tag" data-eid="s10-5">Our work</b><h4 data-eid="s10-6">Link the two models</h4></div></div>
+      <div class="bk opp" data-zoom="gx-z2"><div class="bk-top"><span class="zchip" aria-hidden="true">Details ⤢</span><h3 data-eid="s10-7"><span class="brk">2</span>Data</h3><p data-eid="s10-8">No data shows how long the cooling loop <b>carries a cut</b>.</p></div>
+        <div class="bk-our"><b class="tag" data-eid="s10-9">Our opportunity</b><h4 data-eid="s10-10">Use our field data</h4></div></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s10-11">Fake content</span></div>
+  <template id="gx-z1"><div class="zd"><div class="zd-h"><span class="brk" data-eid="s10-12">1</span><h3 data-eid="s10-13">Modeling: where the two worlds meet</h3></div>
+    <div class="zd-g"><div><b class="zt" data-eid="s10-14">What exists</b><p data-eid="s10-15">Fast models cover microseconds to 1 s.</p></div><div class="miss"><b class="zt" data-eid="s10-16">What is missing</b><p data-eid="s10-17">A public case that runs both on one site.</p></div><div class="our"><b class="zt" data-eid="s10-18">Our work</b><p data-eid="s10-19">Run both and compare at 100 ms.</p></div></div></div></template>
+  <template id="gx-z2"><div class="zd"><div class="zd-h"><span class="brk" data-eid="s10-20">2</span><h3 data-eid="s10-21">Data: the thermal buffer</h3></div>
+    <div class="zd-g"><div><b class="zt" data-eid="s10-22">What exists</b><p data-eid="s10-23">Design values for tanks and loops.</p></div><div class="miss"><b class="zt" data-eid="s10-24">What is missing</b><p data-eid="s10-25">Measured hold times after a load cut.</p></div><div class="our opp"><b class="zt" data-eid="s10-26">Our opportunity</b><p data-eid="s10-27">Field data from our own sites.</p></div></div></div></template>
+</section>
+
+<!-- ===================== 11–12 · SITUATION 4: PART OF A PICTURE ===================== -->
+<section class="slide" data-enter="fade" data-title="The power path of a campus" data-act="4 · Part of a picture" data-time="1">
+  <div class="kick" data-eid="s11-1">Situation 4<i>·</i>Part of a picture<i>·</i>→ zooms gently into the PCS</div>
+  <h2 class="ttl" data-eid="s11-2">One power path; the PCS sets the response time</h2>
+  <div class="body">
+    <svg class="gx-path" viewBox="0 0 1728 520" width="100%" role="img" aria-labelledby="gxp-t"><title id="gxp-t">Grid, transformer, PCS, battery racks and EMS in one row; the PCS is marked</title>
+      <g fill="none" stroke="#46515e" stroke-width="3"><path d="M 300 220 H 380"/><path d="M 640 220 H 720"/><path d="M 1000 220 H 1080"/><path d="M 860 300 V 380"/></g>
+      <g><rect x="40" y="140" width="260" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="170" y="230" font-size="32" font-weight="600" text-anchor="middle" data-eid="s11-3">Grid</text></g>
+      <g><rect x="380" y="140" width="260" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="510" y="230" font-size="32" font-weight="600" text-anchor="middle" data-eid="s11-4">Transformer</text></g>
+      <g data-focus=""><rect x="720" y="140" width="280" height="160" rx="12" fill="#fbe9e5" stroke="#c2412d" stroke-width="4"/><text x="860" y="222" font-size="34" font-weight="700" text-anchor="middle" fill="#c2412d" data-eid="s11-5">PCS</text><text x="860" y="262" font-size="22" text-anchor="middle" fill="#46515e" data-eid="s11-6">power conversion</text></g>
+      <g><rect x="1080" y="140" width="300" height="160" rx="12" fill="#fff" stroke="#141b24" stroke-width="2"/><text x="1230" y="230" font-size="32" font-weight="600" text-anchor="middle" data-eid="s11-7">Battery racks</text></g>
+      <g><rect x="720" y="380" width="280" height="110" rx="12" fill="#f0f3f6" stroke="#7a8794" stroke-width="2" stroke-dasharray="7 5"/><text x="860" y="445" font-size="28" font-weight="600" text-anchor="middle" data-eid="s11-8">Local EMS</text></g>
+    </svg>
+  </div>
+  <div class="src"><span data-eid="s11-9">Fake content · schematic</span></div>
+</section>
+
+<section class="slide" data-enter="zoom" data-title="Inside the PCS" data-act="4 · Part of a picture" data-time="1">
+  <div class="kick" data-eid="s12-1">Situation 4<i>·</i>The part, on its own slide<i>·</i>← zooms back out</div>
+  <h2 class="ttl" data-eid="s12-2">Inside the PCS: three loops, three speeds</h2>
+  <div class="body">
+    <div class="grid3 fill">
+      <div class="card"><div class="label" data-eid="s12-3">Current loop</div><p class="num" style="font-size:80px" data-eid="s12-4">1 ms</p><p class="body-m mut" data-eid="s12-5">holds the AC current</p></div>
+      <div class="card"><div class="label" data-eid="s12-6">Grid-forming loop</div><p class="num hl" style="font-size:80px" data-eid="s12-7">20 ms</p><p class="body-m mut" data-eid="s12-8">holds voltage and frequency</p></div>
+      <div class="card"><div class="label" data-eid="s12-9">EMS set point</div><p class="num" style="font-size:80px" data-eid="s12-10">1 s</p><p class="body-m mut" data-eid="s12-11">follows the dispatch</p></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s12-12">Fake content</span></div>
+</section>
+
+<!-- ===================== 13 · SITUATION 5: A PROCESS STEP BY STEP ===================== -->
+<section class="slide" data-enter="fade" data-title="Commissioning in five steps" data-act="5 · Process" data-time="1.5">
+  <div class="kick" data-eid="s13-1">Situation 5<i>·</i>A process<i>·</i>→ adds one step</div>
+  <h2 class="ttl" data-eid="s13-2">Commissioning a site in five steps</h2>
+  <div class="body with-take">
+    <div class="gx-steps">
+      <div class="card" data-b="1" data-fx="left"><b class="num" data-eid="s13-3">1</b><p data-eid="s13-4">Model the site</p></div>
+      <div class="card" data-b="2" data-fx="left"><b class="num" data-eid="s13-5">2</b><p data-eid="s13-6">Test the PCS alone</p></div>
+      <div class="card" data-b="3" data-fx="left"><b class="num" data-eid="s13-7">3</b><p data-eid="s13-8">Test with the EMS</p></div>
+      <div class="card" data-b="4" data-fx="left"><b class="num" data-eid="s13-9">4</b><p data-eid="s13-10">Ride-through test</p></div>
+      <div class="card" data-b="5" data-fx="left"><b class="num" data-eid="s13-11">5</b><p data-eid="s13-12">Grid operator sign-off</p></div>
+    </div>
+  </div>
+  <div class="take" data-b="6" data-fx="push"><span class="tk-l" data-eid="s13-13">So</span><p data-eid="s13-14">Step 4 is where most sites <b>lose weeks</b>.</p></div>
+  <div class="src"><span data-eid="s13-15">Fake content</span></div>
+</section>
+
+<!-- ===================== 14–15 · SITUATION 6: SAME CHART, NEW NUMBERS ===================== -->
+<section class="slide" data-enter="fade" data-title="Share of national power, 2024" data-act="6 · New numbers" data-time="1">
+  <div class="kick" data-eid="s14-1">Situation 6<i>·</i>Same chart, new numbers<i>·</i>→ moves the bars to 2030</div>
+  <h2 class="ttl" data-morph="gx-t" data-eid="s14-2">Data-center share of national power, 2024</h2>
+  <div class="body">
+    <div class="gx-bars">
+      <div class="gx-c"><span class="gx-v" data-morph="v1" data-eid="s14-3">22%</span><i class="gx-b" data-morph="b1" style="height:330px"></i><span class="gx-l" data-eid="s14-4">Country A</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v2" data-eid="s14-5">8%</span><i class="gx-b" data-morph="b2" style="height:120px"></i><span class="gx-l" data-eid="s14-6">Country B</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v3" data-eid="s14-7">5%</span><i class="gx-b" data-morph="b3" style="height:75px"></i><span class="gx-l" data-eid="s14-8">Country C</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v4" data-eid="s14-9">4%</span><i class="gx-b" data-morph="b4" style="height:60px"></i><span class="gx-l" data-eid="s14-10">Country D</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v5" data-eid="s14-11">3%</span><i class="gx-b" data-morph="b5" style="height:45px"></i><span class="gx-l" data-eid="s14-12">Country E</span></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s14-13">Fake numbers</span></div>
+</section>
+
+<section class="slide" data-title="Share of national power, 2030" data-act="6 · New numbers" data-time="1">
+  <div class="kick" data-eid="s15-1">Situation 6<i>·</i>Same chart, new numbers<i>·</i>← moves them back</div>
+  <h2 class="ttl" data-morph="gx-t" data-eid="s15-2">Data-center share of national power, 2030</h2>
+  <div class="body">
+    <div class="gx-bars">
+      <div class="gx-c"><span class="gx-v hl" data-morph="v1" data-eid="s15-3">30%</span><i class="gx-b hot" data-morph="b1" style="height:450px"></i><span class="gx-l" data-eid="s15-4">Country A</span></div>
+      <div class="gx-c"><span class="gx-v hl" data-morph="v2" data-eid="s15-5">14%</span><i class="gx-b hot" data-morph="b2" style="height:210px"></i><span class="gx-l" data-eid="s15-6">Country B</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v3" data-eid="s15-7">6%</span><i class="gx-b" data-morph="b3" style="height:90px"></i><span class="gx-l" data-eid="s15-8">Country C</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v4" data-eid="s15-9">5%</span><i class="gx-b" data-morph="b4" style="height:75px"></i><span class="gx-l" data-eid="s15-10">Country D</span></div>
+      <div class="gx-c"><span class="gx-v" data-morph="v5" data-eid="s15-11">4%</span><i class="gx-b" data-morph="b5" style="height:60px"></i><span class="gx-l" data-eid="s15-12">Country E</span></div>
+    </div>
+  </div>
+  <div class="src"><span data-eid="s15-13">Fake numbers</span></div>
+</section>
+
+<!-- ===================== 16–17 · SITUATION 7: A NEW ACT ===================== -->
+<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="7 · New act" data-time="0.5">
+  <div class="kick" data-eid="s16-1">Situation 7<i>·</i>A new act<i>·</i>fade</div>
+  <div class="gx-act"><b data-eid="s16-2">Act 3</b><span data-eid="s16-3">Our work</span></div>
+  <div class="src"><span data-eid="s16-4">A divider slide: one fade, nothing moves</span></div>
+</section>
+
+<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="7 · New act" data-time="1">
+  <div class="kick" data-eid="s17-1">Closing</div>
+  <h2 class="ttl" data-eid="s17-2">Pick the calmest effect that still tells the story</h2>
+  <div class="body with-take">
+    <ul class="ste" style="font-size:30px;gap:14px">
+      <li data-eid="s17-3">Keep the screen still. Move only what changes.</li>
+      <li data-eid="s17-4">Never zoom more than about 12% across the whole screen.</li>
+      <li data-eid="s17-5">Do not go back and forth between an overview and its parts. Go back once, at the end.</li>
+      <li data-eid="s17-6">Use motion on three to five slides of a talk, not on every slide.</li>
+      <li data-eid="s17-7">Jumps (overview, links) and reduced-motion settings always switch at once.</li>
+    </ul>
+  </div>
+  <div class="take"><span class="tk-l" data-eid="s17-8">Test</span><p data-eid="s17-9">If someone looks away, they must still <b>know where they are</b>.</p></div>
+  <div class="src"><span data-eid="s17-10">Not shown: the camera tour (legacy). It moves the whole screen; use it only when asked.</span></div>
+</section>
+
+    </div>
+  </div>
+  <aside id="notes" aria-label="Notes and sources"><div class="in"></div></aside>
+</div>
+
+<div class="dctl" role="toolbar" aria-label="Deck controls">
+  <button type="button" id="bPrev" aria-label="Previous slide">←</button>
+  <button type="button" id="bNext" aria-label="Next slide">→</button>
+  <button type="button" id="bOv" data-ui="Overview">Overview</button>
+  <button type="button" id="bNotes" aria-pressed="false" data-ui="Notes &amp; sources">Notes &amp; sources</button>
+  <button type="button" id="bPres" data-ui="Presenter">Presenter</button>
+  <button type="button" id="bEdit" aria-pressed="false" data-ui="Edit text">Edit text</button>
+  
+  <button type="button" id="bFs">Full screen</button>
+</div>
+<div id="viewer" role="dialog" aria-modal="true" aria-label="Reference figure" hidden>
+  <div class="vw-bar">
+    <div class="vw-t"><span class="vw-k" data-ui="Reference figure">Reference figure</span><b class="vw-name"></b><span class="vw-desc"></span></div>
+    <div class="vw-btns">
+      <button type="button" class="vw-prev" aria-label="Previous figure">←</button><span class="vw-n"></span><button type="button" class="vw-next" aria-label="Next figure">→</button>
+      <a class="vw-open" target="_blank" rel="noopener" hidden data-ui="Open in new tab">Open in new tab</a>
+      <button type="button" class="vw-close" data-ui="Close">Close</button>
+    </div>
+  </div>
+  <div class="vw-stage"><div class="vw-card"></div></div>
+</div>
+<div id="overview" role="dialog" aria-label="Slide overview"><h3 data-ui="Slide overview · click to jump">Slide overview · click to jump</h3><div class="grid"></div></div>
+<div id="hint" data-ui="← → move · O overview · N notes &amp; sources · P presenter · E edit · R figure · F full screen">← → move · O overview · N notes &amp; sources · P presenter · E edit · R figure · F full screen</div>
+<script>window.DECK_CONFIG={"embeds": {}, "title": "Motion Gallery"};</script>
+<script>window.I18N_DATA={"source": "en", "langs": ["en"], "tr": {}};</script>
+<script>window.I18N_UI={};</script>
+<script>window.NOTES_TR={};</script>
+<script>
+/* Notes and sources, one entry per slide in slide order. Mark each entry with a comment of the form  N · Title  (build.py counts them).
+   Writing rules: ASD-STE100. Short sentences (max 20 words). Active voice. One idea per sentence. Plain text only.
+   Entry: say = opening line, cue = points and click cues, land = closing line, limits = [tag, text],
+          src = keys of T, figs = keys of F.
+   Click cues: start the first cue with "Clicks: …" on a slide with builds, zoom details or a tour.
+   Figure kinds: tpl (hidden <template id>, made by figs_gen.py), clone (copy of a figure on the slide),
+                 embed (full-size interactive page; the key must be in deck.config.json "embeds"). */
+(function () {
+  "use strict";
+
+  /* Evidence tags: same codes as the .ev chips in the slide footers. n = internal document. */
+  const TAG = { p: "Primary", a: "Academic", m: "Media / claim", i: "Inference", v: "To verify", n: "Internal" };
+
+  /* Sources: key -> [tag, title, publisher and date, url]. No url = no public link. Check each url before use. */
+  const T = {};
+  const F = {};
+
+  const N = [
+    /* 1 · Title */
+    { say: "This deck shows calm transitions. Each one fits one kind of content.", cue: ["Press \u2192 to go through the seven situations."], land: "", limits: [], src: [], figs: [] },
+    /* 2 · Index */
+    { say: "Pick the effect from the content. The table gives the match.", cue: ["Read the seven rows. The slides follow in the same order."], land: "", limits: [], src: [], figs: [] },
+    /* 3 · Overview */
+    { say: "An overview with three parts. Each part gets its own slide.", cue: ["Press \u2192. The Q1 card turns into the header of the next slide. Nothing else moves."], land: "Use this when an overview leads to one slide per part.", limits: [], src: [], figs: [] },
+    /* 4 · Q1 */
+    { say: "The strip at the top shows the part we are in.", cue: ["Press \u2192. The next part slides in a little. We do not go back to the overview in between."], land: "", limits: [], src: [], figs: [] },
+    /* 5 · Q2 */
+    { say: "Push is for the next item of a series.", cue: ["The strip marks Q1 as done."], land: "", limits: [], src: [], figs: [] },
+    /* 6 · Q3 */
+    { say: "The last part.", cue: ["Press \u2192. The Q3 header turns back into its card on the overview. All three show done."], land: "", limits: [], src: [], figs: [] },
+    /* 7 · Recap */
+    { say: "We go back to the overview once, at the end.", cue: ["All parts carry a done mark. Then the talk goes on."], land: "Back once, never back and forth.", limits: [], src: [], figs: [] },
+    /* 8 · Options */
+    { say: "Three options side by side. The speaker discusses one at a time.", cue: ["Clicks: press \u2192 three times. Each press lights one option and dims the others. Press \u2192 again for the takeaway."], land: "Use this when the audience must compare, not only read.", limits: [], src: [], figs: [] },
+    /* 9 · Option B */
+    { say: "A fade takes us to the chosen option.", cue: [], land: "", limits: [], src: [], figs: [] },
+    /* 10 · Backup */
+    { say: "Details for questions stay hidden until someone asks.", cue: ["Click a card. The detail grows out of it. Esc closes it."], land: "Use this for backup facts, not for the main line.", limits: [], src: [], figs: [] },
+    /* 11 · Picture */
+    { say: "A picture with one marked part.", cue: ["Press \u2192. The view moves a little toward the PCS and the next slide fades in."], land: "Use this when the next slide is a part of this picture.", limits: [], src: [], figs: [] },
+    /* 12 · PCS */
+    { say: "The part on its own slide.", cue: ["Press \u2190. The view moves back out to the whole picture."], land: "", limits: [], src: [], figs: [] },
+    /* 13 · Process */
+    { say: "A process that the speaker explains step by step.", cue: ["Clicks: press \u2192 five times. Each press adds one step. Press \u2192 again for the takeaway."], land: "Use builds when the order of the steps matters.", limits: [], src: [], figs: [] },
+    /* 14 · 2024 */
+    { say: "The same chart, now with 2024 numbers.", cue: ["Press \u2192. The bars and the values move to the 2030 numbers. The layout stays."], land: "Use this when only the numbers change.", limits: [], src: [], figs: [] },
+    /* 15 · 2030 */
+    { say: "The 2030 numbers.", cue: ["Press \u2190. The bars move back to 2024."], land: "", limits: [], src: [], figs: [] },
+    /* 16 · Divider */
+    { say: "A new act starts. A fade is enough.", cue: [], land: "", limits: [], src: [], figs: [] },
+    /* 17 · Rules */
+    { say: "Five rules for motion in a talk.", cue: ["Read the rules. The test: if someone looks away, they still know where they are."], land: "Pick the calmest effect that still tells the story.", limits: [], src: [], figs: [] }
+  ];
+
+  /* Resolve keys once, so the deck code reads plain objects. An unknown key is an error. */
+  const out = N.map(function (n) {
+    return {
+      say: n.say, cue: n.cue || [], land: n.land || "", limits: n.limits || [],
+      src: (n.src || []).map(function (k) { const s = T[k]; if (!s) throw new Error("Unknown source " + k); return { tag: s[0], title: s[1], meta: s[2], url: s[3] || "" }; }),
+      figs: (n.figs || []).map(function (k) { const f = F[k]; if (!f) throw new Error("Unknown figure " + k); return Object.assign({ key: k }, f); })
+    };
+  });
+
+  /* Other languages (src/notes_<lang>.js sets window.NOTES_TR[lang]): same slide order; say, cue, land, the limit
+     texts, tag names and figure names. Sources keep their original titles. A missing field falls back to the source.
+     Every language gets its own arrays, so an edit in one language cannot change another. */
+  const langs = {};
+  const tr = window.NOTES_TR || {};
+  Object.keys(tr).forEach(function (lang) {
+    const Z = tr[lang] || {};
+    langs[lang] = {
+      tags: Object.assign({}, TAG, Z.tags || {}),
+      slides: out.map(function (o, i) {
+        const z = (Z.slides || [])[i] || {};
+        return Object.assign({}, o, {
+          say: z.say != null ? z.say : o.say,
+          cue: o.cue.map(function (c, k) { return (z.cue || [])[k] != null ? z.cue[k] : c; }),
+          land: z.land != null ? z.land : o.land,
+          limits: o.limits.map(function (l, k) { return [l[0], (z.limits || [])[k] != null ? z.limits[k] : l[1]]; }),
+          figs: o.figs.map(function (f) { const t = (Z.figs || {})[f.key]; return t ? Object.assign({}, f, { n: t[0], d: t[1] }) : f; })
+        });
+      })
+    };
+  });
+  const SRC = (window.I18N_DATA && window.I18N_DATA.source) || "en";
+  langs[SRC] = { slides: out, tags: TAG };
+  window.NOTES = { slides: out, tags: TAG, langs: langs };
+})();
+
+</script>
+<script>
+/* Languages. deck.config.json "languages": the first is the source (slides.html, notes.js); the others come from
+   src/i18n/<lang>.txt and src/notes_<lang>.js (window.I18N_DATA and window.NOTES_TR, written by build.py).
+   L or the language button cycles the languages; ?lang=zh opens in Chinese; the choice is remembered.
+   This file owns what each text unit shows: elements with data-eid (the editor's ids) get their text per language
+   from getText(lang, id). The editor changes text only through setText(lang, id, html), so an edit in one language
+   never changes another. Text without an id (drawn by scripts) is translated by the free strings and patterns,
+   also when a script redraws it. Embedded pages stay as published.
+   window.t(s, vars) translates an engine string (window.I18N_UI) into the language on screen; {name} is replaced
+   from vars. A "langchange" event fires on document after a switch. */
+(function () {
+  "use strict";
+  const D = window.I18N_DATA || { source: "en", langs: ["en"], tr: {} };
+  const UI = window.I18N_UI || {};
+  const SRC = D.source, LANGS = D.langs;
+  const KEY = "deck-lang:" + ((window.DECK_CONFIG && window.DECK_CONFIG.title) || document.title);
+  const SKIP = new Set(["SCRIPT", "STYLE", "IFRAME", "TEMPLATE", "TITLE", "DESC", "title", "desc", "style", "script"]);
+  const norm = s => String(s).replace(/\s+/g, " ").trim();
+  let lang = SRC, busy = false;
+
+  window.t = function (s, vars) {
+    let out = s;
+    const u = UI[lang];
+    if (u && u[s] != null) out = u[s];
+    if (vars) out = String(out).replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
+    return out;
+  };
+
+  /* ---------- text units with ids ---------- */
+  const srcText = {}, kindOf = {};
+  function nodes(eid) {
+    const sel = '[data-eid="' + eid + '"]';
+    const out = Array.from(document.querySelectorAll(sel));
+    document.querySelectorAll("template").forEach(t => out.push(...t.content.querySelectorAll(sel)));
+    return out;
+  }
+  function capture() {
+    const all = Array.from(document.querySelectorAll("[data-eid]"));
+    document.querySelectorAll("template").forEach(t => all.push(...t.content.querySelectorAll("[data-eid]")));
+    all.forEach(n => {
+      const id = n.getAttribute("data-eid");
+      if (id in srcText) return;
+      kindOf[id] = n.tagName.toLowerCase() === "text" ? "svg" : "html";
+      srcText[id] = kindOf[id] === "svg" ? n.textContent : n.innerHTML;
+    });
+  }
+  const units = l => (D.tr[l] || (D.tr[l] = { units: {}, free: {}, pats: [] })).units;
+  function getText(l, id) {
+    if (l === SRC) return srcText[id];
+    const u = (D.tr[l] || {}).units || {};
+    return u[id] != null ? u[id] : srcText[id];
+  }
+  const translated = (l, id) => l === SRC || ((D.tr[l] || {}).units || {})[id] != null;
+  function render(id) {
+    const v = getText(lang, id);
+    if (v == null) return;
+    nodes(id).forEach(n => {
+      if (n.isContentEditable && n === document.activeElement) return;   // never under the cursor
+      if (kindOf[id] === "svg") { if (n.textContent !== v) n.textContent = v; } else if (n.innerHTML !== v) n.innerHTML = v;
+    });
+  }
+  function setText(l, id, v) {
+    if (l === SRC) srcText[id] = v; else units(l)[id] = v;
+    if (l === lang) { busy = true; render(id); mo.takeRecords(); busy = false; }
+  }
+
+  /* ---------- text without ids: free strings and patterns ---------- */
+  const compiled = {};
+  function pats(l) {
+    if (!compiled[l]) compiled[l] = ((D.tr[l] || {}).pats || []).map(([p, r]) => { try { return [new RegExp(p), r]; } catch (e) { return null; } }).filter(Boolean);
+    return compiled[l];
+  }
+  function lookup(l, s) {
+    if (l === SRC || !s) return null;
+    const free = (D.tr[l] || {}).free || {};
+    if (Object.prototype.hasOwnProperty.call(free, s)) return free[s];
+    let out = s, hit = false;
+    for (const [re, rep] of pats(l)) if (re.test(out)) { out = out.replace(re, rep); hit = true; }
+    if (!hit && UI[l] && UI[l][s] != null) return UI[l][s];   // engine labels inside slides (zoom chips)
+    return hit ? out : null;
+  }
+  const loose = new Map();                          // node -> [source text, shown text]
+  function walkLoose(root, fn) {
+    if (!root) return;
+    for (const n of Array.from(root.childNodes)) {
+      if (n.nodeType === 3) { if (n.nodeValue.trim()) fn(n); continue; }
+      if (n.nodeType !== 1 || SKIP.has(n.tagName) || n.hasAttribute("data-eid") || n.classList.contains("frame") || n.classList.contains("no-i18n")) continue;
+      walkLoose(n, fn);
+    }
+  }
+  function looseTo(root) {
+    walkLoose(root, n => {
+      const prev = loose.get(n);
+      const src = prev && n.nodeValue === prev[1] ? prev[0] : n.nodeValue;
+      const z = lookup(lang, norm(src));
+      if (z == null) { if (prev && n.nodeValue === prev[1]) n.nodeValue = prev[0]; loose.delete(n); return; }
+      if (n.nodeValue !== z) n.nodeValue = z;
+      loose.set(n, [src, z]);
+    });
+  }
+  function looseBack() { loose.forEach(([src, z], n) => { if (n.nodeValue === z) n.nodeValue = src; }); loose.clear(); }
+
+  /* ---------- slide attributes, chrome, notes ---------- */
+  function attrs() {
+    document.querySelectorAll("#stage > .slide").forEach(s => {
+      ["title", "act"].forEach(a => {
+        const k = "src" + a[0].toUpperCase() + a.slice(1);
+        if (s.dataset[k] == null) s.dataset[k] = s.dataset[a] || "";
+        const z = lookup(lang, norm(s.dataset[k]));
+        s.dataset[a] = z != null ? z : s.dataset[k];
+      });
+    });
+  }
+  function chrome() { document.querySelectorAll("[data-ui]").forEach(el => { el.textContent = window.t(el.dataset.ui); }); }
+  function notes() {
+    const N = window.NOTES; if (!N || !N.langs) return;
+    const src = N.langs[lang] || N.langs[SRC];
+    N.slides = src.slides; N.tags = src.tags;
+  }
+
+  function apply(next, quiet) {
+    if (LANGS.indexOf(next) < 0) next = SRC;
+    busy = true;
+    lang = next;
+    Object.keys(srcText).forEach(render);
+    const st = document.getElementById("stage");
+    if (lang === SRC) looseBack(); else { looseBack(); looseTo(st); document.querySelectorAll("template").forEach(t => looseTo(t.content)); }
+    attrs(); chrome(); notes();
+    document.documentElement.lang = lang;
+    mo.takeRecords();
+    busy = false;
+    try { localStorage.setItem(KEY, lang); } catch (e) { /* storage blocked */ }
+    if (!quiet) document.dispatchEvent(new CustomEvent("langchange", { detail: { lang } }));
+  }
+  function toggle() { apply(LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]); }
+
+  /* Scripts that redraw text: translate the new text again. Text inside id units is never touched here. */
+  const mo = new MutationObserver(list => {
+    if (busy || lang === SRC) return;
+    busy = true;
+    const done = new Set();
+    list.forEach(m => {
+      let el = m.target.nodeType === 1 ? m.target : m.target.parentNode;
+      if (!el || (el.closest && el.closest("[data-eid]"))) return;
+      el = (el.closest && el.closest("svg")) || el;
+      if (!done.has(el)) { done.add(el); looseTo(el.parentNode || el); }
+    });
+    mo.takeRecords();
+    busy = false;
+  });
+
+  capture();                                        // at load: the editor reads the source text before start()
+  function start() {
+    let want = SRC;
+    try { want = localStorage.getItem(KEY) || SRC; } catch (e) { /* storage blocked */ }
+    const m = /[?&]lang=([a-z]{2}(?:-[A-Za-z]+)?)\b/.exec(location.search); if (m) want = m[1];
+    const st = document.getElementById("stage");
+    if (st) mo.observe(st, { childList: true, subtree: true, characterData: true });
+    apply(LANGS.indexOf(want) > -1 ? want : SRC, true);
+  }
+  const label = l => ({ en: "EN", zh: "中文" })[l] || l.toUpperCase();
+
+  window.I18N = {
+    start, apply, toggle, getText, setText, translated, label,
+    text: s => { const z = lookup(lang, norm(s)); return z != null ? z : s; },   // a free string (PDF titles, captions)
+    lang: () => lang, source: SRC, langs: LANGS.slice(),
+    kind: id => kindOf[id], next: () => LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]
+  };
+})();
+
+</script>
+<script>
+/* Builds and zoom details. Used by deck.js.
+   Builds: an element with data-b="n" shows at step n. data-fx sets the motion (up, left, right, push, zoom, fade).
+   The slide also gets classes st-1 … st-k, so CSS can animate pseudo-elements. It fires "slidestep" {step, total, instant}.
+   Spotlight: an element with data-spot="n" is highlighted at step n and its data-spot siblings are dimmed.
+   It stays visible at every step. Add a last build (for example the take) after the last spot, so the complete
+   slide (jump, print) shows nothing dimmed.
+   Zoom: an element with data-zoom="templateId" opens that template in a card that grows out of the element.
+   Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide). */
+(function () {
+  "use strict";
+  const stepOf = new Map();
+  const count = s => { let m = 0; s.querySelectorAll("[data-b], [data-spot]").forEach(e => { m = Math.max(m, +(e.dataset.b || e.dataset.spot)); }); return m; };
+
+  function dots(s, n, k) {
+    let d = s.querySelector(".bdots");
+    if (!d) { d = document.createElement("div"); d.className = "bdots"; d.setAttribute("aria-hidden", "true"); s.appendChild(d); }
+    d.replaceChildren(...Array.from({ length: n }, (_, j) => { const i = document.createElement("i"); if (j < k) i.className = "on"; return i; }));
+  }
+  function set(s, k, instant) {
+    const n = count(s);
+    k = Math.max(0, Math.min(n, k));
+    stepOf.set(s, k);
+    s.querySelectorAll("[data-b]").forEach(e => e.classList.toggle("in", +e.dataset.b <= k));
+    for (let j = 1; j <= n; j++) s.classList.toggle("st-" + j, j <= k);
+    const spots = s.querySelectorAll("[data-spot]");
+    const lit = Array.from(spots).some(e => +e.dataset.spot === k);
+    spots.forEach(e => { const me = +e.dataset.spot === k; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
+    dots(s, n, k);
+    s.dispatchEvent(new CustomEvent("slidestep", { detail: { step: k, total: n, instant: !!instant } }));
+  }
+  /* mode "start": nothing shown yet (forward entry). mode "end": everything shown (back entry, jump). */
+  function enter(s, mode) {
+    if (!count(s)) return;
+    s.classList.add("b-instant");
+    set(s, mode === "start" ? 0 : count(s), true);
+    requestAnimationFrame(() => requestAnimationFrame(() => s.classList.remove("b-instant")));
+  }
+  function forward(s) { const k = stepOf.get(s) || 0; if (k < count(s)) { set(s, k + 1); return true; } return false; }
+  function back(s) { const k = stepOf.get(s) || 0; if (k > 0) { set(s, k - 1); return true; } return false; }
+
+  /* ---- zoom ---- */
+  const T = { x: 180, y: 110, w: 1560, h: 860 };          // target card on the 1920 × 1080 stage
+  let zl = null;
+  function stageRect(el) {
+    const st = document.getElementById("stage"), sr = st.getBoundingClientRect(), sc = sr.width / 1920, r = el.getBoundingClientRect();
+    return { x: (r.left - sr.left) / sc, y: (r.top - sr.top) / sc, w: r.width / sc, h: r.height / sc };
+  }
+  const flip = f => "translate(" + (f.x - T.x) + "px," + (f.y - T.y) + "px) scale(" + (f.w / T.w) + "," + (f.h / T.h) + ")";
+  function zoomOpen(src) {
+    const tpl = document.getElementById(src.dataset.zoom);
+    if (!tpl || zl) return;
+    const from = stageRect(src);
+    zl = document.createElement("div");
+    zl.className = "zl";
+    zl.innerHTML = '<div class="zl-bg"></div><div class="zl-card" role="dialog" aria-modal="true"><div class="zl-in"></div></div>';
+    const card = zl.querySelector(".zl-card"), inner = zl.querySelector(".zl-in");
+    inner.appendChild(tpl.content.cloneNode(true));
+    const x = document.createElement("button");
+    x.type = "button"; x.className = "zl-x"; x.textContent = window.t ? window.t("Close · Esc") : "Close · Esc";
+    inner.appendChild(x);
+    card.setAttribute("aria-label", (inner.querySelector("h3") || {}).textContent || "Details");
+    Object.assign(card.style, { left: T.x + "px", top: T.y + "px", width: T.w + "px", height: T.h + "px", transform: flip(from) });
+    zl.dataset.from = JSON.stringify(from);
+    document.getElementById("stage").appendChild(zl);
+    zl.addEventListener("click", e => {
+      const g = e.target.closest("[data-goto]");
+      if (g) { zoomClose(true); window.__deck.show(+g.dataset.goto - 1); return; }
+      if (e.target.closest(".zl-x") || e.target.classList.contains("zl-bg")) zoomClose();
+    });
+    card.getBoundingClientRect();                         // commit the start state, then animate
+    zl.classList.add("open");
+    card.style.transform = "none";
+    x.focus({ preventScroll: true });
+  }
+  function zoomClose(now) {
+    if (!zl) return;
+    const el = zl; zl = null;
+    if (now || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+    el.classList.remove("open");
+    el.querySelector(".zl-card").style.transform = flip(JSON.parse(el.dataset.from));
+    setTimeout(() => el.remove(), 480);
+  }
+  document.addEventListener("click", e => {
+    const z = e.target.closest("#stage [data-zoom]");
+    if (z && !zl) zoomOpen(z);
+  });
+
+  document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); });
+
+  /* ---- progress strip: Q1 · Q2 · Q3 at the top of each slide of a series ---- */
+  const groups = {};
+  document.querySelectorAll("#stage > .slide[data-strip]").forEach(s => { (groups[s.dataset.strip] = groups[s.dataset.strip] || []).push(s); });
+  Object.values(groups).forEach(list => list.forEach((s, i) => {
+    const ol = document.createElement("ol");
+    ol.className = "strip"; ol.setAttribute("aria-label", "Progress");
+    list.forEach((m, j) => {
+      const li = document.createElement("li");
+      li.className = j < i ? "done" : j === i ? "now" : "next";
+      li.textContent = m.dataset.stripLabel || m.dataset.title || String(j + 1);
+      ol.appendChild(li);
+    });
+    s.appendChild(ol);
+  }));
+  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count };
+})();
+
+</script>
+<script>
+/* Calm slide transitions between neighbouring slides. The screen stays still; only what changes moves.
+   The transition belongs to the boundary: going forward it is the incoming slide's choice, going back the outgoing one.
+     data-enter="fade"   cross-fade (a change of act or topic)
+     data-enter="push"   a short slide-in, 60 px, with a fade (the next item of a series)
+     data-enter="zoom"   a gentle push into one part of a picture: the previous slide grows 12 % around its
+                         [data-focus] element and fades; going back reverses it (a detail of a diagram or map)
+     data-enter="morph"  or, with no data-enter, automatic when both slides hold elements with the same
+                         data-morph key: those elements travel and resize from their old place to the new one,
+                         everything else fades (an overview card becoming the next slide's header; the same chart
+                         with new numbers)
+     data-enter="none"   never animate this boundary
+   Jumps (overview, Home, End, links), edit mode, the camera tour and prefers-reduced-motion switch at once.
+   Used by deck.js: before(from, to, dir) while the old slide is still shown, then run(token) after the switch. */
+(function () {
+  "use strict";
+  const T = { fade: 420, push: 460, zoom: 560, morph: 650 };
+  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stage = () => document.getElementById("stage");
+  let live = null;
+
+  function rect(el) {
+    const sr = stage().getBoundingClientRect(), sc = sr.width / 1920, r = el.getBoundingClientRect();
+    return { x: (r.left - sr.left) / sc, y: (r.top - sr.top) / sc, w: r.width / sc, h: r.height / sc };
+  }
+  const visible = el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+  function pairs(from, to) {
+    const out = [];
+    from.querySelectorAll("[data-morph]").forEach(a => {
+      if (!visible(a)) return;
+      const b = to.querySelector('[data-morph="' + a.dataset.morph + '"]');
+      if (b) out.push([a, b]);
+    });
+    return out;
+  }
+  function kind(from, to, dir) {
+    const owner = dir > 0 ? to : from;
+    const k = owner.dataset.enter;
+    if (k === "none") return null;
+    if (k && k !== "morph") return T[k] ? k : null;
+    return from.querySelector("[data-morph]") && to.querySelector("[data-morph]") ? "morph" : null;
+  }
+
+  /* Remember what the old slide looks like, before deck.js switches. */
+  function before(from, to, dir) {
+    finish();
+    if (!from || !to || from === to || reduce() || document.documentElement.classList.contains("printing")) return null;
+    const k = kind(from, to, dir);
+    if (!k) return null;
+    const tok = { k, from, to, dir, touched: [], saved: [] };
+    if (k === "morph") {
+      tok.pairs = pairs(from, to).map(([a, b]) => ({ a, b, r: rect(a) }));
+      if (!tok.pairs.length) tok.k = "fade";
+    }
+    if (k === "zoom") {
+      const f = (dir > 0 ? from : to).querySelector("[data-focus]");
+      tok.focus = f && dir > 0 ? rect(f) : null;                  // the overview is shown now only when going forward
+    }
+    return tok;
+  }
+
+  const PROPS = ["transition", "opacity", "transform", "transformOrigin", "visibility"];
+  /* Set inline styles for the animation; the first touch saves the author's own values for finish(). */
+  function style(tok, el, props) {
+    if (tok.touched.indexOf(el) < 0) {
+      tok.touched.push(el);
+      tok.saved.push([el, PROPS.map(p => el.style[p]), el.hasAttribute("style")]);
+      el.setAttribute("data-tr", "");
+    }
+    Object.assign(el.style, props);
+  }
+  const commit = el => el.getBoundingClientRect();
+  const origin = r => r ? (r.x + r.w / 2) + "px " + (r.y + r.h / 2) + "px" : "50% 50%";
+
+  function run(tok) {
+    if (!tok) return;
+    const { k, from, to, dir } = tok;
+    live = tok;
+    from.classList.add("tr-leave");
+    to.classList.add("tr-enter");
+    if (k === "zoom" && dir < 0) {
+      const f = to.querySelector("[data-focus]");
+      tok.focus = f ? rect(f) : null;
+    }
+    const ms = T[k];
+    /* The old slide is gone by about half time and the new one appears from about a third: little double image. */
+    const out = Math.round(ms * 0.42), inAt = Math.round(ms * 0.32), inFor = ms - inAt;
+    const fadeOut = el => style(tok, el, { transition: "opacity " + out + "ms ease", opacity: "0" });
+    const fadeIn = el => style(tok, el, { transition: "opacity " + inFor + "ms ease " + inAt + "ms", opacity: "1" });
+    if (k === "fade") {
+      style(tok, to, { opacity: "0" }); commit(to);
+      fadeIn(to); fadeOut(from);
+    } else if (k === "push") {
+      style(tok, to, { opacity: "0", transform: "translateX(" + (60 * dir) + "px)" }); commit(to);
+      style(tok, to, { transition: "opacity " + inFor + "ms ease " + inAt + "ms, transform " + ms + "ms cubic-bezier(.2,.7,.2,1)", opacity: "1", transform: "none" });
+      style(tok, from, { transition: "opacity " + out + "ms ease, transform " + ms + "ms ease", opacity: "0", transform: "translateX(" + (-30 * dir) + "px)" });
+    } else if (k === "zoom") {
+      const o = origin(tok.focus);
+      if (dir > 0) {
+        style(tok, from, { transformOrigin: o }); style(tok, to, { opacity: "0", transform: "scale(.96)" }); commit(to);
+        style(tok, from, { transition: "opacity " + out + "ms ease, transform " + ms + "ms ease-in-out", opacity: "0", transform: "scale(1.12)" });
+        style(tok, to, { transition: "opacity " + inFor + "ms ease " + inAt + "ms, transform " + ms + "ms ease-out", opacity: "1", transform: "none" });
+      } else {
+        style(tok, to, { transformOrigin: o, opacity: "0", transform: "scale(1.12)" }); commit(to);
+        style(tok, from, { transition: "opacity " + out + "ms ease, transform " + ms + "ms ease-in", opacity: "0", transform: "scale(.96)" });
+        style(tok, to, { transition: "opacity " + inFor + "ms ease " + inAt + "ms, transform " + ms + "ms ease-out", opacity: "1", transform: "none" });
+      }
+    } else if (k === "morph") {
+      morph(tok, ms);
+    }
+    tok.timer = setTimeout(finish, ms + 140);                       // timers run in hidden tabs; animations need no rAF
+  }
+
+  /* Morph: each pair travels together. The old element moves to the new place and fades out; the new element
+     starts at the old place and fades in. A colour or shape change is a cross-fade on the way, never a jump.
+     When the shape changes a lot, the content of both is hidden on the way, so stretched text is never seen.
+     Everything else: the old slide's content fades out first, the new slide's content fades in after. */
+  function morph(tok, ms) {
+    const { from, to } = tok;
+    const ease = "cubic-bezier(.4,0,.2,1)";
+    const rest = (root, set) => {
+      const list = [];
+      const holds = el => Array.from(set).some(x => el === x || el.contains(x));
+      (function walk(node) {
+        Array.from(node.children).forEach(c => { if (set.has(c)) return; if (holds(c)) walk(c); else list.push(c); });
+      })(root);
+      return list;
+    };
+    const A = new Set(tok.pairs.map(p => p.a)), B = new Set(tok.pairs.map(p => p.b));
+    const outList = rest(from, A), inList = rest(to, B);
+    inList.forEach(el => style(tok, el, { opacity: "0" }));
+    const moves = tok.pairs.map(p => {
+      const n = rect(p.b);
+      if (!n.w || !n.h || !p.r.w || !p.r.h) return null;
+      const sx = p.r.w / n.w, sy = p.r.h / n.h;
+      const reshape = Math.abs(sx / sy - 1) > 0.15;
+      style(tok, p.b, { transformOrigin: "0 0", opacity: "0", transform: "translate(" + (p.r.x - n.x) + "px," + (p.r.y - n.y) + "px) scale(" + sx + "," + sy + ")" });
+      style(tok, p.a, { transformOrigin: "0 0" });
+      if (reshape) Array.from(p.b.children).forEach(c => style(tok, c, { opacity: "0" }));
+      return { p, n, reshape };
+    }).filter(Boolean);
+    commit(to);
+    moves.forEach(({ p, n, reshape }) => {
+      const tx = "translate(" + (n.x - p.r.x) + "px," + (n.y - p.r.y) + "px) scale(" + (n.w / p.r.w) + "," + (n.h / p.r.h) + ")";
+      style(tok, p.a, { transition: "transform " + ms + "ms " + ease + ", opacity " + Math.round(ms * 0.6) + "ms ease " + Math.round(ms * 0.2) + "ms", transform: tx, opacity: "0" });
+      style(tok, p.b, { transition: "transform " + ms + "ms " + ease + ", opacity " + Math.round(ms * 0.6) + "ms ease " + Math.round(ms * 0.2) + "ms", transform: "none", opacity: "1" });
+      if (reshape) {
+        Array.from(p.a.children).forEach(c => style(tok, c, { transition: "opacity 160ms ease", opacity: "0" }));
+        Array.from(p.b.children).forEach(c => style(tok, c, { transition: "opacity 220ms ease " + Math.round(ms * 0.7) + "ms", opacity: "1" }));
+      }
+    });
+    outList.forEach(el => style(tok, el, { transition: "opacity " + Math.round(ms * 0.4) + "ms ease", opacity: "0" }));
+    inList.forEach(el => style(tok, el, { transition: "opacity " + Math.round(ms * 0.5) + "ms ease " + Math.round(ms * 0.35) + "ms", opacity: "1" }));
+  }
+
+  function finish() {
+    const tok = live; if (!tok) return;
+    live = null;
+    clearTimeout(tok.timer);
+    tok.from.classList.remove("tr-leave");
+    tok.to.classList.remove("tr-enter");
+    tok.saved.forEach(([el, vals, had]) => {
+      PROPS.forEach((p, i) => { el.style[p] = vals[i]; });
+      el.removeAttribute("data-tr");
+      if (!had && !el.getAttribute("style")) el.removeAttribute("style");
+    });
+  }
+
+  window.DeckTransition = { before, run, finish, busy: () => !!live };
+})();
+
+</script>
+<script>
+/* Camera tour: zoom from an overview slide into each part, then pull back.
+   Markup: the overview slide has data-tour. Each item on it has data-tour-to="N" (the 1-based slide number it opens).
+   → on the overview dives into the next item not yet covered. → at the end of a part slide pulls back to the
+   overview, ticks the item, then dives into the next one. When all are covered, → goes to the slide after the
+   last part. ← on a part slide pulls back to the overview only. Other navigation is unchanged.
+   Several overview slides can exist; each one keeps its own state. Used by deck.js and presenter.js. */
+(function () {
+  "use strict";
+  const slides = Array.from(document.querySelectorAll("#stage > .slide"));
+  const DUR = 950, HOLD = 750;
+  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const fade = (e, a, b) => clamp01((e - a) / (b - a));
+  const wait = ms => new Promise(r => setTimeout(r, reduce() ? 0 : ms));
+  const deck = () => window.__deck;
+  let busy = false;
+
+  const tours = slides.filter(s => s.hasAttribute("data-tour")).map(ov => {
+    const items = Array.from(ov.querySelectorAll("[data-tour-to]"));
+    const Q = items.map(c => +c.dataset.tourTo - 1);
+    return { ov, OV: slides.indexOf(ov), items, Q, AFTER: Math.max(...Q) + 1, done: new Set() };
+  }).filter(t => t.Q.length && t.Q.every(q => slides[q]));
+  if (!tours.length) return;
+
+  const tourOf = i => tours.find(t => t.OV === i) || tours.find(t => t.Q.indexOf(i) > -1) || null;
+  const nextOf = t => t.Q.find(q => !t.done.has(q));
+
+  function marks(t) {
+    const nxt = nextOf(t);
+    t.ov.classList.toggle("t-all", t.done.size === t.Q.length);
+    t.items.forEach((c, k) => {
+      c.classList.toggle("t-done", t.done.has(t.Q[k]));
+      c.classList.toggle("t-next", t.done.size > 0 && t.Q[k] === nxt);
+    });
+  }
+  function rectOf(el) {
+    const st = document.getElementById("stage"), sr = st.getBoundingClientRect(), sc = sr.width / 1920, r = el.getBoundingClientRect();
+    return { x: (r.left - sr.left) / sc, y: (r.top - sr.top) / sc, w: r.width / sc, h: r.height / sc };
+  }
+  /* World = the overview slide. The part slide sits inside its item, scaled by 1/s.
+     e = 0: camera on the overview. e = 1: camera on the part slide. */
+  function frame(t, inner, R, s, e) {
+    const S = Math.pow(s, e);
+    const px = R.x + R.w / 2, py = R.y + R.h / 2;
+    const qx = px + (960 - px) * e, qy = py + (540 - py) * e;
+    t.ov.style.transform = "translate(" + (qx - S * px) + "px," + (qy - S * py) + "px) scale(" + S + ")";
+    const k = S / s;
+    inner.style.transform = "translate(" + (qx - k * 960) + "px," + (qy - k * 540) + "px) scale(" + k + ")";
+    inner.style.opacity = fade(e, .04, .3);
+  }
+  function fly(t, qi, from, to) {
+    return new Promise(resolve => {
+      const inner = slides[qi], R = rectOf(t.items[t.Q.indexOf(qi)]);
+      const s = Math.max(1920 / R.w, 1080 / R.h);           // fill the screen with the item: a deep dive
+      [t.ov, inner].forEach(el => { el.classList.add("cam"); el.style.transformOrigin = "0 0"; });
+      inner.classList.add("cam-in");
+      if (reduce()) { frame(t, inner, R, s, to); resolve(); return; }
+      const t0 = performance.now();
+      let over = false;
+      const finish = () => { if (over) return; over = true; clearTimeout(guard); frame(t, inner, R, s, to); resolve(); };
+      const guard = setTimeout(finish, DUR + 300);         // rAF stops in a hidden tab; never leave the tour stuck
+      const tick = now => {
+        if (over) return;
+        const p = clamp01((now - t0) / DUR);
+        frame(t, inner, R, s, from + (to - from) * ease(p));
+        if (p < 1) requestAnimationFrame(tick); else finish();
+      };
+      frame(t, inner, R, s, from);
+      requestAnimationFrame(tick);
+    });
+  }
+  function clear() {
+    slides.forEach(el => { el.classList.remove("cam", "cam-in"); el.style.transform = el.style.opacity = el.style.transformOrigin = ""; });
+  }
+  async function dive(t, qi) {
+    busy = true;
+    t.ov.classList.add("cam");                               // measure the item on a visible, untransformed overview
+    if (window.DeckAnim) window.DeckAnim.enter(slides[qi], "start");
+    await fly(t, qi, 0, 1);
+    clear();
+    deck().show(qi, false, "start");
+    busy = false;
+  }
+  async function pullBack(t, qi, thenNext) {
+    busy = true;
+    t.ov.classList.add("cam");
+    marks(t);
+    await fly(t, qi, 1, 0);
+    clear();
+    deck().show(t.OV, false, "end");
+    const nxt = nextOf(t);
+    if (thenNext && nxt !== undefined) { await wait(HOLD); busy = false; return dive(t, nxt); }
+    busy = false;
+  }
+
+  /* Hooks for deck.js. They return true when the tour handled the key. */
+  function next(cur) {
+    if (busy) return true;
+    const pre = tours.find(t => t.OV - 1 === cur);
+    if (pre) { pre.done.clear(); marks(pre); return false; }  // a fresh start each time the overview is entered forwards
+    const t = tourOf(cur);
+    if (!t) return false;
+    if (cur === t.OV) {
+      const nxt = nextOf(t);
+      if (nxt === undefined) { deck().show(t.AFTER, false, "start"); return true; }
+      dive(t, nxt); return true;
+    }
+    t.done.add(cur); pullBack(t, cur, true); return true;
+  }
+  function prev(cur) {
+    if (busy) return true;
+    const t = tourOf(cur);
+    if (!t || cur === t.OV) return false;
+    pullBack(t, cur, false); return true;
+  }
+  /* For the presenter window: where → goes from slide cur, or null when no tour acts there. */
+  function peek(cur) {
+    const t = tourOf(cur);
+    if (!t) return null;
+    const tr = (x, v) => (window.t ? window.t(x, v) : x);
+    const n = qi => t.Q.indexOf(qi) + 1;
+    if (cur === t.OV) {
+      const nxt = nextOf(t);
+      return nxt === undefined ? { i: t.AFTER, label: tr("Next slide") } : { i: nxt, label: tr("Zoom into part {n}", { n: n(nxt) }) };
+    }
+    const nxt = t.Q.find(q => q !== cur && !t.done.has(q));
+    return nxt === undefined ? { i: t.OV, label: tr("Pull back to the overview") } : { i: nxt, label: tr("Pull back, then zoom into part {n}", { n: n(nxt) }) };
+  }
+  tours.forEach(marks);
+  window.DeckTour = { next, prev, busy: () => busy, peek };
+})();
+
+</script>
+<script>
+/* Presenter window. P (or the toolbar button) opens a second window for the speaker: notes, the current view,
+   the next view and timers. Put it on the laptop screen and the deck on the projector.
+   The main window owns the state and draws into the presenter window (an about:blank page of the same origin).
+   Keys pressed in the presenter window drive the main window. Used by deck.js. */
+(function () {
+  "use strict";
+  const slides = Array.from(document.querySelectorAll("#stage > .slide"));
+  const total = slides.length;
+  const NAME = "deck-presenter";
+  const FWD = ["ArrowLeft", "ArrowRight", "PageUp", "PageDown", " ", "Home", "End", "Escape", "r", "R", "o", "O", "l", "L"];
+  const pad = n => String(n).padStart(2, "0");
+  const tr = (x, v) => (window.t ? window.t(x, v) : x);
+  const langNow = () => (window.I18N ? window.I18N.lang() : "");
+  const mmss = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ":" + pad(s % 60); };
+  const budget = i => parseFloat(slides[i].dataset.time || 0) * 60000;
+  const planTo = i => slides.slice(0, i + 1).reduce((a, s) => a + parseFloat(s.dataset.time || 0) * 60000, 0);
+  const store = { get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } } };
+
+  let w = null, cur = -1, t0 = 0, ts = 0, paused = 0, pausedAt = 0, timer = 0;
+  const now = () => (pausedAt || Date.now());
+
+  const CSS = `
+body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100vh}
+.pr-top{display:flex;align-items:center;gap:22px;padding:12px 20px;border-bottom:1px solid #26313c;background:#10161d}
+.pr-pos{display:flex;flex-direction:column;min-width:0;flex:1}
+.pr-pos .n{font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:#ff9b88}
+.pr-pos b{font-size:20px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-clock{display:flex;gap:18px;align-items:flex-end}
+.pr-t{display:flex;flex-direction:column;align-items:flex-end}
+.pr-t small{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c0}
+.pr-t b{font-family:var(--num);font-size:38px;line-height:1;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.pr-t i{font-style:normal;font-family:var(--mono);font-size:12px;color:#9fb0c0}
+.pr-t.warn b{color:#f0b45a} .pr-t.over b{color:#ff7a66}
+.pr-btns{display:flex;gap:6px}
+.pr-btns button{background:transparent;border:1px solid #3a4856;border-radius:8px;color:#c5d0da;font-size:13px;padding:5px 10px;cursor:pointer}
+.pr-btns button:hover{border-color:#8fa0b0;color:#fff}
+.pr-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:22px;padding:18px 20px;min-height:0}
+.pr-left{display:flex;flex-direction:column;gap:16px;min-height:0}
+.pr-lab{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0c0;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-lab b{color:#ff9b88;font-weight:500}
+.pr-box{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:var(--paper);box-shadow:0 0 0 2px #26313c}
+.pr-cur .pr-box{box-shadow:0 0 0 3px var(--accent)}
+.pr-nxt{width:72%}
+.pr-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow:hidden}
+.pr-end{position:absolute;inset:0;display:grid;place-items:center;background:#18212b;color:#9fb0c0;font-size:18px}
+.pr-emb{position:absolute;inset:0;display:grid;place-items:center;background:var(--tint);color:var(--ink3);font-family:var(--mono);font-size:30px;letter-spacing:.1em;text-transform:uppercase;border:3px dashed var(--rule)}
+.pr-notes{overflow:auto;min-height:0;padding:4px 14px 30px 4px;font-size:var(--pf,22px);line-height:1.5}
+.pr-notes .np-say p{font-size:1.1em}
+.pr-notes .np-lab,.pr-notes .np-sec{font-size:12px}
+.pr-notes .np-cue li{padding-bottom:.45em}
+.pr-notes details{margin-top:26px;font-size:.78em;border-top:1px solid #26313c;padding-top:8px}
+.pr-notes summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0c0}
+.pr-notes .np-lim li,.pr-notes .np-src li{grid-template-columns:9em 1fr}
+.pr-keys{padding:8px 20px;font-family:var(--mono);font-size:12px;color:#7d8e9e;border-top:1px solid #26313c}
+`;
+
+  /* ---- small DOM helpers (they build nodes in the presenter document) ---- */
+  function el(tag, cls, text) {
+    const e = w.document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  const q = s => w.document.querySelector(s);
+
+  /* A copy of a slide for a thumbnail. step: a build step to show; undefined keeps the live state. */
+  function snap(slide, step) {
+    const c = slide.cloneNode(true);
+    c.classList.add("on", "b-instant");
+    c.classList.remove("cam", "cam-in");
+    ["transform", "opacity", "visibility", "z-index"].forEach(p => c.style.removeProperty(p));
+    c.classList.remove("tr-leave", "tr-enter");
+    c.querySelectorAll("[data-tr]").forEach(e => ["transform", "opacity", "visibility", "transition", "transform-origin"].forEach(p => e.style.removeProperty(p)));
+    if (step !== undefined) {
+      let n = 0;
+      c.querySelectorAll("[data-b]").forEach(e => { n = Math.max(n, +e.dataset.b); e.classList.toggle("in", +e.dataset.b <= step); });
+      for (let j = 1; j <= n; j++) c.classList.toggle("st-" + j, j <= step);
+    }
+    c.querySelectorAll("[data-embed]").forEach(b => { b.replaceChildren(); const p = document.createElement("div"); p.className = "pr-emb"; p.textContent = tr("Interactive view"); b.appendChild(p); });
+    const src = slide.querySelectorAll("canvas"), dst = c.querySelectorAll("canvas");
+    dst.forEach((d, i) => { try { d.getContext("2d").drawImage(src[i], 0, 0); } catch (e) { /* tainted or empty canvas */ } });
+    return w.document.importNode(c, true);
+  }
+  function thumb(box, node) {
+    const st = el("div", "pr-stage");
+    if (node) st.appendChild(node);
+    box.replaceChildren(st);
+    st.style.transform = "scale(" + (box.clientWidth / 1920) + ")";
+  }
+  function refit() { w.document.querySelectorAll(".pr-box").forEach(b => { const s = b.querySelector(".pr-stage"); if (s) s.style.transform = "scale(" + (b.clientWidth / 1920) + ")"; }); }
+
+  /* ---- notes ---- */
+  function chip(tag) { const T = (window.NOTES && window.NOTES.tags) || {}; return el("span", "np-ev " + tag, T[tag] || tag); }
+  function notes(i) {
+    const n = ((window.NOTES && window.NOTES.slides) || [])[i] || { say: "", cue: [], land: "", limits: [], src: [] };
+    const root = el("div");
+    const say = (lab, txt, cls) => { const d = el("div", "np-say" + (cls ? " " + cls : "")); d.appendChild(el("span", "np-lab", lab)); d.appendChild(el("p", "", txt)); root.appendChild(d); };
+    if (n.say) say(tr("Say"), n.say);
+    if (n.cue.length) { root.appendChild(el("h4", "np-sec", tr("Points"))); const ul = el("ul", "np-cue"); n.cue.forEach(t => ul.appendChild(el("li", "", t))); root.appendChild(ul); }
+    if (n.land) say(tr("End with"), n.land, "land");
+    if (n.limits.length || n.src.length) {
+      const d = el("details"); d.open = store.get("pr-backup", "0") === "1";
+      d.addEventListener("toggle", () => store.set("pr-backup", d.open ? "1" : "0"));
+      d.appendChild(el("summary", "", tr("Limits and sources · for questions")));
+      if (n.limits.length) {
+        d.appendChild(el("h4", "np-sec", tr("Limits")));
+        const ul = el("ul", "np-lim");
+        n.limits.forEach(l => { const li = el("li"); li.appendChild(chip(l[0])); li.appendChild(el("span", "", l[1])); ul.appendChild(li); });
+        d.appendChild(ul);
+      }
+      if (n.src.length) {
+        d.appendChild(el("h4", "np-sec", tr("Sources")));
+        const ul = el("ul", "np-src");
+        n.src.forEach(r => {
+          const li = el("li"); li.appendChild(chip(r.tag));
+          const box = el("span", "np-st");
+          if (r.url) { const a = el("a", "", r.title); a.href = r.url; a.target = "_blank"; a.rel = "noopener noreferrer"; box.appendChild(a); }
+          else box.appendChild(el("span", "np-nolink", r.title));
+          if (r.meta) box.appendChild(el("small", "", r.meta));
+          li.appendChild(box); ul.appendChild(li);
+        });
+        d.appendChild(ul);
+      }
+      root.appendChild(d);
+    }
+    if (!root.children.length) root.appendChild(el("p", "np-none", tr("No notes for this slide.")));
+    return root;
+  }
+
+  /* ---- what → shows next ---- */
+  function nextView(i) {
+    const A = window.DeckAnim, Z = window.DeckTour, s = slides[i];
+    const k = A && A.step ? A.step(s) : 0, n = A && A.steps ? A.steps(s) : 0;
+    if (k < n) return { slide: s, step: k + 1, label: tr("Next · build {k} of {n}", { k: k + 1, n }) };
+    const z = Z && Z.peek ? Z.peek(i) : null;
+    const j = z ? z.i : i + 1;
+    if (j >= total) return null;
+    const t = slides[j];
+    return { slide: t, step: A && A.steps ? A.steps(t) : undefined, label: (z ? z.label : tr("Next slide")) + " · " + pad(j + 1) + " " + (t.dataset.title || "") };
+  }
+
+  /* ---- timers ---- */
+  function tick() {
+    if (!isOpen()) { clearInterval(timer); return; }
+    const all = now() - t0 - paused, sl = now() - ts;
+    const b = budget(cur), plan = planTo(cur);
+    const T = q("#prTot"), S = q("#prSl");
+    T.querySelector("b").textContent = mmss(all);
+    T.querySelector("i").textContent = tr("plan {t} by end of slide", { t: mmss(plan) });
+    T.className = "pr-t" + (all > plan ? " over" : all > plan - b * 0.2 ? " warn" : "");
+    S.querySelector("b").textContent = mmss(sl);
+    S.querySelector("i").textContent = tr("budget {t}", { t: mmss(b) });
+    S.className = "pr-t" + (b && sl > b ? " over" : b && sl > b * 0.8 ? " warn" : "");
+    q("#prPause").textContent = tr(pausedAt ? "Resume" : "Pause");
+  }
+
+  let shownNotes = [-1, ""];
+  function update(force) {
+    if (!isOpen()) return;
+    const i = (window.__deck && window.__deck.current) ? window.__deck.current() : 0;
+    if (i !== cur) { cur = i; ts = now(); q(".pr-notes").scrollTop = 0; }
+    if (i !== shownNotes[0] || langNow() !== shownNotes[1] || force) { q(".pr-notes").replaceChildren(notes(i)); shownNotes = [i, langNow()]; }
+    w.document.documentElement.lang = langNow() || "en";
+    w.document.querySelectorAll("[data-ui]").forEach(e => { e.textContent = tr(e.dataset.ui); });
+    const s = slides[i];
+    const A = window.DeckAnim, n = A && A.steps ? A.steps(s) : 0;
+    q(".pr-pos .n").textContent = pad(i + 1) + " / " + total + " · " + (s.dataset.act || "");
+    q(".pr-pos b").textContent = s.dataset.title || "";
+    const lab = q(".pr-cur .pr-lab");
+    lab.replaceChildren(tr("Now"));
+    if (n) { lab.append(" · "); lab.appendChild(el("b", "", tr("build {k} of {n}", { k: A.step(s), n }))); }
+    if (A && A.zoomed && A.zoomed()) { lab.append(" · "); lab.appendChild(el("b", "", tr("detail open"))); }
+    thumb(q(".pr-cur .pr-box"), snap(s));
+    const nx = nextView(i);
+    q(".pr-nxt .pr-lab").textContent = nx ? nx.label : tr("End of the talk");
+    if (nx) thumb(q(".pr-nxt .pr-box"), snap(nx.slide, nx.step));
+    else { const box = q(".pr-nxt .pr-box"); box.replaceChildren(el("div", "pr-end", tr("Last slide"))); }
+    tick();
+  }
+
+  function build() {
+    const d = w.document;
+    d.open();
+    d.write('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Presenter · ' + document.title.replace(/</g, "&lt;") + "</title></head><body></body></html>");
+    d.close();
+    Array.from(document.querySelectorAll('head link[rel="stylesheet"], style')).forEach(n => d.head.appendChild(d.importNode(n, true)));
+    const st = d.createElement("style"); st.textContent = CSS; d.head.appendChild(st);
+    d.body.innerHTML =
+      '<header class="pr-top"><div class="pr-pos"><span class="n"></span><b></b></div>' +
+      '<div class="pr-clock"><div class="pr-t" id="prSl"><small data-ui="This slide"></small><b>0:00</b><i></i></div>' +
+      '<div class="pr-t" id="prTot"><small data-ui="Total"></small><b>0:00</b><i></i></div></div>' +
+      '<div class="pr-btns"><button type="button" id="prPause">Pause</button><button type="button" id="prReset" data-ui="Reset"></button>' +
+      '<button type="button" id="prSm" aria-label="Smaller text">A−</button><button type="button" id="prLg" aria-label="Larger text">A+</button></div></header>' +
+      '<main class="pr-main"><section class="pr-left"><div class="pr-cur"><div class="pr-lab"></div><div class="pr-box"></div></div>' +
+      '<div class="pr-nxt"><div class="pr-lab"></div><div class="pr-box"></div></div></section>' +
+      '<section class="pr-notes" aria-label="Speaker notes"></section></main>' +
+      '<footer class="pr-keys" data-ui="← → move the deck · Home / End first and last slide · R reference figure on the main screen · O overview · L language · Esc close it"></footer>';
+    const notesBox = q(".pr-notes");
+    let pf = parseFloat(store.get("pr-font", "22"));
+    const font = delta => { pf = Math.max(14, Math.min(40, pf + delta)); notesBox.style.setProperty("--pf", pf + "px"); store.set("pr-font", String(pf)); };
+    font(0);
+    q("#prSm").onclick = () => font(-2);
+    q("#prLg").onclick = () => font(2);
+    q("#prPause").onclick = () => { if (pausedAt) { paused += Date.now() - pausedAt; ts += Date.now() - pausedAt; pausedAt = 0; } else pausedAt = Date.now(); tick(); };
+    q("#prReset").onclick = () => { t0 = ts = Date.now(); paused = 0; pausedAt = 0; tick(); };
+    d.addEventListener("keydown", e => {
+      if (FWD.indexOf(e.key) < 0 || !window.__deck) return;
+      e.preventDefault();
+      window.__deck.key(e);
+    });
+    w.addEventListener("resize", refit);
+  }
+
+  function isOpen() { return !!(w && !w.closed && w.document && w.document.body); }
+
+  /* Returns false when the browser blocks the pop-up or the window is not reachable. */
+  function open() {
+    if (isOpen()) { w.focus(); return true; }
+    let nw = null;
+    try { nw = window.open("", NAME, "popup,width=1280,height=800"); } catch (e) { nw = null; }
+    if (!nw) return false;
+    try { void nw.document.body; } catch (e) { return false; }
+    w = nw; cur = -1;
+    t0 = ts = Date.now(); paused = 0; pausedAt = 0;
+    build();
+    update();
+    clearInterval(timer); timer = setInterval(tick, 500);
+    return true;
+  }
+
+  slides.forEach(s => s.addEventListener("slidestep", () => { if (isOpen()) setTimeout(update, 0); }));
+  addEventListener("pagehide", () => { if (isOpen()) w.close(); });
+  window.DeckPresenter = { open, update, isOpen };
+})();
+
+</script>
+<script>
+/* Edit the words in place, never the layout. E (or the "Edit text" button) toggles edit mode.
+   Editable: elements with data-eid (stamped by build.py: titles, text, callouts, footers, zoom details, SVG labels)
+   and the notes in the N panel (data-neid). Enter commits, Esc undoes the current field, paste is plain text.
+   Every edit belongs to the language on screen. The text goes through i18n.js (setText), so an edit in Chinese
+   changes only the Chinese and an edit in English only the English.
+   Where edits are kept:
+     - on a hosted Artifact that declares the db capability: the "edits" collection, one document per element and
+       language, shared by everyone who opens the page; only the owner and editors can write.
+     - anywhere else (preview.html from disk): this browser's storage; "Export" downloads edits.json.
+   src/apply_edits.py writes edits back: the source language into slides.html and notes.js, other languages into
+   src/i18n/<lang>.txt and src/notes_<lang>.js. Used by deck.js. */
+(function () {
+  "use strict";
+  const TITLE = (window.DECK_CONFIG && window.DECK_CONFIG.title) || document.title;
+  const KEY = "deck-edits:" + TITLE;
+  const KEEP = new Set(["B", "I", "EM", "STRONG", "SPAN", "SMALL", "BR", "SUP", "SUB", "CODE", "MARK"]);
+  const NOTE_ID = /^n(\d+)-(say|land|cue(\d+)|lim(\d+))$/;
+  const I = window.I18N || null;
+  const SRC = I ? I.source : "src";
+  const lnow = () => (I ? I.lang() : SRC);
+  const tr = (s, v) => (window.t ? window.t(s, v) : s);
+  const textOf = h => { const d = document.createElement("div"); d.innerHTML = String(h).replace(/<br\s*\/?>/gi, " "); return d.textContent.replace(/\s+/g, " ").trim(); };
+  const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const keyOf = (lang, eid) => lang + "_" + eid;              // also the db document id
+
+  let edits = {};                 // key -> { eid, lang, kind: "html" | "svg" | "note", slide, before, after, at }
+  let stale = {};                 // edits whose text in the file changed since (kept, not applied)
+  let on = false, mode = "local", db = null, canWrite = true;
+  const orig = {};                // key -> the text in the file for that language, before any edit
+
+  /* ---------- stores ---------- */
+  const local = {
+    load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } },
+    flush() { try { localStorage.setItem(KEY, JSON.stringify(Object.assign({}, stale, edits))); } catch (e) { flash(tr("This browser blocks storage: export your edits before you close the page.")); } }
+  };
+  const queue = {};               // one write at a time per document
+  function dbWrite(k, fn) {
+    queue[k] = (queue[k] || Promise.resolve()).then(fn).catch(err => {
+      if (err && err.code === "invalid_argument") { canWrite = false; setOn(false); flash(tr("You can view this deck but not edit it.")); }
+      else flash(tr("Could not save the edit ({code}). Try again.", { code: (err && err.code) || "error" }));
+    });
+  }
+  function save(k) {
+    if (mode === "db") { const e = edits[k]; dbWrite(k, () => db.collection("edits").doc(k).set(e)); }
+    else local.flush();
+  }
+  function remove(k) {
+    delete edits[k]; delete stale[k];
+    if (mode === "db") dbWrite(k, () => db.collection("edits").doc(k).delete());
+    else local.flush();
+  }
+
+  /* ---------- reading and writing text ---------- */
+  function nodes(eid) {
+    const sel = '[data-eid="' + eid + '"]';
+    const out = Array.from(document.querySelectorAll(sel));
+    document.querySelectorAll("template").forEach(t => out.push(...t.content.querySelectorAll(sel)));
+    return out;
+  }
+  function noteRef(eid, lang) {
+    const m = NOTE_ID.exec(eid); if (!m) return null;
+    const N = window.NOTES || {};
+    const set = (N.langs && N.langs[lang] ? N.langs[lang].slides : N.slides) || [];
+    const n = set[+m[1] - 1]; if (!n) return null;
+    if (m[2] === "say" || m[2] === "land") return { get: () => n[m[2]], set: v => { n[m[2]] = v; } };
+    if (m[3] != null && n.cue[+m[3]] != null) return { get: () => n.cue[+m[3]], set: v => { n.cue[+m[3]] = v; } };
+    if (m[4] != null && n.limits[+m[4]]) return { get: () => n.limits[+m[4]][1], set: v => { n.limits[+m[4]][1] = v; } };
+    return null;
+  }
+  function read(eid, kind, lang) {
+    if (kind === "note") { const r = noteRef(eid, lang); return r ? r.get() : null; }
+    if (I) return I.getText(lang, eid);
+    const n = nodes(eid)[0]; if (!n) return null;
+    return kind === "svg" ? n.textContent : n.innerHTML;
+  }
+  function write(eid, kind, lang, v) {
+    if (kind === "note") { const r = noteRef(eid, lang); if (r) r.set(v); return; }
+    if (I) { I.setText(lang, eid, v); return; }
+    nodes(eid).forEach(n => { if (kind === "svg") n.textContent = v; else if (n !== document.activeElement) n.innerHTML = v; });
+  }
+  /* Marks show the edits of the language on screen. */
+  function marks() {
+    document.querySelectorAll(".edited").forEach(n => n.classList.remove("edited"));
+    const L = lnow();
+    Object.values(edits).forEach(e => { if (e.lang === L && e.kind !== "note") nodes(e.eid).forEach(n => n.classList.add("edited")); });
+  }
+  /* Apply stored edits: drop the ones already in the file, keep the ones whose file text changed as stale. */
+  function adopt(list) {
+    list.forEach(e => {
+      if (!e || !e.eid) return;
+      e.lang = e.lang || SRC;
+      const k = keyOf(e.lang, e.eid);
+      if (orig[k] == null) orig[k] = read(e.eid, e.kind, e.lang);
+      const file = orig[k];
+      if (file == null) { stale[k] = e; return; }
+      if (textOf(file) === textOf(e.after)) { if (canWrite) remove(k); return; }     // merged already
+      if (textOf(file) !== textOf(e.before)) { stale[k] = e; return; }
+      edits[k] = e; write(e.eid, e.kind, e.lang, e.after);
+    });
+    marks(); bar();
+  }
+
+  /* Keep inline formatting only, with its class; never copy the live DOM's other attributes. */
+  function clean(el) {
+    const walk = n => Array.from(n.childNodes).map(c => {
+      if (c.nodeType === 3) return esc(c.nodeValue);
+      if (c.nodeType !== 1) return "";
+      if (!KEEP.has(c.tagName)) return walk(c);
+      const tag = c.tagName.toLowerCase();
+      if (tag === "br") return "<br>";
+      const cls = c.getAttribute("class") ? ' class="' + c.getAttribute("class").replace(/"/g, "").replace(/\bedited\b/, "").trim() + '"' : "";
+      return "<" + tag + (cls === ' class=""' ? "" : cls) + ">" + walk(c) + "</" + tag + ">";
+    }).join("");
+    return walk(el).replace(/ /g, " ").trim();
+  }
+
+  /* ---------- edit mode ---------- */
+  const editable = root => root.querySelectorAll("#stage [data-eid]:not(text), .zl [data-eid]:not(text), #notes [data-neid]");
+  function arm(root) {
+    if (!on) return;
+    editable(root || document).forEach(el => { if (!el.hasAttribute("contenteditable")) el.setAttribute("contenteditable", "plaintext-only"); });
+  }
+  function disarm() { document.querySelectorAll("[contenteditable]").forEach(el => el.removeAttribute("contenteditable")); }
+  function setOn(v) {
+    if (v && !canWrite) { flash(tr("You can view this deck but not edit it.")); return; }
+    on = v;
+    if (!on && document.activeElement && document.activeElement.isContentEditable) document.activeElement.blur();
+    document.body.classList.toggle("editing", on);
+    if (on) {
+      const d = window.__deck, A = window.DeckAnim;
+      if (d && A) A.enter(d.slides[d.current()], "end");      // every build visible, so every text can be edited
+      arm();
+    } else { disarm(); closeSvg(); }
+    bar();
+  }
+  const watch = new MutationObserver(muts => { if (on) muts.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) arm(n.parentNode || document); })); });
+
+  document.addEventListener("focusin", e => {
+    const el = e.target;
+    if (!on || !el.isContentEditable || el.dataset.start != null) return;
+    el.dataset.start = el.innerHTML;
+  });
+  document.addEventListener("keydown", e => {
+    const el = e.target;
+    if (!el.isContentEditable) return;
+    if (e.key === "Enter") { e.preventDefault(); el.blur(); }
+    else if (e.key === "Escape") { e.preventDefault(); if (el.dataset.start != null) el.innerHTML = el.dataset.start; el.blur(); }
+    e.stopPropagation();
+  }, true);
+  document.addEventListener("paste", e => {
+    if (!e.target.isContentEditable) return;
+    e.preventDefault();
+    const t = (e.clipboardData || window.clipboardData).getData("text/plain").replace(/\s*\n\s*/g, " ");
+    document.execCommand("insertText", false, t);
+  }, true);
+  document.addEventListener("focusout", e => {
+    const el = e.target;
+    if (!el.isContentEditable || el.dataset.start == null) return;
+    const start = el.dataset.start; delete el.dataset.start;
+    if (el.dataset.neid) commit(el.dataset.neid, "note", +el.dataset.neid.slice(1).split("-")[0], el.textContent.replace(/\s+/g, " ").trim(), textOf(start));
+    else if (el.dataset.eid) commit(el.dataset.eid, "html", slideOf(el), clean(el), start);
+  });
+  /* In edit mode a click on text edits it: it must not open a zoom, follow a link or jump. */
+  document.addEventListener("click", e => {
+    if (!on) return;
+    const t = e.target;
+    const svg = t.closest && t.closest("text[data-eid]");
+    if (svg) { e.stopPropagation(); e.preventDefault(); openSvg(svg); return; }
+    if (t.closest("[contenteditable]") || (t.closest("[data-zoom]") && !t.closest(".zchip"))) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  function slideOf(el) {
+    const s = el.closest("#stage > .slide");
+    if (s) return Array.from(document.querySelectorAll("#stage > .slide")).indexOf(s) + 1;
+    const m = /^s(\d+)-/.exec(el.dataset.eid || ""); return m ? +m[1] : 0;
+  }
+  function commit(eid, kind, slide, after, startValue) {
+    const lang = lnow(), k = keyOf(lang, eid);
+    if (orig[k] == null) orig[k] = kind === "note" || !I ? startValue : read(eid, kind, lang);   // i18n still holds the file text
+    const prev = edits[k];
+    const before = prev ? prev.before : (kind === "note" ? textOf(orig[k]) : orig[k]);
+    write(eid, kind, lang, after);
+    if (textOf(after) === textOf(orig[k])) { if (prev) remove(k); }
+    else { edits[k] = { eid, lang, kind, slide, before, after, at: new Date().toISOString() }; save(k); }
+    marks(); bar();
+    if (window.DeckPresenter) window.DeckPresenter.update(true);
+  }
+
+  /* SVG labels: a small input over the label */
+  let svgBox = null;
+  function openSvg(t) {
+    closeSvg();
+    const r = t.getBoundingClientRect();
+    const eid = t.dataset.eid, start = t.textContent;
+    svgBox = document.createElement("input");
+    svgBox.className = "ed-svg"; svgBox.value = start;
+    Object.assign(svgBox.style, { left: Math.max(4, r.left - 6) + "px", top: Math.max(4, r.top - 6) + "px", width: Math.max(160, r.width + 40) + "px" });
+    document.body.appendChild(svgBox);
+    svgBox.focus(); svgBox.select();
+    const done = keep => {
+      if (!svgBox) return;
+      const v = svgBox.value.replace(/\s+/g, " ").trim();
+      closeSvg();
+      if (keep && v && v !== start) commit(eid, "svg", slideOf(t), v, start);
+    };
+    svgBox.addEventListener("keydown", e => { e.stopPropagation(); if (e.key === "Enter") done(true); else if (e.key === "Escape") done(false); });
+    svgBox.addEventListener("blur", () => done(true));
+  }
+  function closeSvg() { if (svgBox) { const b = svgBox; svgBox = null; b.remove(); } }
+
+  /* ---------- the bar at the top in edit mode ---------- */
+  let barEl = null, armed = false;
+  function bar() {
+    if (!barEl) {
+      barEl = document.createElement("div");
+      barEl.id = "edbar"; barEl.setAttribute("role", "status");
+      barEl.innerHTML = '<b class="ed-t"></b><span class="ed-lang"></span><span class="ed-n"></span><span class="ed-where"></span>'
+        + '<button type="button" class="ed-exp"></button><button type="button" class="ed-dis"></button><button type="button" class="ed-done"></button>';
+      document.body.appendChild(barEl);
+      barEl.querySelector(".ed-done").onclick = () => setOn(false);
+      barEl.querySelector(".ed-exp").onclick = exportEdits;
+      barEl.querySelector(".ed-dis").onclick = discard;
+    }
+    const n = Object.keys(edits).length, s = Object.keys(stale).length;
+    const q = c => barEl.querySelector(c);
+    barEl.hidden = !on;
+    q(".ed-t").textContent = tr("Edit text");
+    q(".ed-lang").textContent = I && I.langs.length > 1 ? tr("editing {lang}", { lang: I.label(lnow()) }) : "";
+    q(".ed-n").textContent = tr(n === 1 ? "{n} change" : "{n} changes", { n }) + (s ? " · " + tr("{n} no longer match the file", { n: s }) : "");
+    q(".ed-where").textContent = tr(mode === "db" ? "saved to this Artifact" : "saved in this browser");
+    q(".ed-exp").textContent = tr("Export");
+    q(".ed-exp").hidden = mode === "db" || !(n + s);
+    q(".ed-dis").hidden = !(n + s);
+    q(".ed-dis").textContent = tr(armed ? "Click again to discard" : "Discard all");
+    q(".ed-done").textContent = tr("Done · E");
+    const btn = document.getElementById("bEdit");
+    if (btn) { btn.setAttribute("aria-pressed", on ? "true" : "false"); btn.hidden = !canWrite; }
+  }
+  function exportEdits() {
+    const all = Object.values(Object.assign({}, stale, edits));
+    const blob = new Blob([JSON.stringify({ deck: TITLE, exported: new Date().toISOString(), edits: all }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "edits.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    flash(tr("edits.json saved. Merge it with: python3 src/apply_edits.py edits.json"));
+  }
+  function discard() {
+    if (!armed) { armed = true; bar(); setTimeout(() => { armed = false; bar(); }, 3000); return; }
+    Object.keys(Object.assign({}, stale, edits)).forEach(remove);
+    Promise.all(Object.values(queue)).then(() => location.reload());
+  }
+  function flash(msg) {
+    const h = document.getElementById("hint"); if (!h) return;
+    h.textContent = msg; h.style.opacity = 1;
+    clearTimeout(flash.t); flash.t = setTimeout(() => { h.style.opacity = 0; }, 3500);
+  }
+
+  /* ---------- start ---------- */
+  adopt(Object.values(local.load()));
+  watch.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener("langchange", () => { closeSvg(); marks(); bar(); if (on) arm(); });
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("db").then(async d => {
+      if (!d) return;
+      const user = await window.claude.use("user").catch(() => null);
+      db = d; mode = "db";
+      if (user && typeof user.canEdit === "function") canWrite = !!(await user.canEdit());
+      Object.keys(edits).forEach(k => { const e = edits[k]; if (orig[k] != null) write(e.eid, e.kind, e.lang, orig[k]); });   // browser edits do not belong to the Artifact
+      edits = {}; stale = {};
+      const snap = await db.collection("edits").get();
+      adopt(snap.docs.map(x => x.data()));
+      if (window.__deck) window.__deck.show(window.__deck.current(), true);
+    }).catch(() => { /* stay local */ });
+  }
+  window.DeckEdit = { toggle: () => setOn(!on), on: () => on, edits: () => Object.values(edits) };
+})();
+
+</script>
+<script>
+/* Deck engine: stage scaling, navigation, notes and sources panel, presenter window, reference-figure viewer, overview, lazy embeds. */
+(function () {
+  "use strict";
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const slides = $$(".slide");
+  const total = slides.length;
+  let cur = 0;
+  const stage = $("#stage"), wrap = $("#stageWrap"), notesEl = $("#notes"), viewer = $("#viewer");
+  /* Notes are read live: a language switch (i18n.js) swaps window.NOTES.slides. */
+  const NS = () => (window.NOTES && window.NOTES.slides) || [], TAGS = () => (window.NOTES && window.NOTES.tags) || {};
+  const t = (s, v) => (window.t ? window.t(s, v) : s);
+
+  /* ---- scaling ---- */
+  function fit() {
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    const s = Math.min(w / 1920, h / 1080);
+    stage.style.transform = "translate(" + ((w - 1920 * s) / 2) + "px," + ((h - 1080 * s) / 2) + "px) scale(" + s + ")";
+  }
+  addEventListener("resize", fit);
+
+  /* ---- chrome per slide ---- */
+  slides.forEach((s, i) => {
+    if (!s.classList.contains("s-title")) {
+      const pg = document.createElement("div");
+      pg.className = "pg";
+      pg.textContent = String(i + 1).padStart(2, "0") + " / " + total;
+      s.appendChild(pg);
+    }
+  });
+
+  /* ---- embeds ---- */
+  /* Embed pages come from deck.config.json "embeds" (build.py writes window.DECK_CONFIG). */
+  const EMB = (window.DECK_CONFIG && window.DECK_CONFIG.embeds) || {};
+  const cache = {};
+  /* The single-file build puts the embed pages in window.__EMBED (url → text). Otherwise they are fetched. */
+  const INL = window.__EMBED || {};
+  const load = url => INL[url] != null ? Promise.resolve(INL[url]) : fetch(url, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+  const pageUrl = url => INL[url] != null ? URL.createObjectURL(new Blob([INL[url]], { type: "text/html" })) : url;
+  const FWD = "<script>addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(/INPUT|TEXTAREA|SELECT/.test(t))return;if(['ArrowLeft','ArrowRight','PageUp','PageDown','Escape','o','O','n','N','p','P','r','R','f','F'].indexOf(e.key)>-1){try{parent.__deck.key(e);e.preventDefault()}catch(x){}}});<\/script>";
+  function prepare(txt, css) {
+    let t = txt.replace(/<html(\s[^>]*)?>/i, function (m, a) { return '<html' + (a || '') + ' data-theme="light">'; });
+    const style = "<style>" + css + "</style>";
+    t = /<head[^>]*>/i.test(t) ? t.replace(/<head[^>]*>/i, function (m) { return m + style; }) : style + t;
+    return /<\/body>/i.test(t) ? t.replace(/<\/body>/i, FWD + "</body>") : t + FWD;
+  }
+  function mount(box) {
+    if (box.dataset.ready) return;
+    box.dataset.ready = "1";
+    const def = EMB[box.dataset.embed];
+    if (!def) { box.textContent = "Unknown embed: " + box.dataset.embed + ". Add it to deck.config.json."; return; }
+    const ld = document.createElement("div");
+    ld.className = "loading"; ld.textContent = t("Loading interactive view…");
+    box.appendChild(ld);
+    const go = txt => {
+      const f = document.createElement("iframe");
+      f.title = box.dataset.title || t("Interactive view");
+      const sc = def.scale || 1;
+      if (sc !== 1) { f.style.width = (100 / sc) + "%"; f.style.height = (100 / sc) + "%"; f.style.transformOrigin = "0 0"; f.style.transform = "scale(" + sc + ")"; }
+      /* From file:// a Blob page is not reachable (opaque origin), so use srcdoc there. Over http(s) keep the
+         Blob URL: in a srcdoc page the map library's worker does not load the GeoJSON sources. */
+      if (location.protocol === "file:") f.srcdoc = prepare(txt, def.css);
+      else f.src = URL.createObjectURL(new Blob([prepare(txt, def.css)], { type: "text/html" }));
+      f.addEventListener("load", () => { ld.remove(); });
+      box.appendChild(f);
+      const alive = fr => { try { return !!(fr.contentDocument && fr.contentDocument.body && fr.contentDocument.body.children.length); } catch (e) { return false; } };
+      setTimeout(() => {
+        if (alive(f)) return;
+        f.remove();
+        const g = document.createElement("iframe");   // second attempt: the published file itself
+        g.title = f.title; g.src = pageUrl(def.url); box.appendChild(g);
+        setTimeout(() => {
+          if (alive(g)) { ld.remove(); return; }
+          g.remove(); ld.innerHTML = 'The embedded view was blocked here. <a href="' + def.url + '" target="_blank" rel="noopener">Open it in a new tab</a>.';
+          if (!ld.isConnected) box.appendChild(ld);
+        }, 4000);
+      }, 4000);
+    };
+    const get = cache[def.url] || (cache[def.url] = load(def.url));
+    get.then(go).catch(() => { ld.innerHTML = 'Could not load the interactive view. <a href="' + def.url + '" target="_blank" rel="noopener">Open it in a new tab</a>.'; });
+  }
+  function prefetch(i) {
+    if (!slides[i]) return;
+    $$("[data-embed]", slides[i]).forEach(b => { const d = EMB[b.dataset.embed]; if (!cache[d.url]) cache[d.url] = load(d.url).catch(() => ""); });
+  }
+  function mountFor(i) {
+    $$("[data-embed]", slides[i]).forEach(b => { if (!b.hidden) mount(b); });
+    prefetch(i + 1);
+  }
+
+  /* ---- navigation ---- */
+  const P = window.DeckPresenter || { open: () => false, update() {}, isOpen: () => false };
+  function presenter() { if (!P.open()) flash(t("The browser blocked the presenter window. Allow pop-ups for this page, or press N for notes here.")); }
+  const A = window.DeckAnim || { enter() {}, forward: () => false, back: () => false, zoomed: () => false, zoomClose() {} };
+  /* mode: "start" when entered with →, so builds play; anything else shows the slide complete. */
+  function show(i, keepHash, mode) {
+    i = Math.max(0, Math.min(total - 1, i));
+    A.zoomClose(true);
+    const TR = window.DeckTransition;
+    const calm = TR && $("#viewport").dataset.ready && Math.abs(i - cur) === 1 && !ED() && !Z.busy() && slides[cur].classList.contains("on");
+    const tok = calm ? TR.before(slides[cur], slides[i], i > cur ? 1 : -1) : (TR && TR.finish(), null);
+    cur = i;
+    slides.forEach((s, k) => s.classList.toggle("on", k === i));
+    if (tok) TR.run(tok);
+    $(".progress").style.width = ((i + 1) / total * 100) + "%";
+    if (!keepHash) { try { history.replaceState(null, "", "#s" + (i + 1)); } catch (e) { location.hash = "s" + (i + 1); } }
+    renderNotes();
+    mountFor(i);
+    A.enter(slides[i], mode || "end");
+    $$("#overview button").forEach((b, k) => b.classList.toggle("cur", k === i));
+    const ev = new CustomEvent("slideshow", { detail: { index: i } });
+    slides[i].dispatchEvent(ev);
+    P.update();
+  }
+  const Z = window.DeckTour || { next: () => false, prev: () => false, busy: () => false };
+  const ED = () => !!(window.DeckEdit && window.DeckEdit.on());   // edit mode: plain steps, every build shown
+  const next = () => { if (ED()) { if (cur < total - 1) show(cur + 1, false, "end"); return; } if (Z.busy() || A.forward(slides[cur]) || Z.next(cur)) return; if (cur < total - 1) show(cur + 1, false, "start"); };
+  const prev = () => { if (ED()) { show(cur - 1, false, "end"); return; } if (Z.busy() || A.back(slides[cur]) || Z.prev(cur)) return; show(cur - 1, false, "end"); };
+
+  /* ---- notes and sources panel ---- */
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function sec(parent, label) { parent.appendChild(el("h4", "np-sec", t(label))); }
+  function chip(tag) { return el("span", "np-ev " + tag, TAGS()[tag] || tag); }
+  function renderNotes() {
+    if (!notesEl.classList.contains("open")) return;
+    const s = slides[cur], n = NS()[cur] || { say: "", cue: [], land: "", limits: [], src: [], figs: [] };
+    let used = 0, sum = 0;
+    slides.forEach((x, k) => { const t = parseFloat(x.dataset.time || 0); sum += t; if (k <= cur) used += t; });
+    const root = el("div", "np");
+    const head = el("div", "np-h");
+    const ttl = el("div", "np-t");
+    ttl.appendChild(el("span", "np-n", String(cur + 1).padStart(2, "0") + " / " + total));
+    ttl.appendChild(el("b", "", s.dataset.title || ""));
+    head.appendChild(ttl);
+    const x = el("button", "np-x", t("Close")); x.type = "button"; x.onclick = () => toggleNotes(false);
+    head.appendChild(x);
+    root.appendChild(head);
+    root.appendChild(el("div", "np-meta", t("{act} · {min} min · {used} of {sum} min used", { act: s.dataset.act || "", min: s.dataset.time || "0", used: used.toFixed(1), sum: sum.toFixed(0) })));
+    const nid = (e, k) => { e.dataset.neid = "n" + (cur + 1) + "-" + k; return e; };   // ids for the text editor
+    if (n.say) { const q = el("div", "np-say"); q.appendChild(el("span", "np-lab", t("Say"))); q.appendChild(nid(el("p", "", n.say), "say")); root.appendChild(q); }
+    if (n.cue.length) { sec(root, "Points"); const ul = el("ul", "np-cue"); n.cue.forEach((t, k) => ul.appendChild(nid(el("li", "", t), "cue" + k))); root.appendChild(ul); }
+    if (n.land) { const q = el("div", "np-say land"); q.appendChild(el("span", "np-lab", t("End with"))); q.appendChild(nid(el("p", "", n.land), "land")); root.appendChild(q); }
+    if (n.limits.length) {
+      sec(root, "Limits");
+      const ul = el("ul", "np-lim");
+      n.limits.forEach((l, k) => { const li = el("li"); li.appendChild(chip(l[0])); li.appendChild(nid(el("span", "", l[1]), "lim" + k)); ul.appendChild(li); });
+      root.appendChild(ul);
+    }
+    if (n.src.length) {
+      sec(root, "Sources");
+      const ul = el("ul", "np-src");
+      n.src.forEach(r => {
+        const li = el("li"); li.appendChild(chip(r.tag));
+        const box = el("span", "np-st");
+        if (r.url) { const a = el("a", "", r.title); a.href = r.url; a.target = "_blank"; a.rel = "noopener noreferrer"; box.appendChild(a); }
+        else box.appendChild(el("span", "np-nolink", r.title));
+        if (r.meta) box.appendChild(el("small", "", r.meta));
+        li.appendChild(box); ul.appendChild(li);
+      });
+      root.appendChild(ul);
+    }
+    sec(root, "Reference figures");
+    if (n.figs.length) {
+      const g = el("div", "np-figs");
+      n.figs.forEach((f, i) => {
+        const b = el("button", "np-fig"); b.type = "button";
+        b.appendChild(el("span", "np-fi", f.k === "embed" ? "↗" : "▣"));
+        const t = el("span", "np-ft"); t.appendChild(el("b", "", f.n)); t.appendChild(el("small", "", f.d || ""));
+        b.appendChild(t);
+        b.onclick = () => openFig(i);
+        g.appendChild(b);
+      });
+      root.appendChild(g);
+    } else root.appendChild(el("p", "np-none", t("No reference figure for this slide.")));
+    root.appendChild(el("p", "np-keys", t("← → move · R open first figure · O overview · P presenter window · E edit text · L language · N close this panel · F full screen")));
+    const host = $("#notes .in");
+    const top = host.scrollTop;
+    host.replaceChildren(root);
+    host.scrollTop = top && host.dataset.slide === String(cur) ? top : 0;
+    host.dataset.slide = String(cur);
+  }
+  function toggleNotes(force) {
+    const open = force === undefined ? !notesEl.classList.contains("open") : force;
+    notesEl.classList.toggle("open", open);
+    $("#bNotes").setAttribute("aria-pressed", open ? "true" : "false");
+    renderNotes();
+    fit();
+  }
+
+  /* ---- reference-figure viewer ---- */
+  let figIdx = -1, lastFocus = null;
+  const viewerOpen = () => !viewer.hidden;
+  function fitFig() {
+    const st = $(".vw-stage", viewer), card = $(".vw-card", viewer), fig = $(".vw-fig", card);
+    if (!fig) return;
+    fig.style.transform = "none";
+    const nw = fig.offsetWidth, nh = fig.offsetHeight;
+    const aw = st.clientWidth - 40, ah = st.clientHeight - 40;
+    const sc = Math.max(0.2, Math.min(aw / nw, ah / nh, 1.8));
+    card.style.width = Math.round(nw * sc) + "px";
+    card.style.height = Math.round(nh * sc) + "px";
+    fig.style.transformOrigin = "0 0";
+    fig.style.transform = "scale(" + sc + ")";
+  }
+  function figNode(f) {
+    const fig = el("div", "vw-fig");
+    if (f.k === "tpl") {
+      const t = document.getElementById(f.t);
+      if (!t) return null;
+      fig.appendChild(t.content.cloneNode(true));
+    } else if (f.k === "clone") {
+      const src = $$(f.s, slides[cur])[f.i || 0];
+      if (!src) return null;
+      const c = src.cloneNode(true);
+      c.removeAttribute("id");
+      c.style.width = "100%"; c.style.height = "auto"; c.removeAttribute("height");
+      fig.appendChild(c);
+    }
+    return fig;
+  }
+  function openFig(i) {
+    const n = NS()[cur]; if (!n || !n.figs.length) return false;
+    i = (i + n.figs.length) % n.figs.length;
+    figIdx = i;
+    const f = n.figs[i];
+    if (viewer.hidden) lastFocus = document.activeElement;
+    viewer.hidden = false;
+    $(".vw-name", viewer).textContent = f.n;
+    $(".vw-desc", viewer).textContent = f.d || "";
+    $(".vw-n", viewer).textContent = (i + 1) + " / " + n.figs.length;
+    $(".vw-prev", viewer).hidden = $(".vw-next", viewer).hidden = n.figs.length < 2;
+    $(".vw-n", viewer).hidden = n.figs.length < 2;
+    const card = $(".vw-card", viewer);
+    card.replaceChildren(); card.removeAttribute("style"); card.className = "vw-card";
+    const link = $(".vw-open", viewer);
+    if (f.k === "embed") {
+      card.classList.add("embed");
+      const box = el("div", "frame"); box.dataset.embed = f.e; box.dataset.title = f.n;
+      card.appendChild(box);
+      mount(box);
+      link.hidden = false; link.href = pageUrl(EMB[f.e].url);
+    } else {
+      link.hidden = true;
+      const fig = figNode(f);
+      if (!fig) { card.appendChild(el("p", "vw-miss", t("This figure is not on the slide."))); }
+      else { card.appendChild(fig); requestAnimationFrame(fitFig); }
+    }
+    $(".vw-close", viewer).focus({ preventScroll: true });
+    return true;
+  }
+  function closeFig() {
+    viewer.hidden = true; figIdx = -1;
+    $(".vw-card", viewer).replaceChildren();
+    if (lastFocus && lastFocus.isConnected && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    lastFocus = null;
+  }
+  function stepFig(d) { if (figIdx >= 0) openFig(figIdx + d); }
+  function flash(msg) {
+    const h = $("#hint"); if (!h) return;
+    h.textContent = msg; h.style.opacity = 1;
+    clearTimeout(flash.t); flash.t = setTimeout(() => { h.style.opacity = 0; }, 2200);
+  }
+  addEventListener("resize", () => { if (viewerOpen()) fitFig(); });
+  $(".vw-close", viewer).onclick = closeFig;
+  $(".vw-prev", viewer).onclick = () => stepFig(-1);
+  $(".vw-next", viewer).onclick = () => stepFig(1);
+  viewer.addEventListener("click", e => { if (e.target.classList.contains("vw-stage")) closeFig(); });
+
+  function toggleOverview(force) {
+    const o = $("#overview"); const open = force === undefined ? !o.classList.contains("open") : force;
+    o.classList.toggle("open", open);
+  }
+  function fullscreen() {
+    const el = document.documentElement;
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  }
+  function key(e) {
+    const k = e.key;
+    if (viewerOpen()) {
+      if (k === "Escape") closeFig();
+      else if (k === "ArrowRight" || k === "PageDown") stepFig(1);
+      else if (k === "ArrowLeft" || k === "PageUp") stepFig(-1);
+      else if (k === "f" || k === "F") fullscreen();
+      else return;
+      if (e.preventDefault) e.preventDefault();
+      return;
+    }
+    if (A.zoomed()) {
+      if (["Escape", "ArrowRight", "ArrowLeft", "PageDown", "PageUp", " "].indexOf(k) > -1) { A.zoomClose(); if (e.preventDefault) e.preventDefault(); }
+      return;
+    }
+    if (k === "ArrowRight" || k === "PageDown" || k === " " && !e.shiftKey) { next(); }
+    else if (k === "ArrowLeft" || k === "PageUp" || (k === " " && e.shiftKey)) { prev(); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(total - 1);
+    else if (k === "o" || k === "O") toggleOverview();
+    else if (k === "n" || k === "N") toggleNotes();
+    else if (k === "p" || k === "P") presenter();
+    else if ((k === "e" || k === "E") && window.DeckEdit) window.DeckEdit.toggle();
+    else if ((k === "l" || k === "L") && I && I.langs.length > 1) I.toggle();
+    else if (k === "r" || k === "R") { if (!openFig(0)) flash(t("No reference figure on this slide")); }
+    else if (k === "f" || k === "F") fullscreen();
+    else if (k === "Escape") { if ($("#overview").classList.contains("open")) toggleOverview(false); else if (notesEl.classList.contains("open")) toggleNotes(false); }
+    else return;
+    if (e.preventDefault) e.preventDefault();
+  }
+  addEventListener("keydown", e => {
+    const t = e.target && e.target.tagName;
+    if (/INPUT|TEXTAREA|SELECT/.test(t) || (e.target && e.target.isContentEditable)) return;
+    key(e);
+  });
+  addEventListener("hashchange", () => { const m = /^#s(\d+)$/.exec(location.hash); if (m) show(parseInt(m[1], 10) - 1, true); });
+
+  /* ---- buttons / overview ---- */
+  $("#bPrev").onclick = prev; $("#bNext").onclick = next; $("#bOv").onclick = () => toggleOverview();
+  $("#bNotes").onclick = () => toggleNotes(); $("#bFs").onclick = fullscreen;
+  $("#bPres").onclick = presenter;
+  if ($("#bEdit")) $("#bEdit").onclick = () => { if (window.DeckEdit) window.DeckEdit.toggle(); };
+  const fsLabel = () => { $("#bFs").textContent = t(document.fullscreenElement ? "Exit full screen" : "Full screen"); };
+  document.addEventListener("fullscreenchange", fsLabel);
+  function buildOverview() {
+    const ov = $("#overview .grid");
+    ov.replaceChildren();
+    slides.forEach((s, i) => {
+      const b = document.createElement("button");
+      const nf = NS()[i] ? NS()[i].figs.length : 0;
+      [["n", String(i + 1).padStart(2, "0")], ["a", s.dataset.act || ""], ["t", s.dataset.title || ""], ["f", nf ? "▣ " + t(nf > 1 ? "{n} figures" : "{n} figure", { n: nf }) : ""]]
+        .forEach(([c, v]) => { if (v) b.appendChild(el("span", c, v)); });
+      b.classList.toggle("cur", i === cur);
+      b.onclick = () => { toggleOverview(false); show(i); };
+      ov.appendChild(b);
+    });
+  }
+  /* Language switch (i18n.js): L or the button. The engine redraws what it builds itself. */
+  const I = window.I18N && window.I18N.langs.length ? window.I18N : null;
+  const langLabel = () => { const b = $("#bLang"); if (b && I) b.textContent = I.label(I.next()); };
+  if ($("#bLang")) $("#bLang").onclick = () => { if (I) I.toggle(); };
+  document.addEventListener("langchange", () => {
+    A.zoomClose(true); if (viewerOpen()) closeFig();
+    buildOverview(); renderNotes(); fsLabel(); langLabel(); P.update();
+  });
+  $("#overview").addEventListener("click", e => { if (e.target.id === "overview") toggleOverview(false); });
+
+  window.__deck = { key: key, show: show, slides: slides, mount: mount, current: () => cur };
+  if (I) I.start();
+  buildOverview(); fsLabel(); langLabel();
+  fit();
+  const m = /^#s(\d+)$/.exec(location.hash);
+  show(m ? parseInt(m[1], 10) - 1 : 0, !m);
+  setTimeout(() => { const h = $("#hint"); if (h) h.style.opacity = 0; }, 5000);
+  $("#viewport").dataset.ready = "1";
+})();
+
+</script>

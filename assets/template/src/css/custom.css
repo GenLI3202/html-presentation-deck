@@ -1,0 +1,3 @@
+/* Deck-specific styles. Keep house components in base.css unchanged; add new classes here.
+   Prefix slide-specific classes (for example .s7-…) so they cannot clash with the engine classes
+   (.dctl, .frame, .zl, .zd, .np-, .vw-, .pr-). */

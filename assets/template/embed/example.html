@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Example interactive chart</title>
+<style>
+  :root{--ink:#141b24;--ink2:#46515e;--rule:#d9dfe5;--accent:#c2412d;--blue:#2f67a6}
+  body{margin:0;padding:24px 32px;font-family:"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:#fff}
+  header h1{margin:0 0 4px;font-size:26px}
+  header p{margin:0 0 16px;color:var(--ink2)}
+  .ctl{display:flex;gap:16px;align-items:center;font-size:18px;margin-bottom:12px}
+  input[type=range]{width:320px;accent-color:var(--accent)}
+  svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<header><h1>Example interactive chart</h1><p>This header is hidden in the deck by the embed CSS in deck.config.json.</p></header>
+<div class="ctl"><label for="k">Buffer share</label><input id="k" type="range" min="0" max="100" value="40"><output id="ko">40%</output></div>
+<svg id="ch" viewBox="0 0 900 360" role="img" aria-label="Bars of raw and buffered load"></svg>
+<script>
+  const raw = [30, 80, 45, 95, 40, 85, 35, 90];
+  function draw(k) {
+    const svg = document.getElementById("ch");
+    let s = '<line x1="40" x2="880" y1="320" y2="320" stroke="#141b24" stroke-width="2"/>';
+    raw.forEach((v, i) => {
+      const x = 60 + i * 102, mean = 60, b = v - (v - mean) * k / 100;
+      s += '<rect x="' + x + '" y="' + (320 - v * 3) + '" width="38" height="' + v * 3 + '" fill="#d9dfe5"/>';
+      s += '<rect x="' + (x + 42) + '" y="' + (320 - b * 3) + '" width="38" height="' + b * 3 + '" fill="#c2412d"/>';
+    });
+    s += '<text x="60" y="350" font-size="16" fill="#46515e">Grey: raw load · Red: load the grid sees</text>';
+    svg.innerHTML = s;
+    document.getElementById("ko").textContent = k + "%";
+  }
+  document.getElementById("k").addEventListener("input", e => draw(+e.target.value));
+  draw(40);
+</script>
+</body>
+</html>

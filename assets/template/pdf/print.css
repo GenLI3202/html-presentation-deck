@@ -1,0 +1,36 @@
+/* Print layout for the PDF handout: one 1920 × 1080 page per slide, supplement, detail and appendix page. */
+@page{size:1920px 1080px;margin:0}
+html.printing,html.printing body{height:auto;overflow:visible;background:#fff}
+.printing #viewport{position:static;display:block}
+.printing #stageWrap{overflow:visible}
+.printing #stage{position:static;transform:none!important;width:1920px;height:auto;background:none;overflow:visible}
+.printing .slide{position:relative!important;inset:auto;display:flex!important;width:1920px;height:1080px;break-after:page;page-break-after:always;background:var(--paper);overflow:hidden;opacity:1!important;transform:none!important}
+.printing .progress,.printing .dctl,.printing #hint,.printing #notes,.printing #overview,.printing #viewer,.printing .zchip,.printing .zl,.printing .bdots{display:none!important}
+.printing .anchor{position:absolute;top:0;left:0}
+.printing .frame img.snap{width:100%;height:100%;object-fit:contain;object-position:top center;display:block;background:#fff}
+.printing a{color:inherit}
+
+/* supplement pages: two images side by side */
+.sup .kick i{font-style:normal;color:var(--ink3)}
+.sup .sub{font-size:26px}
+.sup-body{display:grid;grid-template-columns:1fr 1fr;gap:26px 36px;align-content:start;margin-bottom:96px}
+.sup figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sup figure img{width:100%;height:640px;object-fit:contain;object-position:center;background:#fff;border:1.5px solid var(--rule);border-radius:10px;display:block}
+.sup figcaption{font-size:22px;line-height:1.35;color:var(--ink2)}
+
+/* zoom details */
+.sup-zoom{position:absolute;left:180px;top:130px;width:1560px;height:860px;background:#fff;border:3px solid var(--accent);border-radius:16px;overflow:hidden}
+.sup-zoom a.zgo{text-decoration:none}
+
+/* how to read */
+.how .body{display:flex;flex-direction:column;gap:30px;margin-top:40px}
+.how-l{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:18px;font-size:30px;line-height:1.35;max-width:1500px}
+.how-l b{font-weight:600}
+.how-tags{display:flex;gap:14px;align-items:center;font-size:22px}
+.how-tags b{font-family:var(--mono);font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:500;margin-right:8px}
+.how-tags .ev{font-size:17px}
+.how-note{font-size:24px;line-height:1.4;color:var(--ink2);max-width:1500px}
+
+/* appendix: reference figures */
+.figp .fig-host{position:relative;width:1728px;height:830px;margin:28px auto 0;overflow:hidden}
+.figp .vw-fig{position:absolute;left:0;top:0;transform-origin:0 0}

@@ -1,0 +1,33 @@
+{
+  "title": "Deck title",
+  "lang": "en",
+  "fonts": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+  "tokens": {
+    "--d1": "#2f67a6",
+    "--d2": "#6b4aa8",
+    "--d3": "#d9691c",
+    "--d4": "#6b7785"
+  },
+  "embeds": {
+    "example": { "url": "embed/example.html", "scale": 1.0, "css": "header{display:none!important} body{padding:12px 20px!important}" },
+    "examplefull": { "url": "embed/example.html", "scale": 1.0, "css": "body{padding-block:8px!important}" }
+  },
+  "scripts": [],
+  "outputs": { "fragment": "index.html", "single": "preview.html" },
+  "pdf": {
+    "file": "Deck.pdf",
+    "captures": [
+      { "id": "ex40", "page": "deck", "slide": 3, "wait": 1500, "shot": ".slide.on .frame" },
+      { "id": "ex90", "page": "embed/example.html", "viewport": [1600, 900], "steps": [{ "eval": "document.getElementById('k').value=90; document.getElementById('k').dispatchEvent(new Event('input'))" }], "wait": 500, "shot": "#ch" }
+    ],
+    "frames": [{ "slide": 3, "selector": ".frame", "shot": "ex40", "alt": "Example chart, default view" }],
+    "supplements": [
+      { "after": 3, "title": "Two states of the example chart", "sub": "In the live deck you move the slider. These images show two states.",
+        "items": [["ex40", "Buffer share 40%: the default view."], ["ex90", "Buffer share 90%: the grid sees an almost flat load."]] }
+    ],
+    "zoomPages": true,
+    "appendix": true,
+    "howTo": null
+  },
+  "script": { "file": "Deck-script" }
+}

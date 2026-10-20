@@ -1,0 +1,32 @@
+{
+  "title": "Motion Gallery",
+  "lang": "en",
+  "fonts": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+  "tokens": {
+    "--d1": "#2f67a6",
+    "--d2": "#6b4aa8",
+    "--d3": "#d9691c",
+    "--d4": "#6b7785"
+  },
+  "embeds": {},
+  "scripts": [],
+  "outputs": {
+    "fragment": "index.html",
+    "single": "preview.html"
+  },
+  "pdf": {
+    "file": "Motion-Gallery.pdf",
+    "captures": [],
+    "frames": [],
+    "supplements": [],
+    "zoomPages": true,
+    "appendix": false,
+    "howTo": null
+  },
+  "script": {
+    "file": "Motion-Gallery-script"
+  },
+  "languages": [
+    "en"
+  ]
+}
