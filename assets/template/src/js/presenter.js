@@ -51,6 +51,9 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
 .pr-notes details{margin-top:26px;font-size:.78em;border-top:1px solid #26313c;padding-top:8px}
 .pr-notes summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0c0}
 .pr-notes .np-lim li,.pr-notes .np-src li{grid-template-columns:9em 1fr}
+.pr-figs{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;margin:0 0 14px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--accent);background:#2a1a18;color:#ffd9d1;font:inherit;font-size:15px;cursor:pointer}
+.pr-figs b{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#ff9b88;font-weight:500}
+.pr-figs:hover{background:#3a221f}
 .pr-keys{padding:8px 20px;font-family:var(--mono);font-size:12px;color:#7d8e9e;border-top:1px solid #26313c}
 `;
 
@@ -94,6 +97,13 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   function notes(i) {
     const n = ((window.NOTES && window.NOTES.slides) || [])[i] || { say: "", cue: [], land: "", limits: [], src: [] };
     const root = el("div");
+    if (n.figs && n.figs.length) {
+      const f = el("button", "pr-figs"); f.type = "button";
+      f.appendChild(el("b", "", "▣ " + tr(n.figs.length > 1 ? "{n} reference figures" : "{n} reference figure", { n: n.figs.length })));
+      f.appendChild(el("span", "", tr("R opens them on the main screen") + ": " + n.figs.map(x => x.n).join(" · ")));
+      f.onclick = () => { if (window.__deck) window.__deck.key({ key: "r" }); };
+      root.appendChild(f);
+    }
     const say = (lab, txt, cls) => { const d = el("div", "np-say" + (cls ? " " + cls : "")); d.appendChild(el("span", "np-lab", lab)); d.appendChild(el("p", "", txt)); root.appendChild(d); };
     if (n.say) say(tr("Say"), n.say);
     if (n.cue.length) { root.appendChild(el("h4", "np-sec", tr("Points"))); const ul = el("ul", "np-cue"); n.cue.forEach(t => ul.appendChild(el("li", "", t))); root.appendChild(ul); }

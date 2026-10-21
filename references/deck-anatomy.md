@@ -92,7 +92,7 @@ language switch; the first entry is the source language (languages.md). `"editin
 
 ← → Space PageUp PageDown Home End move · O overview · N notes panel (same window) · P presenter window ·
 E edit text · L language · R first reference figure · F full screen (button shows "Exit full screen") · Esc closes the top layer.
-A hover toolbar (`.dctl`) at the bottom right has the same actions. Keys pressed inside an embed are forwarded.
+? shows every shortcut. The toolbar (`.dctl`, bottom right) shows while the mouse moves and hides at rest: Overview, Full screen and ⋯ (the other controls fold behind it; the choice is remembered). On a slide with reference figures a red "▣ N reference figures · R" button appears; the presenter window lists them at the top of the notes. Keys pressed inside an embed are forwarded.
 
 ## Engine hooks
 

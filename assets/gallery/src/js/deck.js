@@ -96,6 +96,7 @@
   function show(i, keepHash, mode) {
     i = Math.max(0, Math.min(total - 1, i));
     A.zoomClose(true);
+    if (A.recap) A.recap(slides[i]);                            // a recap slide mirrors its source as it is now
     const TR = window.DeckTransition;
     const calm = TR && $("#viewport").dataset.ready && Math.abs(i - cur) === 1 && !ED() && !Z.busy() && slides[cur].classList.contains("on");
     const tok = calm ? TR.before(slides[cur], slides[i], i > cur ? 1 : -1) : (TR && TR.finish(), null);
@@ -105,6 +106,7 @@
     $(".progress").style.width = ((i + 1) / total * 100) + "%";
     if (!keepHash) { try { history.replaceState(null, "", "#s" + (i + 1)); } catch (e) { location.hash = "s" + (i + 1); } }
     renderNotes();
+    figButton();
     mountFor(i);
     A.enter(slides[i], mode || "end");
     $$("#overview button").forEach((b, k) => b.classList.toggle("cur", k === i));
@@ -282,6 +284,8 @@
   }
   function key(e) {
     const k = e.key;
+    if (keysOpen()) { toggleKeys(false); if (e.preventDefault) e.preventDefault(); return; }
+    if (k === "?") { toggleKeys(true); if (e.preventDefault) e.preventDefault(); return; }
     if (viewerOpen()) {
       if (k === "Escape") closeFig();
       else if (k === "ArrowRight" || k === "PageDown") stepFig(1);
@@ -321,6 +325,54 @@
   $("#bPrev").onclick = prev; $("#bNext").onclick = next; $("#bOv").onclick = () => toggleOverview();
   $("#bNotes").onclick = () => toggleNotes(); $("#bFs").onclick = fullscreen;
   $("#bPres").onclick = presenter;
+
+  /* ---- toolbar: Overview and Full screen always; the rest folds behind ⋯ (remembered); a Reference figures
+     button appears only on slides that have figures. The bar shows while the mouse moves and hides at rest. ---- */
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } } };
+  function setMore(open) {
+    $("#dMore").hidden = !open;
+    $("#bMore").setAttribute("aria-expanded", open ? "true" : "false");
+    $("#bMore").title = t(open ? "Fewer controls" : "More controls");
+    store.set("deck-more", open ? "1" : "0");
+  }
+  $("#bMore").onclick = () => setMore($("#dMore").hidden);
+  setMore(store.get("deck-more") === "1");
+  function figButton() {
+    const b = $("#bFig"); if (!b) return;
+    const n = (NS()[cur] && NS()[cur].figs.length) || 0;
+    b.hidden = !n;
+    b.textContent = "▣ " + t(n > 1 ? "{n} reference figures" : "{n} reference figure", { n }) + " · R";
+    b.title = t("Open the reference figures of this slide (R)");
+  }
+  $("#bFig").onclick = () => openFig(0);
+  let awake = 0;
+  const wake = () => { document.body.classList.add("ui-awake"); clearTimeout(awake); awake = setTimeout(() => document.body.classList.remove("ui-awake"), 2500); };
+  ["mousemove", "pointerdown", "touchstart"].forEach(ev => addEventListener(ev, wake, { passive: true }));
+  wake();
+
+  /* ---- keyboard shortcuts (? key or the Keys button) ---- */
+  const keysEl = $("#keys");
+  const keysOpen = () => keysEl && !keysEl.hidden;
+  function toggleKeys(force) {
+    if (!keysEl) return;
+    const open = force === undefined ? keysEl.hidden : force;
+    if (open) {
+      const rows = [["← →", "Move; the next build step first"], ["Home End", "First and last slide"], ["O", "Overview"], ["R", "Reference figures of this slide"],
+        ["N", "Notes and sources in this window"], ["P", "Presenter window for a second screen"], ["F", "Full screen"]];
+      if (window.DeckEdit) rows.push(["E", "Edit the text"]);
+      if (I && I.langs.length > 1) rows.push(["L", "Switch language"]);
+      rows.push(["?", "This list"], ["Esc", "Close the top layer"]);
+      const box = $(".keys-in", keysEl);
+      box.replaceChildren(el("h3", "", t("Keyboard shortcuts")));
+      const dl = el("dl");
+      rows.forEach(([k, d]) => { const dt = el("dt"); k.split(" ").forEach(x => dt.appendChild(el("kbd", "", x))); dl.appendChild(dt); dl.appendChild(el("dd", "", t(d))); });
+      box.appendChild(dl);
+      box.appendChild(el("p", "keys-x", t("Press any key or click to close.")));
+    }
+    keysEl.hidden = !open;
+  }
+  if (keysEl) keysEl.addEventListener("click", () => toggleKeys(false));
+  if ($("#bKeys")) $("#bKeys").onclick = () => toggleKeys(true);
   if ($("#bEdit")) $("#bEdit").onclick = () => { if (window.DeckEdit) window.DeckEdit.toggle(); };
   const fsLabel = () => { $("#bFs").textContent = t(document.fullscreenElement ? "Exit full screen" : "Full screen"); };
   document.addEventListener("fullscreenchange", fsLabel);
@@ -343,7 +395,7 @@
   if ($("#bLang")) $("#bLang").onclick = () => { if (I) I.toggle(); };
   document.addEventListener("langchange", () => {
     A.zoomClose(true); if (viewerOpen()) closeFig();
-    buildOverview(); renderNotes(); fsLabel(); langLabel(); P.update();
+    buildOverview(); renderNotes(); figButton(); fsLabel(); langLabel(); P.update();
   });
   $("#overview").addEventListener("click", e => { if (e.target.id === "overview") toggleOverview(false); });
 

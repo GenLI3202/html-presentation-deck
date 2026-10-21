@@ -82,7 +82,7 @@ def body(cfg: dict, tr: dict) -> str:
                "<script>window.NOTES_TR={};</script>"]
     scripts += ["<script>\n" + rd(n) + "\n</script>" for n in names]
     multi = len(cfg["languages"]) > 1
-    hint = "← → move · O overview · N notes & sources · P presenter · E edit" + (" · L language" if multi else "") + " · R figure · F full screen"
+    hint = "← → move · R reference figures · ? all keys"
     figs = rd("figs.html") if os.path.exists(os.path.join(SRC, "figs.html")) else ""
     return f"""<style>
 {css(cfg)}
@@ -98,15 +98,21 @@ def body(cfg: dict, tr: dict) -> str:
 </div>
 {figs}
 <div class="dctl" role="toolbar" aria-label="Deck controls">
-  <button type="button" id="bPrev" aria-label="Previous slide">←</button>
-  <button type="button" id="bNext" aria-label="Next slide">→</button>
+  <div class="dctl-more" id="dMore" hidden>
+    <button type="button" id="bPrev" aria-label="Previous slide">←</button>
+    <button type="button" id="bNext" aria-label="Next slide">→</button>
+    <button type="button" id="bNotes" aria-pressed="false" data-ui="Notes &amp; sources">Notes &amp; sources</button>
+    <button type="button" id="bPres" data-ui="Presenter">Presenter</button>
+    {'<button type="button" id="bEdit" aria-pressed="false" data-ui="Edit text">Edit text</button>' if cfg["editing"] else ""}
+    {'<button type="button" id="bLang" aria-label="Switch language"></button>' if multi else ""}
+    <button type="button" id="bKeys" data-ui="Keys ?">Keys ?</button>
+  </div>
+  <button type="button" id="bFig" class="dctl-fig" hidden></button>
   <button type="button" id="bOv" data-ui="Overview">Overview</button>
-  <button type="button" id="bNotes" aria-pressed="false" data-ui="Notes &amp; sources">Notes &amp; sources</button>
-  <button type="button" id="bPres" data-ui="Presenter">Presenter</button>
-  {'<button type="button" id="bEdit" aria-pressed="false" data-ui="Edit text">Edit text</button>' if cfg["editing"] else ""}
-  {'<button type="button" id="bLang" aria-label="Switch language"></button>' if multi else ""}
   <button type="button" id="bFs">Full screen</button>
+  <button type="button" id="bMore" aria-expanded="false" aria-controls="dMore" aria-label="More controls">⋯</button>
 </div>
+<div id="keys" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden><div class="keys-in"></div></div>
 <div id="viewer" role="dialog" aria-modal="true" aria-label="Reference figure" hidden>
   <div class="vw-bar">
     <div class="vw-t"><span class="vw-k" data-ui="Reference figure">Reference figure</span><b class="vw-name"></b><span class="vw-desc"></span></div>

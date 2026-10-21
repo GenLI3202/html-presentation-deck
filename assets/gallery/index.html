@@ -179,12 +179,32 @@ svg .mut{fill:var(--ink2)} svg .mut3{fill:var(--ink3)}
 .part-head b{font-family:var(--num);font-size:56px;line-height:1;font-weight:600}
 .part-head span{font-size:40px;line-height:1.15;font-weight:600}
 .part-head.opp{background:var(--amber)}
+[data-recap] [data-morph]{position:relative}
+.done-chip.pin{position:absolute;top:-14px;right:18px;z-index:2}
 .done-chip{display:inline-block;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--ok);color:#fff;border-radius:99px;padding:4px 14px;width:max-content}
 
 :root{--d1:#2f67a6;--d2:#6b4aa8;--d3:#d9691c;--d4:#6b7785;}
 /* Chrome outside the slides: toolbar, notes and sources panel, reference-figure viewer, overview, key hint. */
-.dctl{position:fixed;right:18px;bottom:14px;display:flex;gap:6px;opacity:.0;transition:opacity .2s;z-index:50}
-body:hover .dctl,.dctl:focus-within{opacity:.9}
+.dctl{position:fixed;right:18px;bottom:14px;display:flex;gap:6px;align-items:center;opacity:0;transition:opacity .25s;z-index:50}
+/* shown while the mouse moves (body.ui-awake, set by deck.js), on hover and on keyboard focus */
+body.ui-awake .dctl,.dctl:hover,.dctl:focus-within{opacity:.92}
+.dctl-more{display:flex;gap:6px}
+.dctl-more[hidden]{display:none}
+.dctl button[hidden]{display:none}
+.dctl #bMore{min-width:40px;font-size:18px;line-height:1;padding:6px 10px}
+.dctl #bMore[aria-expanded="true"]{background:#000;border-color:rgba(255,255,255,.6)}
+.dctl .dctl-fig{background:var(--accent);border-color:var(--accent)}
+.dctl .dctl-fig:hover{background:#a5341f}
+/* keyboard shortcuts (? key) */
+#keys{position:fixed;inset:0;z-index:92;background:rgba(10,14,19,.86);display:grid;place-items:center}
+#keys[hidden]{display:none}
+#keys .keys-in{background:#10161d;color:#e8edf2;border:1.5px solid #2c3743;border-radius:14px;padding:26px 32px;min-width:460px;font-size:16px}
+#keys h3{margin:0 0 14px;font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#ff9b88;font-weight:500}
+#keys dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 22px;align-items:baseline}
+#keys dt{font-family:var(--mono);font-size:14px;color:#fff}
+#keys dt kbd{display:inline-block;min-width:26px;text-align:center;border:1px solid #3a4856;border-bottom-width:3px;border-radius:6px;padding:1px 7px;margin-right:4px}
+#keys dd{margin:0;color:#c5d0da}
+#keys .keys-x{margin-top:18px;font-family:var(--mono);font-size:12px;color:#7d8e9e}
 body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
 .dctl button{white-space:nowrap;background:rgba(15,20,26,.86);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 12px;font-size:15px;font-family:var(--mono);cursor:pointer}
 .dctl button:hover{background:#000}
@@ -271,7 +291,7 @@ body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
 #overview .a{font-family:var(--mono);font-size:13px;color:#9fb0c0;letter-spacing:.08em;text-transform:uppercase}
 #overview .t{font-size:17px;line-height:1.3}
 #overview .f{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#ff9b88;margin-top:2px}
-#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(15,20,26,.92);color:#fff;font-family:var(--mono);font-size:16px;padding:10px 20px;border-radius:99px;z-index:60;transition:opacity .6s;pointer-events:none}
+#hint{position:fixed;left:50%;bottom:72px;max-width:90vw;text-align:center;transform:translateX(-50%);background:rgba(15,20,26,.92);color:#fff;font-family:var(--mono);font-size:16px;padding:10px 20px;border-radius:99px;z-index:60;transition:opacity .6s;pointer-events:none}
 
 @media (prefers-reduced-motion:reduce){.progress,.dctl{transition:none}}
 
@@ -653,15 +673,21 @@ body.editing text.edited{text-decoration:underline}
 </div>
 
 <div class="dctl" role="toolbar" aria-label="Deck controls">
-  <button type="button" id="bPrev" aria-label="Previous slide">←</button>
-  <button type="button" id="bNext" aria-label="Next slide">→</button>
+  <div class="dctl-more" id="dMore" hidden>
+    <button type="button" id="bPrev" aria-label="Previous slide">←</button>
+    <button type="button" id="bNext" aria-label="Next slide">→</button>
+    <button type="button" id="bNotes" aria-pressed="false" data-ui="Notes &amp; sources">Notes &amp; sources</button>
+    <button type="button" id="bPres" data-ui="Presenter">Presenter</button>
+    <button type="button" id="bEdit" aria-pressed="false" data-ui="Edit text">Edit text</button>
+    
+    <button type="button" id="bKeys" data-ui="Keys ?">Keys ?</button>
+  </div>
+  <button type="button" id="bFig" class="dctl-fig" hidden></button>
   <button type="button" id="bOv" data-ui="Overview">Overview</button>
-  <button type="button" id="bNotes" aria-pressed="false" data-ui="Notes &amp; sources">Notes &amp; sources</button>
-  <button type="button" id="bPres" data-ui="Presenter">Presenter</button>
-  <button type="button" id="bEdit" aria-pressed="false" data-ui="Edit text">Edit text</button>
-  
   <button type="button" id="bFs">Full screen</button>
+  <button type="button" id="bMore" aria-expanded="false" aria-controls="dMore" aria-label="More controls">⋯</button>
 </div>
+<div id="keys" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden><div class="keys-in"></div></div>
 <div id="viewer" role="dialog" aria-modal="true" aria-label="Reference figure" hidden>
   <div class="vw-bar">
     <div class="vw-t"><span class="vw-k" data-ui="Reference figure">Reference figure</span><b class="vw-name"></b><span class="vw-desc"></span></div>
@@ -674,7 +700,7 @@ body.editing text.edited{text-decoration:underline}
   <div class="vw-stage"><div class="vw-card"></div></div>
 </div>
 <div id="overview" role="dialog" aria-label="Slide overview"><h3 data-ui="Slide overview · click to jump">Slide overview · click to jump</h3><div class="grid"></div></div>
-<div id="hint" data-ui="← → move · O overview · N notes &amp; sources · P presenter · E edit · R figure · F full screen">← → move · O overview · N notes &amp; sources · P presenter · E edit · R figure · F full screen</div>
+<div id="hint" data-ui="← → move · R reference figures · ? all keys">← → move · R reference figures · ? all keys</div>
 <script>window.DECK_CONFIG={"embeds": {}, "title": "Motion Gallery"};</script>
 <script>window.I18N_DATA={"source": "en", "langs": ["en"], "tr": {}};</script>
 <script>window.I18N_UI={};</script>
@@ -949,7 +975,8 @@ body.editing text.edited{text-decoration:underline}
    It stays visible at every step. Add a last build (for example the take) after the last spot, so the complete
    slide (jump, print) shows nothing dimmed.
    Zoom: an element with data-zoom="templateId" opens that template in a card that grows out of the element.
-   Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide). */
+   Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide).
+   Recap: a slide with data-recap="N" repeats slide N with every data-morph item marked done (back once, at the end). */
 (function () {
   "use strict";
   const stepOf = new Map();
@@ -1031,6 +1058,44 @@ body.editing text.edited{text-decoration:underline}
 
   document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); });
 
+  /* ---- recap: <section class="slide" data-recap="N"> mirrors slide N as it is drawn now (charts, language, edits)
+     and marks each [data-morph] item done. It is copied again before each show and after a language change.
+     Ids get a suffix, and references to them follow, so nothing clashes. Children that the recap slide has itself
+     (a .kick, .take or .src) replace the copied ones. ---- */
+  const all = Array.from(document.querySelectorAll("#stage > .slide"));
+  function recap(r) {
+    if (!r || !r.hasAttribute("data-recap")) return;
+    const src = all[+r.dataset.recap - 1];
+    if (!src || src === r) return;
+    r.querySelectorAll(":scope > [data-recap-copy]").forEach(c => c.remove());
+    const tag = "-r" + (all.indexOf(r) + 1);
+    const own = new Set(Array.from(r.children).map(c => c.className.split(" ")[0]));
+    const frag = document.createDocumentFragment();
+    Array.from(src.children).forEach(c => {
+      if (own.has(c.className.split(" ")[0]) || /\b(pg|bdots|strip)\b/.test(c.className)) return;
+      const k = c.cloneNode(true); k.setAttribute("data-recap-copy", ""); frag.appendChild(k);
+    });
+    const ids = new Set();
+    frag.querySelectorAll("[id]").forEach(e => { ids.add(e.id); e.id = e.id + tag; });
+    if (ids.size) frag.querySelectorAll("*").forEach(e => Array.from(e.attributes).forEach(a => {
+      let v = a.value;
+      if (/^aria-(labelledby|describedby)$/.test(a.name)) v = v.split(/\s+/).map(x => (ids.has(x) ? x + tag : x)).join(" ");
+      else ids.forEach(id => { v = v.split("url(#" + id + ")").join("url(#" + id + tag + ")"); if (v === "#" + id) v = "#" + id + tag; });
+      if (v !== a.value) e.setAttribute(a.name, v);
+    }));
+    frag.querySelectorAll("[data-b], [data-spot], [data-tr]").forEach(e => { ["data-b", "data-spot", "data-tr", "style"].forEach(x => { if (x !== "style" || e.hasAttribute("data-tr")) e.removeAttribute(x); }); });
+    frag.querySelectorAll(".in, .spot-on, .spot-dim").forEach(e => e.classList.remove("spot-on", "spot-dim"));
+    frag.querySelectorAll("[data-morph]").forEach(e => {
+      const d = document.createElement("span");
+      d.className = "done-chip pin"; d.textContent = (window.t ? window.t(r.dataset.recapLabel || "✓ Covered") : (r.dataset.recapLabel || "✓ Covered"));
+      e.prepend(d);
+    });
+    r.prepend(frag);
+  }
+  const recapAll = () => all.forEach(recap);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", recapAll); else recapAll();
+  document.addEventListener("langchange", recapAll);
+
   /* ---- progress strip: Q1 · Q2 · Q3 at the top of each slide of a series ---- */
   const groups = {};
   document.querySelectorAll("#stage > .slide[data-strip]").forEach(s => { (groups[s.dataset.strip] = groups[s.dataset.strip] || []).push(s); });
@@ -1045,7 +1110,7 @@ body.editing text.edited{text-decoration:underline}
     });
     s.appendChild(ol);
   }));
-  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count };
+  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, recap };
 })();
 
 </script>
@@ -1410,6 +1475,9 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
 .pr-notes details{margin-top:26px;font-size:.78em;border-top:1px solid #26313c;padding-top:8px}
 .pr-notes summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0c0}
 .pr-notes .np-lim li,.pr-notes .np-src li{grid-template-columns:9em 1fr}
+.pr-figs{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;margin:0 0 14px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--accent);background:#2a1a18;color:#ffd9d1;font:inherit;font-size:15px;cursor:pointer}
+.pr-figs b{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#ff9b88;font-weight:500}
+.pr-figs:hover{background:#3a221f}
 .pr-keys{padding:8px 20px;font-family:var(--mono);font-size:12px;color:#7d8e9e;border-top:1px solid #26313c}
 `;
 
@@ -1453,6 +1521,13 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   function notes(i) {
     const n = ((window.NOTES && window.NOTES.slides) || [])[i] || { say: "", cue: [], land: "", limits: [], src: [] };
     const root = el("div");
+    if (n.figs && n.figs.length) {
+      const f = el("button", "pr-figs"); f.type = "button";
+      f.appendChild(el("b", "", "▣ " + tr(n.figs.length > 1 ? "{n} reference figures" : "{n} reference figure", { n: n.figs.length })));
+      f.appendChild(el("span", "", tr("R opens them on the main screen") + ": " + n.figs.map(x => x.n).join(" · ")));
+      f.onclick = () => { if (window.__deck) window.__deck.key({ key: "r" }); };
+      root.appendChild(f);
+    }
     const say = (lab, txt, cls) => { const d = el("div", "np-say" + (cls ? " " + cls : "")); d.appendChild(el("span", "np-lab", lab)); d.appendChild(el("p", "", txt)); root.appendChild(d); };
     if (n.say) say(tr("Say"), n.say);
     if (n.cue.length) { root.appendChild(el("h4", "np-sec", tr("Points"))); const ul = el("ul", "np-cue"); n.cue.forEach(t => ul.appendChild(el("li", "", t))); root.appendChild(ul); }
@@ -1971,6 +2046,7 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   function show(i, keepHash, mode) {
     i = Math.max(0, Math.min(total - 1, i));
     A.zoomClose(true);
+    if (A.recap) A.recap(slides[i]);                            // a recap slide mirrors its source as it is now
     const TR = window.DeckTransition;
     const calm = TR && $("#viewport").dataset.ready && Math.abs(i - cur) === 1 && !ED() && !Z.busy() && slides[cur].classList.contains("on");
     const tok = calm ? TR.before(slides[cur], slides[i], i > cur ? 1 : -1) : (TR && TR.finish(), null);
@@ -1980,6 +2056,7 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
     $(".progress").style.width = ((i + 1) / total * 100) + "%";
     if (!keepHash) { try { history.replaceState(null, "", "#s" + (i + 1)); } catch (e) { location.hash = "s" + (i + 1); } }
     renderNotes();
+    figButton();
     mountFor(i);
     A.enter(slides[i], mode || "end");
     $$("#overview button").forEach((b, k) => b.classList.toggle("cur", k === i));
@@ -2157,6 +2234,8 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   }
   function key(e) {
     const k = e.key;
+    if (keysOpen()) { toggleKeys(false); if (e.preventDefault) e.preventDefault(); return; }
+    if (k === "?") { toggleKeys(true); if (e.preventDefault) e.preventDefault(); return; }
     if (viewerOpen()) {
       if (k === "Escape") closeFig();
       else if (k === "ArrowRight" || k === "PageDown") stepFig(1);
@@ -2196,6 +2275,54 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   $("#bPrev").onclick = prev; $("#bNext").onclick = next; $("#bOv").onclick = () => toggleOverview();
   $("#bNotes").onclick = () => toggleNotes(); $("#bFs").onclick = fullscreen;
   $("#bPres").onclick = presenter;
+
+  /* ---- toolbar: Overview and Full screen always; the rest folds behind ⋯ (remembered); a Reference figures
+     button appears only on slides that have figures. The bar shows while the mouse moves and hides at rest. ---- */
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } } };
+  function setMore(open) {
+    $("#dMore").hidden = !open;
+    $("#bMore").setAttribute("aria-expanded", open ? "true" : "false");
+    $("#bMore").title = t(open ? "Fewer controls" : "More controls");
+    store.set("deck-more", open ? "1" : "0");
+  }
+  $("#bMore").onclick = () => setMore($("#dMore").hidden);
+  setMore(store.get("deck-more") === "1");
+  function figButton() {
+    const b = $("#bFig"); if (!b) return;
+    const n = (NS()[cur] && NS()[cur].figs.length) || 0;
+    b.hidden = !n;
+    b.textContent = "▣ " + t(n > 1 ? "{n} reference figures" : "{n} reference figure", { n }) + " · R";
+    b.title = t("Open the reference figures of this slide (R)");
+  }
+  $("#bFig").onclick = () => openFig(0);
+  let awake = 0;
+  const wake = () => { document.body.classList.add("ui-awake"); clearTimeout(awake); awake = setTimeout(() => document.body.classList.remove("ui-awake"), 2500); };
+  ["mousemove", "pointerdown", "touchstart"].forEach(ev => addEventListener(ev, wake, { passive: true }));
+  wake();
+
+  /* ---- keyboard shortcuts (? key or the Keys button) ---- */
+  const keysEl = $("#keys");
+  const keysOpen = () => keysEl && !keysEl.hidden;
+  function toggleKeys(force) {
+    if (!keysEl) return;
+    const open = force === undefined ? keysEl.hidden : force;
+    if (open) {
+      const rows = [["← →", "Move; the next build step first"], ["Home End", "First and last slide"], ["O", "Overview"], ["R", "Reference figures of this slide"],
+        ["N", "Notes and sources in this window"], ["P", "Presenter window for a second screen"], ["F", "Full screen"]];
+      if (window.DeckEdit) rows.push(["E", "Edit the text"]);
+      if (I && I.langs.length > 1) rows.push(["L", "Switch language"]);
+      rows.push(["?", "This list"], ["Esc", "Close the top layer"]);
+      const box = $(".keys-in", keysEl);
+      box.replaceChildren(el("h3", "", t("Keyboard shortcuts")));
+      const dl = el("dl");
+      rows.forEach(([k, d]) => { const dt = el("dt"); k.split(" ").forEach(x => dt.appendChild(el("kbd", "", x))); dl.appendChild(dt); dl.appendChild(el("dd", "", t(d))); });
+      box.appendChild(dl);
+      box.appendChild(el("p", "keys-x", t("Press any key or click to close.")));
+    }
+    keysEl.hidden = !open;
+  }
+  if (keysEl) keysEl.addEventListener("click", () => toggleKeys(false));
+  if ($("#bKeys")) $("#bKeys").onclick = () => toggleKeys(true);
   if ($("#bEdit")) $("#bEdit").onclick = () => { if (window.DeckEdit) window.DeckEdit.toggle(); };
   const fsLabel = () => { $("#bFs").textContent = t(document.fullscreenElement ? "Exit full screen" : "Full screen"); };
   document.addEventListener("fullscreenchange", fsLabel);
@@ -2218,7 +2345,7 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
   if ($("#bLang")) $("#bLang").onclick = () => { if (I) I.toggle(); };
   document.addEventListener("langchange", () => {
     A.zoomClose(true); if (viewerOpen()) closeFig();
-    buildOverview(); renderNotes(); fsLabel(); langLabel(); P.update();
+    buildOverview(); renderNotes(); figButton(); fsLabel(); langLabel(); P.update();
   });
   $("#overview").addEventListener("click", e => { if (e.target.id === "overview") toggleOverview(false); });
 

@@ -5,7 +5,8 @@
    It stays visible at every step. Add a last build (for example the take) after the last spot, so the complete
    slide (jump, print) shows nothing dimmed.
    Zoom: an element with data-zoom="templateId" opens that template in a card that grows out of the element.
-   Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide). */
+   Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide).
+   Recap: a slide with data-recap="N" repeats slide N with every data-morph item marked done (back once, at the end). */
 (function () {
   "use strict";
   const stepOf = new Map();
@@ -87,6 +88,44 @@
 
   document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); });
 
+  /* ---- recap: <section class="slide" data-recap="N"> mirrors slide N as it is drawn now (charts, language, edits)
+     and marks each [data-morph] item done. It is copied again before each show and after a language change.
+     Ids get a suffix, and references to them follow, so nothing clashes. Children that the recap slide has itself
+     (a .kick, .take or .src) replace the copied ones. ---- */
+  const all = Array.from(document.querySelectorAll("#stage > .slide"));
+  function recap(r) {
+    if (!r || !r.hasAttribute("data-recap")) return;
+    const src = all[+r.dataset.recap - 1];
+    if (!src || src === r) return;
+    r.querySelectorAll(":scope > [data-recap-copy]").forEach(c => c.remove());
+    const tag = "-r" + (all.indexOf(r) + 1);
+    const own = new Set(Array.from(r.children).map(c => c.className.split(" ")[0]));
+    const frag = document.createDocumentFragment();
+    Array.from(src.children).forEach(c => {
+      if (own.has(c.className.split(" ")[0]) || /\b(pg|bdots|strip)\b/.test(c.className)) return;
+      const k = c.cloneNode(true); k.setAttribute("data-recap-copy", ""); frag.appendChild(k);
+    });
+    const ids = new Set();
+    frag.querySelectorAll("[id]").forEach(e => { ids.add(e.id); e.id = e.id + tag; });
+    if (ids.size) frag.querySelectorAll("*").forEach(e => Array.from(e.attributes).forEach(a => {
+      let v = a.value;
+      if (/^aria-(labelledby|describedby)$/.test(a.name)) v = v.split(/\s+/).map(x => (ids.has(x) ? x + tag : x)).join(" ");
+      else ids.forEach(id => { v = v.split("url(#" + id + ")").join("url(#" + id + tag + ")"); if (v === "#" + id) v = "#" + id + tag; });
+      if (v !== a.value) e.setAttribute(a.name, v);
+    }));
+    frag.querySelectorAll("[data-b], [data-spot], [data-tr]").forEach(e => { ["data-b", "data-spot", "data-tr", "style"].forEach(x => { if (x !== "style" || e.hasAttribute("data-tr")) e.removeAttribute(x); }); });
+    frag.querySelectorAll(".in, .spot-on, .spot-dim").forEach(e => e.classList.remove("spot-on", "spot-dim"));
+    frag.querySelectorAll("[data-morph]").forEach(e => {
+      const d = document.createElement("span");
+      d.className = "done-chip pin"; d.textContent = (window.t ? window.t(r.dataset.recapLabel || "✓ Covered") : (r.dataset.recapLabel || "✓ Covered"));
+      e.prepend(d);
+    });
+    r.prepend(frag);
+  }
+  const recapAll = () => all.forEach(recap);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", recapAll); else recapAll();
+  document.addEventListener("langchange", recapAll);
+
   /* ---- progress strip: Q1 · Q2 · Q3 at the top of each slide of a series ---- */
   const groups = {};
   document.querySelectorAll("#stage > .slide[data-strip]").forEach(s => { (groups[s.dataset.strip] = groups[s.dataset.strip] || []).push(s); });
@@ -101,5 +140,5 @@
     });
     s.appendChild(ol);
   }));
-  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count };
+  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, recap };
 })();

@@ -175,4 +175,6 @@ svg .mut{fill:var(--ink2)} svg .mut3{fill:var(--ink3)}
 .part-head b{font-family:var(--num);font-size:56px;line-height:1;font-weight:600}
 .part-head span{font-size:40px;line-height:1.15;font-weight:600}
 .part-head.opp{background:var(--amber)}
+[data-recap] [data-morph]{position:relative}
+.done-chip.pin{position:absolute;top:-14px;right:18px;z-index:2}
 .done-chip{display:inline-block;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--ok);color:#fff;border-radius:99px;padding:4px 14px;width:max-content}

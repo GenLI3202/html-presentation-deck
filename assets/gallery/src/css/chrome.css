@@ -1,6 +1,24 @@
 /* Chrome outside the slides: toolbar, notes and sources panel, reference-figure viewer, overview, key hint. */
-.dctl{position:fixed;right:18px;bottom:14px;display:flex;gap:6px;opacity:.0;transition:opacity .2s;z-index:50}
-body:hover .dctl,.dctl:focus-within{opacity:.9}
+.dctl{position:fixed;right:18px;bottom:14px;display:flex;gap:6px;align-items:center;opacity:0;transition:opacity .25s;z-index:50}
+/* shown while the mouse moves (body.ui-awake, set by deck.js), on hover and on keyboard focus */
+body.ui-awake .dctl,.dctl:hover,.dctl:focus-within{opacity:.92}
+.dctl-more{display:flex;gap:6px}
+.dctl-more[hidden]{display:none}
+.dctl button[hidden]{display:none}
+.dctl #bMore{min-width:40px;font-size:18px;line-height:1;padding:6px 10px}
+.dctl #bMore[aria-expanded="true"]{background:#000;border-color:rgba(255,255,255,.6)}
+.dctl .dctl-fig{background:var(--accent);border-color:var(--accent)}
+.dctl .dctl-fig:hover{background:#a5341f}
+/* keyboard shortcuts (? key) */
+#keys{position:fixed;inset:0;z-index:92;background:rgba(10,14,19,.86);display:grid;place-items:center}
+#keys[hidden]{display:none}
+#keys .keys-in{background:#10161d;color:#e8edf2;border:1.5px solid #2c3743;border-radius:14px;padding:26px 32px;min-width:460px;font-size:16px}
+#keys h3{margin:0 0 14px;font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#ff9b88;font-weight:500}
+#keys dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 22px;align-items:baseline}
+#keys dt{font-family:var(--mono);font-size:14px;color:#fff}
+#keys dt kbd{display:inline-block;min-width:26px;text-align:center;border:1px solid #3a4856;border-bottom-width:3px;border-radius:6px;padding:1px 7px;margin-right:4px}
+#keys dd{margin:0;color:#c5d0da}
+#keys .keys-x{margin-top:18px;font-family:var(--mono);font-size:12px;color:#7d8e9e}
 body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
 .dctl button{white-space:nowrap;background:rgba(15,20,26,.86);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 12px;font-size:15px;font-family:var(--mono);cursor:pointer}
 .dctl button:hover{background:#000}
@@ -87,7 +105,7 @@ body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
 #overview .a{font-family:var(--mono);font-size:13px;color:#9fb0c0;letter-spacing:.08em;text-transform:uppercase}
 #overview .t{font-size:17px;line-height:1.3}
 #overview .f{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#ff9b88;margin-top:2px}
-#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(15,20,26,.92);color:#fff;font-family:var(--mono);font-size:16px;padding:10px 20px;border-radius:99px;z-index:60;transition:opacity .6s;pointer-events:none}
+#hint{position:fixed;left:50%;bottom:72px;max-width:90vw;text-align:center;transform:translateX(-50%);background:rgba(15,20,26,.92);color:#fff;font-family:var(--mono);font-size:16px;padding:10px 20px;border-radius:99px;z-index:60;transition:opacity .6s;pointer-events:none}
 
 @media (prefers-reduced-motion:reduce){.progress,.dctl{transition:none}}
 
