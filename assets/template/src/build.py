@@ -54,6 +54,9 @@ def esc_script(text: str) -> str:
 def css(cfg: dict) -> str:
     tokens = "".join(f"{k}:{v};" for k, v in cfg["tokens"].items())
     parts = [rd(n) for n in CSS]
+    used = rd("slides.html") + (rd("figs.html") if os.path.exists(os.path.join(SRC, "figs.html")) else "")
+    if 'class="katex' in used:                                # formulas from figs_gen.tex(): fonts inlined, offline
+        parts.insert(-1, rd("katex/katex-embedded.css"))
     if tokens:
         parts.insert(1, ":root{" + tokens + "}")
     return "\n".join(parts)

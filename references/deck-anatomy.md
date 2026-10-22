@@ -14,6 +14,7 @@
   src/css/custom.css    deck-specific styles (edit this)
   src/js/anim.js transition.js tour.js presenter.js deck.js   engine; deck-specific scripts also go to src/js/
   src/build.py offline.py                        build
+  src/katex/            KaTeX for figs_gen.tex() (MIT; CSS with inlined fonts, added only when a formula is used)
   src/js/editor.js src/edits.py src/apply_edits.py   in-place text editing and write-back
   src/js/i18n.js src/i18n.py src/i18n/        languages: <lang>.txt, ui_<lang>.json; src/notes_<lang>.js
   embed/                interactive pages the deck embeds
@@ -60,6 +61,15 @@
 | Callout | `.take .tk-l p b .tk-s` | the conclusion |
 | Footer | `.src b`, `.ev.p/.a/.m/.i/.v/.n` | sources and evidence tags |
 | Notes in place | `.gapnote b`, `.pill(.red)`, `.label`, `.num`, `.hl`, `.mut`, `.ste` | details |
+| Blocks (default) | `.cols` / `.rows` > `.blk(.our)` > `.blk-k b` + `h3.blk-h`, `.sepT`, `.figcap`; `.story span(.on)` | numbered blocks with dividers; header tracker |
+| Key numbers | `.kpis .kpi(.red/.amb) .v small .l` | numbers above a figure |
+| Reading help | `ol.readlist li b`, `.insbox b` | "how to read it" beside a figure |
+| Insight cards | `.icards article .ic-top .ic-n h3 em ul.ic-why .ic-num(i, small) p .ic-dec b p` | conclusion slide |
+| Icons | `.icrow div svg.ico b span`; `figs_gen.icon(name, colour)` | things named by a picture |
+
+Starter slide 4 shows the block layout; starter slide 10 shows the insight cards.
+Formulas: `figs_gen.tex([...])` renders KaTeX at build time; build.py adds the KaTeX CSS (fonts inlined) only
+when the output uses it. Icons: `figs_gen.ICONS` holds 40×40 line icons; add new ones in the same style.
 
 Type scale on the 1920 stage: title 60, sub 28, body 24–28, small 21, footer 16. Do not go below 16 px.
 

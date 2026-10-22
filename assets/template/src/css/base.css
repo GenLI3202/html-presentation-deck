@@ -178,3 +178,73 @@ svg .mut{fill:var(--ink2)} svg .mut3{fill:var(--ink3)}
 [data-recap] [data-morph]{position:relative}
 .done-chip.pin{position:absolute;top:-14px;right:18px;z-index:2}
 .done-chip{display:inline-block;font-family:var(--mono);font-size:16px;letter-spacing:.06em;background:var(--ok);color:#fff;border-radius:99px;padding:4px 14px;width:max-content}
+
+/* ---------- Blocks: the default layout for a content slide ----------
+   A slide body is split into numbered blocks. Each block has a label (number + short name), a heading that
+   states its point, the content, and a one-line caption under each figure. Dividers separate the blocks:
+   .cols puts them side by side (vertical rules), .rows stacks them (horizontal rules). */
+.story{position:absolute;right:200px;top:62px;display:flex;font-family:var(--mono);font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.story span{padding:3px 12px;border-bottom:3px solid var(--rule)}
+.story span.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.cols{display:grid;height:100%;min-height:0}
+.cols>.blk{padding-right:30px;min-width:0}
+.cols>.blk:last-child{padding-right:0}
+.cols>.blk+.blk{border-left:2px solid var(--rule);padding-left:30px}
+.rows{display:flex;flex-direction:column;min-height:0}
+.rows>.blk+.blk{border-top:2px solid var(--rule);padding-top:16px;margin-top:16px}
+.blk{display:flex;flex-direction:column;gap:12px;min-height:0}
+.blk-k{font-family:var(--mono);font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);font-weight:600}
+.blk-k b{font-family:var(--num);font-size:24px;letter-spacing:0;color:#fff;background:var(--accent);border-radius:6px;padding:0 9px;margin-right:4px;display:inline-block;line-height:1.25}
+.blk-h{margin:0;font-size:27px;line-height:1.2;font-weight:700;color:var(--ink);letter-spacing:-.005em}
+.blk.our{background:var(--accent-soft);border-radius:12px;padding:16px 22px}
+.blk.our .blk-h,.blk.our .blk-k{color:var(--accent)}
+.cols>.blk.our+.blk,.cols>.blk+.blk.our{border-left:0}
+.blk>svg{display:block;width:100%;height:auto}
+.sepT{border-top:2px solid var(--rule);padding-top:16px;margin-top:auto}
+.figcap{margin:0;font-size:18px;line-height:1.3;color:var(--ink2);font-style:italic;border-left:3px solid var(--rule);padding-left:10px}
+
+/* Key numbers: a row of tiles; .red for our result, .amb for an opportunity or a price */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{border-radius:10px;padding:10px 16px;background:var(--tint)}
+.kpi .v{font-family:var(--num);font-size:46px;font-weight:600;line-height:1}
+.kpi .v small{font-size:22px;margin-left:4px}
+.kpi .l{font-size:18px;line-height:1.25;color:var(--ink2);margin-top:4px}
+.kpi.red{background:var(--accent-soft)} .kpi.red .v{color:var(--accent)}
+.kpi.amb{background:var(--amber-soft)} .kpi.amb .v{color:var(--amber)}
+
+/* "How to read it": numbered steps beside a figure, then one insight box */
+.readlist{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:20px;line-height:1.32}
+.readlist li::marker{color:var(--accent);font-weight:700}
+.insbox{background:var(--accent-soft);border-radius:8px;padding:9px 14px;font-size:20px;line-height:1.35}
+.insbox b{color:var(--accent)}
+
+/* Insight cards for the conclusion slide: insight (one red key word) → short phrases → number → decision */
+.icards{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:22px;flex:1;min-height:0}
+.icards article{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:#fff;border:1.5px solid var(--rule)}
+.ic-top{padding:18px 20px 14px;flex:1;display:flex;flex-direction:column;gap:9px}
+.ic-n{font-family:var(--num);font-size:22px;font-weight:600;color:var(--ink3)}
+.ic-n::before{content:"INSIGHT ";font-family:var(--mono);font-size:13px;letter-spacing:.12em}
+.ic-top h3{margin:0;font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em}
+.ic-top h3 em{font-style:normal;color:var(--accent)}
+.ic-why{list-style:none;margin:0;padding:0 0 0 12px;border-left:3px solid var(--rule);display:flex;flex-direction:column;gap:4px;font-size:18px;line-height:1.3}
+.ic-why li{position:relative;padding-left:16px}
+.ic-why li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:2px;background:var(--ink3)}
+.ic-num{font-family:var(--num);font-size:50px;font-weight:600;line-height:1;margin-top:auto;padding-top:6px;border-top:1.5px dashed var(--rule)}
+.ic-num small{font-size:24px;margin-left:6px}
+.ic-num i{font-style:normal;color:var(--ink3);font-size:40px}
+.ic-top p{margin:0;font-size:17px;line-height:1.35;color:var(--ink2)}
+.ic-dec{background:var(--accent);color:#fff;padding:12px 20px 14px}
+.ic-dec b{display:block;font-size:22px;line-height:1.2;margin-bottom:4px}
+.ic-dec b::before{content:"DECISION";font-family:var(--mono);font-size:13px;letter-spacing:.12em;font-weight:500;display:block;color:#ffd6cc;margin-bottom:3px}
+.ic-dec p{margin:0;font-size:16.5px;line-height:1.32}
+
+/* Line icons (icons.svg.html via figs_gen.icon): 40×40 viewBox, stroke only, in a row with a name and one line */
+.icrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.icrow>div{display:flex;flex-direction:column;gap:4px;font-size:18px;line-height:1.3}
+.icrow svg{width:48px;height:48px}
+svg.ico{fill:none}                       /* overrides the svg default fill; parts that need a fill set fill="currentColor" */
+.icrow b{font-size:19px}
+.icrow span{color:var(--ink2)}
+
+/* KaTeX output (figs_gen.tex) inherits the text colour */
+.katex{font-size:1.05em}

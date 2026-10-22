@@ -43,7 +43,13 @@
       limits: [["i", "The chart is a synthetic example."]],
       src: ["srcA"], figs: ["full"]
     },
-    /* 4 · Rules */
+    /* 4 · Blocks */
+    {
+      say: "One finding, three blocks that prove it.",
+      cue: ["Block 1: the key numbers first, then the figure.", "Block 2: read the figure in order; stop at the insight.", "Press R for the details behind the numbers."],
+      land: "", limits: [], src: ["srcA"], figs: ["detail"]
+    },
+    /* 5 · Rules */
     {
       say: "Three rules, one result each.",
       cue: ["Clicks: press → three times. Each press shows one rule. Press → again for the takeaway."],
@@ -51,7 +57,7 @@
       limits: [["i", "The result column is my inference."]],
       src: ["srcA"], figs: ["detail"]
     },
-    /* 5 · Gaps */
+    /* 6 · Gaps */
     {
       say: "The public work stops in two places.",
       cue: ["Click a card to open its detail. Esc closes it. The button jumps to the matching question."],
@@ -59,21 +65,27 @@
       limits: [["i", "“Gap” means: not found in the sources searched."]],
       src: ["srcB"], figs: []
     },
-    /* 6 · Questions */
+    /* 7 · Questions */
     {
       say: "Two questions follow from the gaps.",
       cue: ["Press →. The Q1 card turns into the header of the next slide. Q1 → Q2 slides in; the strip shows where we are."],
       land: "", limits: [], src: [], figs: []
     },
-    /* 7 · Q1 */
+    /* 8 · Q1 */
     {
       say: "Q1 in one sentence.",
       cue: ["Clicks: press → three times: motivation, measures, opportunity."],
       land: "", limits: [], src: ["internal"], figs: []
     },
-    /* 8 · Q2 */
+    /* 9 · Q2 */
     { say: "Q2 in one sentence.", cue: ["Clicks: press → once. The chain enters from left to right."], land: "", limits: [], src: [], figs: [] },
-    /* 9 · Next steps */
+    /* 10 · Insights */
+    {
+      say: "Three insights. Each one gives one decision.",
+      cue: ["Read each card from top to bottom: insight, the number, the decision."],
+      land: "Repeat the three verbs.", limits: [["i", "The decisions are our recommendation."]], src: [], figs: []
+    },
+    /* 11 · Next steps */
     {
       say: "Close with the ask.",
       cue: ["Read the timeline from left to right. Stop at the key milestone."],

@@ -51,7 +51,51 @@
   <div class="src"><b>Sources</b><span>Source A 2026 · Source B 2026</span><span class="ev p">Primary</span></div>
 </section>
 
-<!-- ===================== 4 · ROWS THAT ENTER ONE BY ONE ===================== -->
+<!-- ===================== 4 · BLOCKS: THE DEFAULT CONTENT LAYOUT ===================== -->
+<!-- Numbered blocks: label (number + short name) → heading that states the point → content → one-line caption
+     under each figure. .cols = side by side with vertical rules, .rows = stacked with horizontal rules.
+     .story in the header shows where the talk is (one span per act, "on" for this one). Key numbers in .kpis;
+     main figure + numbered "how to read it" + one insight box when a figure needs reading help.
+     The details go to reference figures (R): keep only the key numbers and a hint here. -->
+<section class="slide" data-title="Blocks: one point per block" data-act="1 · The world" data-time="2">
+  <div class="kick">Act 1<i>·</i>The world</div>
+  <div class="story"><span class="on">World</span><span>Gap</span><span>Our work</span></div>
+  <h2 class="ttl">The title states the finding of the whole slide</h2>
+  <div class="body with-take">
+    <div class="cols" style="grid-template-columns:1.6fr 1fr">
+      <section class="blk">
+        <div class="blk-k"><b>1</b> · Short block name</div>
+        <h3 class="blk-h">The heading states what this block proves</h3>
+        <div class="kpis">
+          <div class="kpi"><div class="v">4.7<small>unit</small></div><div class="l">What it is, with its scale</div></div>
+          <div class="kpi red"><div class="v">94<small>%</small></div><div class="l">Our result</div></div>
+          <div class="kpi amb"><div class="v">12<small>%</small></div><div class="l">The price or the opportunity</div></div>
+        </div>
+        <div class="card flat fill"><p class="body-m mut">Main figure here (inline SVG). Pick the form that fits the data.</p></div>
+        <p class="figcap">One sentence: what the figure shows and how to read it.</p>
+      </section>
+      <div class="rows blk">
+        <section class="blk">
+          <div class="blk-k"><b>2</b> · How to read it</div>
+          <h3 class="blk-h">Read the figure from left to right</h3>
+          <ol class="readlist"><li><b>First part.</b> What it means.</li><li><b>Second part.</b> What it means.</li></ol>
+          <p class="insbox"><b>Insight:</b> one plain sentence.</p>
+        </section>
+        <section class="blk">
+          <div class="blk-k"><b>3</b> · Short block name</div>
+          <div class="icrow">
+            <div><svg class="ico" viewBox="0 0 40 40" aria-hidden="true" style="color:#2f67a6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24h32l-5 9H9zM12 24v-8h14v8M18 16v-7h5v7M4 37c4-2 8 2 12 0s8 2 12 0 8 2 8 0"/></svg><b>Ships</b><span>one line</span></div>
+            <div><svg class="ico" viewBox="0 0 40 40" aria-hidden="true" style="color:#2f67a6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h18a6 6 0 0 1 6 6v3M10 8v8M6 8h8"/><path d="M28 26c-3 4-3 6 0 7s3-3 0-7z" fill="currentColor"/></svg><b>Water</b><span>one line</span></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">So</span><p>One sentence with the <b>key words</b>.</p></div>
+  <div class="src"><b>Sources</b><span>Source A 2026 · press R for the details</span><span class="ev p">Primary</span></div>
+</section>
+
+<!-- ===================== 5 · ROWS THAT ENTER ONE BY ONE ===================== -->
 <section class="slide" data-title="Rules and their results, step by step" data-act="1 · The world" data-time="2">
   <div class="kick">Act 1<i>·</i>The world</div>
   <h2 class="ttl">Each rule has one clear result</h2>
@@ -66,7 +110,7 @@
   <div class="src"><b>Sources</b><span>Rule documents, 2026</span><span class="ev p">Primary</span><span class="ev i">Results: inference</span></div>
 </section>
 
-<!-- ===================== 5 · BREAK CARDS WITH ZOOM DETAILS ===================== -->
+<!-- ===================== 6 · BREAK CARDS WITH ZOOM DETAILS ===================== -->
 <section class="slide" data-title="Where the public work stops" data-act="2 · The gap" data-time="2">
   <div class="kick">Act 2<i>·</i>The gap</div>
   <h2 class="ttl">The public work stops in two places. Our work targets both.</h2>
@@ -107,7 +151,7 @@
   </div></template>
 </section>
 
-<!-- ===================== 6 · OVERVIEW (→ morphs the Q1 card into the header of slide 7) ===================== -->
+<!-- ===================== 7 · OVERVIEW (→ morphs the Q1 card into the header of slide 7) ===================== -->
 <section class="slide" data-title="Two research questions" data-act="3 · Our work" data-time="1">
   <div class="kick">Act 3<i>·</i>Our work</div>
   <h2 class="ttl">Two research questions</h2>
@@ -121,7 +165,7 @@
   <div class="src"><b>Sources</b><span>…</span><span class="ev i">Inference</span></div>
 </section>
 
-<!-- ===================== 7 · PART 1: MOTIVATION / MEASURES / OPPORTUNITY ===================== -->
+<!-- ===================== 8 · PART 1: MOTIVATION / MEASURES / OPPORTUNITY ===================== -->
 <section class="slide" data-strip="qs" data-strip-label="Q1" data-title="Q1 · Short name" data-act="3 · Our work" data-time="1.5">
   <div class="kick">Act 3<i>·</i>Our work<i>·</i>Question 1 of 2</div>
   <div class="part-head" data-morph="q1"><b>Q1</b><span>Short name</span></div>
@@ -137,7 +181,7 @@
   <div class="src"><b>Sources</b><span>…</span><span class="ev p">Rules</span><span class="ev i">Approach: inference</span></div>
 </section>
 
-<!-- ===================== 8 · PART 2: CHAIN ===================== -->
+<!-- ===================== 9 · PART 2: CHAIN ===================== -->
 <section class="slide" data-strip="qs" data-strip-label="Q2" data-enter="push" data-title="Q2 · Short name" data-act="3 · Our work" data-time="1.5">
   <div class="kick">Act 3<i>·</i>Our work<i>·</i>Question 2 of 2</div>
   <div class="part-head" data-morph="q2"><b>Q2</b><span>Short name</span></div>
@@ -148,7 +192,38 @@
   <div class="src"><b>Sources</b><span>…</span><span class="ev i">Inference</span></div>
 </section>
 
-<!-- ===================== 9 · CLOSING ===================== -->
+<!-- ===================== 10 · CONCLUSIONS: INSIGHT CARDS ===================== -->
+<!-- An insight is a plain claim that changes what we do, not a summary. Card: title with one red key word (em)
+     → three short phrases → the number behind it (with its scale) → the decision (red band). -->
+<section class="slide" data-enter="fade" data-title="Insights and decisions" data-act="3 · Our work" data-time="3">
+  <div class="kick">Act 3<i>·</i>So what</div>
+  <h2 class="ttl">The title names what the insights have in common</h2>
+  <div class="body with-take" style="margin-top:20px">
+    <div class="rows" style="height:100%">
+      <section class="blk" style="flex:1;min-height:0">
+        <div class="blk-k"><b>1</b> · Three insights, three decisions</div>
+        <div class="icards">
+          <article><div class="ic-top"><span class="ic-n">1</span><h3>The <em>key word</em> in a plain claim</h3>
+            <ul class="ic-why"><li>Short phrase</li><li>Short phrase</li><li>Short phrase</li></ul>
+            <div class="ic-num">3.3% <i>→</i> 0.6%</div><p>What the number is, and for which case.</p></div>
+            <div class="ic-dec"><b>Decision in four words</b><p>What we do, in one line.</p></div></article>
+          <article><div class="ic-top"><span class="ic-n">2</span><h3>A second <em>plain</em> claim</h3>
+            <ul class="ic-why"><li>Short phrase</li><li>Short phrase</li><li>Short phrase</li></ul>
+            <div class="ic-num">71<small>unit/day</small></div><p>Its scale: 12% of the saving in this case.</p></div>
+            <div class="ic-dec"><b>Decision in four words</b><p>What we do, in one line.</p></div></article>
+          <article><div class="ic-top"><span class="ic-n">3</span><h3>A third <em>plain</em> claim</h3>
+            <ul class="ic-why"><li>Short phrase</li><li>Short phrase</li><li>Short phrase</li></ul>
+            <div class="ic-num">Dec 2027</div><p>Why this date matters.</p></div>
+            <div class="ic-dec"><b>Decision in four words</b><p>What we do, in one line.</p></div></article>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="take"><span class="tk-l">Close</span><p>Three <b>verbs</b> that repeat the decisions.</p></div>
+  <div class="src"><b>Sources</b><span>…</span><span class="ev i">Decisions: inference</span></div>
+</section>
+
+<!-- ===================== 11 · CLOSING ===================== -->
 <section class="slide" data-enter="fade" data-title="Next steps" data-act="3 · Our work" data-time="1.5">
   <div class="kick">Act 3<i>·</i>Next steps</div>
   <h2 class="ttl">The title states the decision or the ask</h2>
