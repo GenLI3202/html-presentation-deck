@@ -11,12 +11,30 @@
 - Numbers with units and a source. Ranges as "60–150 s". Company numbers are claims: tag them `m`.
 - Lists: parallel form; each item starts the same way.
 
+## Plain words first
+
+The audience is often a manager and often not a native speaker. Clear beats clever.
+- No metaphors, slogans or aphorisms ("the site sets the value, not the algorithm", "the product is a price").
+  Write the literal claim: "The site decides the value of EMPC".
+- Short phrases beat long sentences. Plain, even spoken words are fine. Long text that sounds detailed but says
+  little is the worst case.
+- Explain each technical term at its first use, in a few words. The audience is not a peer group.
+- Give each absolute number its scale: the case size, or a share ("71 EUR/day = 12% of the saving on a 12 MW
+  campus"). Without it, the number means nothing.
+- Design slides use symbols or orders of magnitude (Δt, H; 15 min, 1 h, 24–48 h), not the parameters of one case.
+
 ## Slide text
 
 - Title = the finding, in one line, ideally under 70 characters. Not "Market overview" but
   "Compute is moving. Grid connection is the bottleneck."
 - Sub = context or the question, one sentence.
 - Body = short phrases, not paragraphs. Bold the key word, not whole sentences.
+- Blocks: each block has a heading that states its point (deck-anatomy.md, "Blocks").
+- Every figure and table has a one-sentence caption (`.figcap`). Axes say what the value is a share of, the unit,
+  and where 100% is.
+- The conclusion slide gives insights, not a summary. An insight is a plain claim that changes what we do; test:
+  would the audience act differently after it? Pattern: insight → the number behind it → our decision
+  (insight cards). Mark one key word per insight in red; keep the decision band as the strong red element.
 - Take = the conclusion, one sentence, key words in `<b>` (red). Optional `tk-s` line for a consequence.
 - Footer `.src` = small-print sources, then the evidence tags that apply. Keep it on every content slide.
 - Our work and key messages use the accent colour. Opportunity uses amber. Do not use more than two accent

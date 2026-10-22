@@ -17,6 +17,10 @@ Flag conflicts between sources to the user instead of choosing silently.
 Ask also: audience, what they know, the decision or belief the talk should produce, total minutes, speaker name,
 date, language (default English with STE), and whether the user has terms to keep consistent.
 
+Say once, early: when the talk needs little interaction, a native slide deck (the Slides Artifact type, which also
+downloads as .pptx) is faster. This skill pays off when the talk embeds interactive pages, live figures or
+reference figures. When the final file must be PowerPoint, polish in HTML first and convert at the end.
+
 ## 1 · Storyline
 
 Send one compact proposal:
@@ -26,6 +30,22 @@ Send one compact proposal:
 
 Rules: one message per slide; titles state the finding, not the topic; a hinge slide connects the world to our
 work; each interactive page appears where it proves a claim. Ask the user to approve or change the structure.
+
+For a technology or product-positioning talk, check the storyline against three directions plus feasibility:
+- horizontal: competitors and other solutions today;
+- vertical: history and future (generations, horizons, standards that are coming);
+- lateral: other industries with the same problem, and what they learned;
+- feasibility: what it takes, the risks, the first step.
+Reviewers ask for these; a gap in one of them is the first question in the room.
+
+Plan disclosure in two layers: the slide carries the claim, the key numbers and a hint ("press R"); the reference
+figures (R) carry the depth. Plan the reference figures as answers to the questions the audience will ask
+(method, assumptions, model validity, data, details), not as spare figures. A slide that tries to show
+everything is the most common reason for a crowded deck.
+
+Prefer a picture to words where a picture names a thing faster: icons for industries, assets and actors,
+diagrams for flows, charts for numbers. Choose the chart form for the data and the question; no form is the
+default (a waterfall explains a sum of causes, a slope or bar pair a before/after, a line a trend).
 
 ## 2 · Slide text
 
@@ -42,8 +62,10 @@ is approved. Send the term list first (gate). Then follow languages.md. Translat
 ## 3 · Build
 
 1. `python3 $SK/scripts/init_deck.py <deck> --title "…"` (add `--project-root` for the Browser preview config).
-2. Copy embed pages into `embed/` and register each in `deck.config.json` `embeds` (embeds.md).
-3. Write `src/slides.html` from the approved text. Start from the starter patterns (deck-anatomy.md).
+2. Copy embed pages into `embed/` and register each in `deck.config.json` `embeds` (embeds.md). Ask whether the
+   embedded pages should take the deck style: it looks better, but rebuilding a page costs time and tokens.
+3. Write `src/slides.html` from the approved text. Start from the starter patterns (deck-anatomy.md); the block
+   layout (numbered blocks, point-stating headings, dividers, story tracker) is the default for content slides.
    Delete starter slides you do not use; keep `notes.js` in step.
 4. Figures: inline SVG on the slide for main figures; `figs_gen.py` for backup figures. Follow the diagram rules
    in notes-figures.md. Mark synthetic or schematic figures as such on the slide.
@@ -56,6 +78,7 @@ is approved. Send the term list first (gate). Then follow languages.md. Translat
 Write `notes.js`: one entry per slide (notes-figures.md). Say = the opening line. Points = what to say and what to
 click. End with = the bridge to the next slide. Limits = what the slide does not prove, tagged. Sources = keys into
 the source table, with working URLs. Check the URLs (`curl -sI`); report 403s as "probably a bot block".
+For a light fact check (numbers, titles, dates, URLs), a subagent on a smaller, cheaper model is enough.
 
 ## 5 · Motion (gate)
 
@@ -69,7 +92,8 @@ Add click cues to the notes of every slide with motion ("Clicks: press → three
 
 ## 6 · Verify
 
-- `check_deck.cjs` must report no issues. Look at `contact.png` yourself.
+- `check_deck.cjs` must report no issues. Look at `contact.png` yourself, and at the key slides at full size
+  (`--slides 3,6`). Read the "align" notes: cards side by side whose numbers or bands sit at different heights.
 - Click through: every build step, every zoom (open, Esc, `data-goto`), the tour forwards and backwards,
   the presenter window (P), the reference figures (R), full screen (F), overview (O).
 - Open `preview.html` from disk with the network off once (the checker does this).

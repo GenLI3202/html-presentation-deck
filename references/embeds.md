@@ -42,3 +42,11 @@ Pages with their own data (GeoJSON, embedded vector tiles via a custom protocol)
 
 An iframe does not print reliably. The PDF pipeline replaces each embed frame with a captured image and adds
 supplement pages for other states (pdf-storyboard.md).
+
+## Restyling an embedded page (optional)
+
+Pages in the deck style look like one deck, but a rebuild costs time and tokens; ask the user first.
+When yes: keep the content, rebuild the page on one shared token file (the deck's colours, fonts, block labels),
+and add `[hidden]{display:none!important}` to it (a `display:flex` rule otherwise shows hidden panels).
+Store HTML fragments that the page's script inserts in `<template>` blocks, not inside JSON strings.
+After each rebuild, copy the page into `embed/` again.

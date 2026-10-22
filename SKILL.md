@@ -25,19 +25,23 @@ The deck is HTML, not PowerPoint: a fixed 1920×1080 stage, one `<section class=
    links, notes or extra deliverables on your own initiative. When you see a useful extra, offer it in one line.
 2. **Nothing about Claude in deliverables.** No claude.ai or Artifact links, no session paths, no "made with" lines.
    `build.py` stops when an output or an embed page names Claude; clean the source, do not bypass the check.
-3. **Write in ASD-STE100** (English) for slide text and notes. Chinese decks use the concise rules in
+3. **Write in ASD-STE100** (English) for slide text and notes, in plain words: no metaphors or slogans, short
+   phrases, each number with its scale. Chinese decks use the concise rules in
    [references/writing.md](references/writing.md). Propose text first; implement after the user says "ok".
 4. **Compile, do not research.** Use the selected materials. Light gap research is allowed (a missing source link,
    a number check, an evidence tag). Tell the user about every new claim and tag it.
 5. **Reuse interactive pages** as embeds with injected CSS. Do not redraw what already exists.
-6. **Conclusions stand out:** the `.take` callout (large type on light red), never a dark bar.
+6. **Conclusions stand out:** the `.take` callout (large type on light red), never a dark bar. The closing slide
+   gives insights that change what we do (insight → number → decision), not a summary.
+7. **Two layers.** The slide carries the claim, the key numbers and "press R"; reference figures carry the depth.
+   Content slides use numbered blocks with point-stating headings and dividers; every figure has a caption.
 
 ## Workflow and gates
 
 | Step | What you do | Gate: ask the user |
 |---|---|---|
-| 0 Materials | Ask where the existing outputs are and which ones to use. Suggest copying the selection into `<deck>/materials/` and fill `materials/INDEX.md`. | Locations, scope, copy into one folder? |
-| 1 Storyline | Core argument (about 3 claims) → acts → slide list with minutes per slide and the material per slide. | Approve the structure and the time budget. |
+| 0 Materials | Ask where the existing outputs are and which ones to use. Suggest copying the selection into `<deck>/materials/` and fill `materials/INDEX.md`. Say that a native Slides Artifact is faster when little interaction is needed. | Locations, scope, copy into one folder? |
+| 1 Storyline | Core argument (about 3 claims) → acts → slide list with minutes per slide and the material per slide. Positioning talks: check horizontal, vertical, lateral views and feasibility. Plan the reference figures. | Approve the structure and the time budget. |
 | 2 Slide text | Per slide: title (states the finding), sub, body points, take, footer sources + evidence tags. STE. | "ok" per slide or per act, then implement. |
 | 2b Languages | Only when the talk needs a second language: term list first, then translate with `i18n.py todo`. | Approve the term list; review the translated deck. |
 | 3 Build | `init_deck.py`, write `slides.html`, configure embeds, draw figures, build, run `check_deck.cjs`. | — |
@@ -58,7 +62,7 @@ install once with `npm i --prefix <scratch dir> puppeteer-core@23.11.1`, then ru
 python3 $SK/scripts/init_deck.py <deck folder> --title "Title" [--lang zh] [--project-root <repo>]
 python3 <deck>/src/figs_gen.py                 # after changing reference figures
 python3 <deck>/src/build.py                    # writes index.html (Artifact) and preview.html (offline)
-node $SK/scripts/check_deck.cjs <deck> <out>   # overflow, overlap, errors, network, Claude mentions, contact.png
+node $SK/scripts/check_deck.cjs <deck> <out> [--slides 3,6]   # overflow, overlap, align, errors, network, Claude mentions, contact.png, full-size shots
 node <deck>/pdf/make_pdf.cjs                   # PDF handout from deck.config.json "pdf"
 node <deck>/pdf/make_script.cjs                # speaker script, A4, one page per slide
 python3 <deck>/src/apply_edits.py edits.json   # merge wording edits made in the page (E), then rebuild

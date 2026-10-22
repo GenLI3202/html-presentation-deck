@@ -25,10 +25,17 @@
 | A screenshot showed two slides on top of each other | It was taken during a transition | Call `DeckTransition.finish()` after `show()` before measuring or capturing |
 | A data morph looked like a jump | An ease-out curve does most of the change in the first 100 ms | Morph uses ease-in-out over 650 ms and cross-fades each pair |
 | Interactive content lost in the PDF | One flattened view | Storyboard: snapshot + supplement pages + detail pages |
+| Formulas showed as ASCII and wrapped | Plain text maths | `figs_gen.tex()` (KaTeX at build time); `\mathrm{}` for named superscripts |
+| Icons rendered as black blobs | `svg{fill:var(--ink)}` beats a `fill="none"` attribute | `svg.ico{fill:none}`; `figs_gen.icon()` sets it |
+| An embed's script broke after data was added | HTML with quotes inside a JSON string | Keep HTML fragments in `<template>` blocks |
+| A hidden panel in an embed showed | `display:flex` overrides the `hidden` attribute | `[hidden]{display:none!important}` |
+| Numbers in a row of cards sat at different heights | One card had a longer line above | Shorten the line; check_deck reports it as an "align" note |
+| The callout ran into the footer | The sources line wrapped to two lines | Keep the footer to one line; details go to the notes |
+| Edit text did nothing useful on the Artifact | No db capability: browser storage only, downloads blocked | The editor turns itself off; publish with db + user to edit online |
 
 Working habits that avoid most of these:
 - Build and run `check_deck.cjs` after each batch of changes, not at the end.
-- Look at `contact.png` and at single slides at full size; do not trust the code alone.
+- Look at `contact.png` and at single slides at full size (`check_deck.cjs … --slides 3,6`); do not trust the code alone.
 - In the Browser pane, use `preview_start` with the deck's launch config; the Browser pane is often hidden, so
   prefer `read_page` and JavaScript checks over waiting for animations.
 - Change the source (`src/`, `embed/`, config), never the outputs (`index.html`, `preview.html`, `figs.html`).

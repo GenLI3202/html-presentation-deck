@@ -36,8 +36,10 @@ notes in large type, with Limits and Sources folded.
 | `clone` | `s`: selector, `i`: index | an enlarged copy of a figure already on the slide |
 | `embed` | `e`: embed key | the full interactive page (register a full-size key in `embeds`) |
 
-Backup figures answer likely questions: dates behind a rule, a fault chain, model parameters, a worked example.
-Make one only when the user agrees it is needed. The viewer scales each figure to the screen; arrows step
+Reference figures are the second layer of the talk: the slide shows the claim and the key numbers, the
+reference figures answer the questions (method, assumptions, model validity and sensitivity, data, details,
+the full interactive page). Use them generously, and point to them on the slide ("press R"). Agree the list
+with the user. Formulas: `tex()` in figs_gen.py (KaTeX at build time, offline). The viewer scales each figure to the screen; arrows step
 through the figures of the slide; Esc closes.
 
 ## Diagram rules (slide SVGs and figs_gen.py)
