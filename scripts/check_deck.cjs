@@ -7,14 +7,32 @@
    A deck with several languages is checked in each one (Chinese text runs longer or shorter than English);
    text units without a translation are listed as a note, not as an issue.
    Writes contact.png (all slides) into the output folder, and contact-<lang>.png for each other language.
-   Run:  NODE_PATH=<dir with puppeteer-core> node check_deck.cjs <deck folder> [output folder]
+   Notes (not issues): "align" when cards side by side have the same part (a number, a decision band) at
+   different heights, usually because one card has a longer line above it.
+   Run:  NODE_PATH=<dir with puppeteer-core> node check_deck.cjs <deck folder> [output folder] [--slides 3,6]
+   --slides writes slide-<n>.png at full size (1920 × 1080) for a close look at single slides.
    Exit code 1 when an issue is found. Set CHROME to the Chrome binary when it is not in the default place. */
-const puppeteer = require("puppeteer-core");
+/* puppeteer-core: NODE_PATH first, then the global npm folder; otherwise say how to install it. */
+function loadPuppeteer() {
+  try { return require("puppeteer-core"); } catch (e) { /* try the global folder */ }
+  try {
+    const g = require("child_process").execSync("npm root -g", { encoding: "utf8" }).trim();
+    return require(require("path").join(g, "puppeteer-core"));
+  } catch (e) {
+    console.error("puppeteer-core not found. Install it once: npm i --prefix <scratch dir> puppeteer-core@23.11.1\n"
+      + "then run with NODE_PATH=<scratch dir>/node_modules");
+    process.exit(2);
+  }
+}
+const puppeteer = loadPuppeteer();
 const fs = require("fs"), path = require("path"), url = require("url");
 
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const DECK = path.resolve(process.argv[2] || ".");
-const OUT = path.resolve(process.argv[3] || DECK);
+const ARGS = process.argv.slice(2);
+const flag = (k) => { const i = ARGS.indexOf(k); return i < 0 ? null : ARGS.splice(i, 2)[1]; };
+const SHOTS = new Set((flag("--slides") || "").split(",").filter(Boolean).map(Number));   // --slides 3,6: full-size PNGs
+const DECK = path.resolve(ARGS[0] || ".");
+const OUT = path.resolve(ARGS[1] || DECK);
 const FILE = path.join(DECK, "preview.html");
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -44,6 +62,23 @@ function measure() {
     const cs = getComputedStyle(e);
     if (!/hidden|auto|scroll|clip/.test(cs.overflow + cs.overflowY)) continue;
     if (e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2) issues.push(["clipped", name(e), text(e), e.scrollHeight + " > " + e.clientHeight]);
+  }
+  /* align: siblings with the same classes in one row; a part that each of them has once should sit at one height */
+  const seen = new Set();
+  for (const e of slide.querySelectorAll("*")) {
+    const p = e.parentElement;
+    if (!p || seen.has(p) || e.closest("svg, template, iframe, .zl") || p.matches(".cols, .rows")) continue;   // blocks differ on purpose
+    seen.add(p);
+    const sig = k => k.tagName + "." + (typeof k.className === "string" ? k.className : "");
+    const kids = Array.from(p.children).filter(k => visible(k) && sig(k) === sig(p.children[0]));
+    if (kids.length < 2 || kids.some(k => Math.abs(R(k).top - R(kids[0]).top) > 2)) continue;
+    const once = k => { const m = {}; k.querySelectorAll("[class]").forEach(d => { if (!d.closest("svg")) { const c = typeof d.className === "string" && d.className.split(/\s+/)[0]; if (c) m[c] = (m[c] || 0) + 1; } }); return m; };
+    const maps = kids.map(once);
+    for (const c of Object.keys(maps[0])) {
+      if (!maps.every(m => m[c] === 1)) continue;
+      const tops = kids.map(k => R(k.querySelector("." + CSS.escape(c))).top);
+      if (Math.max(...tops) - Math.min(...tops) > 4) { issues.push(["align", "." + c, text(kids[0].querySelector("." + CSS.escape(c))), "tops differ by " + Math.round(Math.max(...tops) - Math.min(...tops)) + " px"]); }
+    }
   }
   return issues;
 }
@@ -78,7 +113,8 @@ function measure() {
         await pg.evaluate(k => { window.__deck.show(k); if (window.DeckTransition) window.DeckTransition.finish(); }, i);
         const embeds = await pg.evaluate(() => document.querySelectorAll(".slide.on [data-embed]").length);
         await sleep(embeds && lang === source ? 3500 : 400);
-        for (const [kind, el, txt, info] of await pg.evaluate(measure)) problems.push(`${tag}slide ${i + 1}: ${kind} ${el} "${txt}" (${info})`);
+        for (const [kind, el, txt, info] of await pg.evaluate(measure)) (kind === "align" ? notesOut : problems).push(`${tag}slide ${i + 1}: ${kind} ${el} "${txt}" (${info})`);
+        if (SHOTS.has(i + 1) && lang === source) { fs.mkdirSync(OUT, { recursive: true }); await pg.screenshot({ path: path.join(OUT, "slide-" + (i + 1) + ".png") }); }
         shots.push("data:image/jpeg;base64," + Buffer.from(await pg.screenshot({ type: "jpeg", quality: 70 })).toString("base64"));
       }
       sheets[lang === source ? "contact.png" : "contact-" + lang + ".png"] = shots;
