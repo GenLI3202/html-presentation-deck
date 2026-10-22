@@ -6,7 +6,8 @@
    Where edits are kept:
      - on a hosted Artifact that declares the db capability: the "edits" collection, one document per element and
        language, shared by everyone who opens the page; only the owner and editors can write.
-     - anywhere else (preview.html from disk): this browser's storage; "Export" downloads edits.json.
+     - preview.html from disk: this browser's storage; "Export" downloads edits.json.
+     - a hosted Artifact without the db capability: editing is off (nowhere to keep the edits).
    src/apply_edits.py writes edits back: the source language into slides.html and notes.js, other languages into
    src/i18n/<lang>.txt and src/notes_<lang>.js. Used by deck.js. */
 (function () {
@@ -260,8 +261,11 @@
   watch.observe(document.body, { childList: true, subtree: true });
   document.addEventListener("langchange", () => { closeSvg(); marks(); bar(); if (on) arm(); });
   if (window.claude && typeof window.claude.use === "function") {
+    /* A hosted Artifact without the db capability cannot keep edits: browser storage is lost and the viewer
+       blocks downloads, so the editor turns itself off there. */
+    const noStore = () => { canWrite = false; setOn(false); bar(); };
     window.claude.use("db").then(async d => {
-      if (!d) return;
+      if (!d) { noStore(); return; }
       const user = await window.claude.use("user").catch(() => null);
       db = d; mode = "db";
       if (user && typeof user.canEdit === "function") canWrite = !!(await user.canEdit());
@@ -270,7 +274,7 @@
       const snap = await db.collection("edits").get();
       adopt(snap.docs.map(x => x.data()));
       if (window.__deck) window.__deck.show(window.__deck.current(), true);
-    }).catch(() => { /* stay local */ });
+    }).catch(noStore);
   }
   window.DeckEdit = { toggle: () => setOn(!on), on: () => on, edits: () => Object.values(edits) };
 })();

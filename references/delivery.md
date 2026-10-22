@@ -28,6 +28,9 @@ Publish `index.html` with the Artifact tool; pass embed pages in `files`, for ex
 `{"embed/map_en.html": "<deck>/embed/map_en.html"}`. For each update, republish to the same URL. When the publish
 is refused because a published file changed or was not read, read that file with `action: "read"` and `path`,
 compare it with the local copy, then publish again. The Artifact is private until the user shares it.
+Without the db capability the text editor turns itself off on the Artifact (nowhere to keep edits; the viewer
+blocks downloads), so the publish warning about `db` is expected. Declare db + user only when the user wants
+online editing.
 
 ## Editing text in place (E)
 
