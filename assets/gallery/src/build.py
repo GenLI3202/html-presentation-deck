@@ -82,7 +82,7 @@ def body(cfg: dict, tr: dict) -> str:
                "<script>window.NOTES_TR={};</script>"]
     scripts += ["<script>\n" + rd(n) + "\n</script>" for n in names]
     multi = len(cfg["languages"]) > 1
-    hint = "← → move · R reference figures · ? all keys"
+    hint = "← → or click to move · Right-click menu · R reference figures · ? all keys"
     figs = rd("figs.html") if os.path.exists(os.path.join(SRC, "figs.html")) else ""
     return f"""<style>
 {css(cfg)}
@@ -113,6 +113,7 @@ def body(cfg: dict, tr: dict) -> str:
   <button type="button" id="bMore" aria-expanded="false" aria-controls="dMore" aria-label="More controls">⋯</button>
 </div>
 <div id="keys" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden><div class="keys-in"></div></div>
+<div id="ctx" role="menu" aria-label="Slide menu" hidden></div>
 <div id="viewer" role="dialog" aria-modal="true" aria-label="Reference figure" hidden>
   <div class="vw-bar">
     <div class="vw-t"><span class="vw-k" data-ui="Reference figure">Reference figure</span><b class="vw-name"></b><span class="vw-desc"></span></div>

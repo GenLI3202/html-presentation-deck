@@ -104,6 +104,8 @@ language switch; the first entry is the source language (languages.md). `"editin
 E edit text · L language · R first reference figure · F full screen (button shows "Exit full screen") · Esc closes the top layer.
 ? shows every shortcut. The toolbar (`.dctl`, bottom right) shows while the mouse moves and hides at rest: Overview, Full screen and ⋯ (the other controls fold behind it; the choice is remembered). On a slide with reference figures a red "▣ N reference figures · R" button appears; the presenter window lists them at the top of the notes. Keys pressed inside an embed are forwarded.
 
+**Mouse.** A left click on the slide goes to the next build step or slide (same as →). A right click opens the quick menu (next, previous, first, last, reference figures, overview, notes, presenter, full screen, edit text, shortcuts); Shift + right click keeps the browser menu. The click never fires on interactive content: links, buttons, inputs, `[data-zoom]`, `[data-goto]`, `[data-tour-to]`, `.zl`, `.frame` and embed iframes, and it does nothing while text is selected, while a layer (overview, reference figure, shortcuts, zoom, edit mode) is open, or just after a menu closes. To exclude a custom control, add it to `INTERACTIVE_SEL` in `src/js/deck.js`. The key forwarder inside an embed also forwards the right click (the menu opens at the pointer) and closes the menu on any click in the embed.
+
 ## Engine hooks
 
 `window.__deck = { key, show(i, keepHash, mode), slides, mount, current }`; `show(i, false, "start")` enters with

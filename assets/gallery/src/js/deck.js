@@ -37,7 +37,7 @@
   const INL = window.__EMBED || {};
   const load = url => INL[url] != null ? Promise.resolve(INL[url]) : fetch(url, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
   const pageUrl = url => INL[url] != null ? URL.createObjectURL(new Blob([INL[url]], { type: "text/html" })) : url;
-  const FWD = "<script>addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(/INPUT|TEXTAREA|SELECT/.test(t))return;if(['ArrowLeft','ArrowRight','PageUp','PageDown','Escape','o','O','n','N','p','P','r','R','f','F'].indexOf(e.key)>-1){try{parent.__deck.key(e);e.preventDefault()}catch(x){}}});<\/script>";
+  const FWD = "<script>addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(/INPUT|TEXTAREA|SELECT/.test(t))return;if(['ArrowLeft','ArrowRight','PageUp','PageDown','Escape','o','O','n','N','p','P','r','R','f','F'].indexOf(e.key)>-1){try{parent.__deck.key(e);e.preventDefault()}catch(x){}}});addEventListener('pointerdown',function(){try{if(parent.__deck&&parent.__deck.closeCtx)parent.__deck.closeCtx()}catch(x){}},true);addEventListener('contextmenu',function(e){var t=e.target&&e.target.tagName;if(e.shiftKey||/INPUT|TEXTAREA|SELECT/.test(t)||(e.target&&e.target.closest&&e.target.closest('a[href^=\"http\"]')))return;var s=window.getSelection&&window.getSelection();if(s&&!s.isCollapsed&&String(s).trim())return;try{if(parent.__deck&&parent.__deck.ctxFromFrame){e.preventDefault();parent.__deck.ctxFromFrame(e.clientX,e.clientY,window)}}catch(x){}});<\/script>";
   function prepare(txt, css) {
     let t = txt.replace(/<html(\s[^>]*)?>/i, function (m, a) { return '<html' + (a || '') + ' data-theme="light">'; });
     const style = "<style>" + css + "</style>";
@@ -95,6 +95,7 @@
   /* mode: "start" when entered with →, so builds play; anything else shows the slide complete. */
   function show(i, keepHash, mode) {
     i = Math.max(0, Math.min(total - 1, i));
+    closeCtx();
     A.zoomClose(true);
     if (A.recap) A.recap(slides[i]);                            // a recap slide mirrors its source as it is now
     const TR = window.DeckTransition;
@@ -284,6 +285,7 @@
   }
   function key(e) {
     const k = e.key;
+    if (ctxOpen()) { closeCtx(); if (k === "Escape") { if (e.preventDefault) e.preventDefault(); return; } }
     if (keysOpen()) { toggleKeys(false); if (e.preventDefault) e.preventDefault(); return; }
     if (k === "?") { toggleKeys(true); if (e.preventDefault) e.preventDefault(); return; }
     if (viewerOpen()) {
@@ -351,13 +353,90 @@
   wake();
 
   /* ---- keyboard shortcuts (? key or the Keys button) ---- */
-  const keysEl = $("#keys");
+  const keysEl = $("#keys"), ctxEl = $("#ctx");
+  let ctxClosedAt = -1e9;
   const keysOpen = () => keysEl && !keysEl.hidden;
+  const ctxOpen = () => !!(ctxEl && !ctxEl.hidden);
+  function closeCtx() {
+    if (!ctxOpen()) return false;
+    ctxEl.hidden = true;
+    ctxClosedAt = performance.now();
+    return true;
+  }
+  function openCtx(x, y) {
+    if (!ctxEl || ED()) return;
+    const s = slides[cur], nf = (NS()[cur] && NS()[cur].figs.length) || 0;
+    const canPrev = cur > 0 || !!(A.step && A.step(s) > 0);
+    const canNext = cur < total - 1 || !!(A.step && A.steps && A.step(s) < A.steps(s)) || !!(window.DeckTour && window.DeckTour.peek && window.DeckTour.peek(cur));
+    ctxEl.replaceChildren();
+    const hd = el("div", "ctx-hd");
+    hd.appendChild(el("b", "", String(cur + 1).padStart(2, "0") + " / " + total));
+    hd.appendChild(el("span", "", s.dataset.title || ""));
+    ctxEl.appendChild(hd);
+    const item = (label, kbdText, fn, disabled) => {
+      const b = el("button", ""); b.type = "button"; b.setAttribute("role", "menuitem");
+      b.disabled = !!disabled;
+      b.appendChild(el("span", "", label));
+      if (kbdText) b.appendChild(el("kbd", "", kbdText));
+      b.onclick = ev => { ev.stopPropagation(); closeCtx(); if (!disabled) fn(); };
+      ctxEl.appendChild(b);
+    };
+    const sep = () => ctxEl.appendChild(el("div", "ctx-sep"));
+    item(t("Next / step"), t("Click / →"), next, !canNext);
+    item(t("Previous / step"), "←", prev, !canPrev);
+    item(t("First slide"), "Home", () => show(0), cur === 0);
+    item(t("Last slide"), "End", () => show(total - 1), cur === total - 1);
+    sep();
+    item("▣ " + (nf ? t(nf > 1 ? "{n} reference figures" : "{n} reference figure", { n: nf }) : t("Reference figure")), "R", () => openFig(0), !nf);
+    item(t("Overview"), "O", () => toggleOverview());
+    item(t("Notes & sources"), "N", () => toggleNotes());
+    item(t("Presenter"), "P", presenter);
+    sep();
+    item(t(document.fullscreenElement ? "Exit full screen" : "Full screen"), "F", fullscreen);
+    if (window.DeckEdit) item(t("Edit text"), "E", () => window.DeckEdit.toggle());
+    item(t("Keyboard shortcuts"), "?", () => toggleKeys(true));
+    ctxEl.style.left = "0px"; ctxEl.style.top = "0px";
+    ctxEl.hidden = false;
+    const r = ctxEl.getBoundingClientRect();
+    ctxEl.style.left = Math.max(8, Math.min(x, innerWidth - r.width - 8)) + "px";
+    ctxEl.style.top = Math.max(8, Math.min(y, innerHeight - r.height - 8)) + "px";
+  }
+  function ctxFromFrame(cx, cy, win) {
+    const fr = Array.from(document.querySelectorAll("iframe")).find(f => f.contentWindow === win);
+    if (!fr) return;
+    const r = fr.getBoundingClientRect();
+    const sx = r.width / (win.innerWidth || 1920), sy = r.height / (win.innerHeight || 1080);
+    openCtx(r.left + cx * sx, r.top + cy * sy);
+  }
+  const INTERACTIVE_SEL = "a, button, input, select, textarea, label, summary, details, dialog, [role='button'], [role='tab'], [role='menuitem'], [data-zoom], [data-goto], [data-tour-to], [data-layer], [data-card], [data-region], [data-back], .zl, .frame, iframe, [contenteditable='true']";
+  wrap.addEventListener("click", e => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (ctxOpen() || performance.now() - ctxClosedAt < 250) { closeCtx(); return; }
+    if (ED() || viewerOpen() || keysOpen() || $("#overview").classList.contains("open") || A.zoomed()) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && String(sel).trim()) return;
+    if (e.target && e.target.closest && e.target.closest(INTERACTIVE_SEL)) return;
+    next();
+  });
+  addEventListener("contextmenu", e => {
+    if (e.shiftKey || ED()) return;
+    const tEl = e.target;
+    if (tEl && tEl.closest && tEl.closest("input, textarea, select, [contenteditable='true'], a[href]")) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && String(sel).trim()) return;
+    e.preventDefault();
+    openCtx(e.clientX, e.clientY);
+  });
+  addEventListener("pointerdown", e => {
+    if (ctxOpen() && !(e.target && e.target.closest && e.target.closest("#ctx"))) closeCtx();
+  }, true);
+  addEventListener("resize", closeCtx);
+  addEventListener("blur", closeCtx);
   function toggleKeys(force) {
     if (!keysEl) return;
     const open = force === undefined ? keysEl.hidden : force;
     if (open) {
-      const rows = [["← →", "Move; the next build step first"], ["Home End", "First and last slide"], ["O", "Overview"], ["R", "Reference figures of this slide"],
+      const rows = [["← →", "Move; the next build step first"], [t("Click"), "Next step or slide (outside interactive controls)"], [t("Right-click"), "Open quick menu"], ["Home End", "First and last slide"], ["O", "Overview"], ["R", "Reference figures of this slide"],
         ["N", "Notes and sources in this window"], ["P", "Presenter window for a second screen"], ["F", "Full screen"]];
       if (window.DeckEdit) rows.push(["E", "Edit the text"]);
       if (I && I.langs.length > 1) rows.push(["L", "Switch language"]);
@@ -399,7 +478,7 @@
   });
   $("#overview").addEventListener("click", e => { if (e.target.id === "overview") toggleOverview(false); });
 
-  window.__deck = { key: key, show: show, slides: slides, mount: mount, current: () => cur };
+  window.__deck = { key: key, show: show, slides: slides, mount: mount, current: () => cur, closeCtx: closeCtx, ctxFromFrame: ctxFromFrame };
   if (I) I.start();
   buildOverview(); fsLabel(); langLabel();
   fit();

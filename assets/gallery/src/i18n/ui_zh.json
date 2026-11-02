@@ -90,5 +90,14 @@
  "Close the top layer": "关闭最上层",
  "Press any key or click to close.": "按任意键或点击关闭。",
  "← → move the deck · Home / End first and last slide · R reference figure on the main screen · O overview · L language · Esc close it": "← → 翻页 · Home / End 第一页和最后一页 · R 在主屏打开参考图 · O 概览 · L 语言 · Esc 关闭",
- "← → move · R reference figures · ? all keys": "← → 翻页 · R 参考图 · ? 全部快捷键"
+ "← → move · R reference figures · ? all keys": "← → 翻页 · R 参考图 · ? 全部快捷键",
+ "← → or click to move · Right-click menu · R reference figures · ? all keys": "左键或 ← → 翻页 · 右键打开常用菜单 · R 参考图 · ? 快捷键",
+ "Click": "左键单击",
+ "Right-click": "右键单击",
+ "Next step or slide (outside interactive controls)": "下一步 / 下一页（避开交互控件）",
+ "Open quick menu": "打开常用菜单",
+ "Next / step": "下一页 / 下一步",
+ "Previous / step": "上一页 / 上一步",
+ "First slide": "第一页",
+ "Click / →": "左键 / →"
 }

@@ -32,6 +32,8 @@
 | Numbers in a row of cards sat at different heights | One card had a longer line above | Shorten the line; check_deck reports it as an "align" note |
 | The callout ran into the footer | The sources line wrapped to two lines | Keep the footer to one line; details go to the notes |
 | Edit text did nothing useful on the Artifact | No db capability: browser storage only, downloads blocked | The editor turns itself off; publish with db + user to edit online |
+| Clicking a tab or scene link in an embed showed the deck's title slide inside the frame | Under `file://` the srcdoc page resolves `href="#x"` against the deck URL | In the embed: `preventDefault()` on `a[href^="#"]`, then route in script |
+| Click-to-advance fired on a card or control | The control was not in the engine's interactive list | Add its selector to `INTERACTIVE_SEL` in `deck.js` |
 
 Working habits that avoid most of these:
 - Build and run `check_deck.cjs` after each batch of changes, not at the end.

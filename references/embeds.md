@@ -29,7 +29,10 @@ Reuse the page the user already has. Do not rebuild it inside the deck.
   breaks map libraries that load GeoJSON in a worker; a Blob page from file:// is not reachable from the deck.)
 - `index.html` (Artifact): pages are fetched from `embed/` at run time. Publish them with the Artifact `files` map.
 - Embeds mount when their slide is shown, and the next slide's embeds are prefetched.
-- The engine injects a key forwarder, so ← → P R F work while the focus is inside the page.
+- The engine injects a key forwarder, so ← → P R F work while the focus is inside the page. It also forwards the
+  right click to the deck menu. A left click inside an embed never turns the slide: the page keeps its own clicks.
+- Under `file://` (`srcdoc`), a relative link `<a href="#x">` in an embed resolves against the deck's URL and loads the
+  whole deck inside the frame. Embedded pages must call `preventDefault()` on `a[href^="#"]` and route in script.
 
 ## Offline inlining (offline.py)
 

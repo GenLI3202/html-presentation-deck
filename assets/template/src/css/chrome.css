@@ -18,7 +18,17 @@ body.ui-awake .dctl,.dctl:hover,.dctl:focus-within{opacity:.92}
 #keys dt{font-family:var(--mono);font-size:14px;color:#fff}
 #keys dt kbd{display:inline-block;min-width:26px;text-align:center;border:1px solid #3a4856;border-bottom-width:3px;border-radius:6px;padding:1px 7px;margin-right:4px}
 #keys dd{margin:0;color:#c5d0da}
-#keys .keys-x{margin-top:18px;font-family:var(--mono);font-size:12px;color:#7d8e9e}
+#keys .keys-x{margin:18px 0 0;font-family:var(--mono);font-size:12px;color:#7d8e9e}
+/* right-click context menu */
+#ctx{position:fixed;z-index:94;min-width:248px;background:rgba(16,22,29,.96);color:#e8edf2;border:1.5px solid #2c3743;border-radius:12px;padding:6px;box-shadow:0 14px 38px rgba(0,0,0,.45);backdrop-filter:blur(10px);font-size:15px;user-select:none}
+#ctx[hidden]{display:none}
+#ctx .ctx-hd{padding:5px 11px 6px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#ff9b88;border-bottom:1px solid #26313c;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#ctx .ctx-hd span{color:#9fb0c0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+#ctx button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:18px;background:transparent;border:0;border-radius:8px;color:#e8edf2;padding:7px 11px;font:inherit;font-size:15px;text-align:left;cursor:pointer}
+#ctx button:hover:not(:disabled),#ctx button:focus-visible{background:#1f2a36;color:#fff;outline:none}
+#ctx button:disabled{opacity:.38;cursor:default}
+#ctx button kbd{font-family:var(--mono);font-size:12px;color:#9fb0c0;background:#18212b;border:1px solid #2c3743;border-radius:5px;padding:1px 6px;white-space:nowrap}
+#ctx .ctx-sep{height:1px;background:#26313c;margin:4px 6px}
 body:has(#notes.open) .dctl{right:calc(min(560px,42vw) + 18px)}
 .dctl button{white-space:nowrap;background:rgba(15,20,26,.86);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 12px;font-size:15px;font-family:var(--mono);cursor:pointer}
 .dctl button:hover{background:#000}

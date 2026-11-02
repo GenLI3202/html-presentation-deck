@@ -42,6 +42,8 @@ a scratch folder when it needs it). The first build downloads the fonts once.
 - Notes and sources panel (N), presenter window for the speaker's laptop (P), reference figures (R), full screen (F);
   press ? for every shortcut. The toolbar stays out of the way: Overview, Full screen and ⋯ for the rest, plus a
   red "Reference figures" button on slides that have them.
+- Click to go forward, right-click for a quick menu (previous, overview, notes, presenter, full screen). Clicks on
+  cards, links and embedded pages are never taken over.
 - Calm motion matched to the content: morph, push, fade, gentle zoom, spotlight, progress strip, builds, zoom details.
 - Edit the wording in the page (E) and merge the edits back into the sources.
 - Optional language switch (L), for example English and Chinese, without edit conflicts.
@@ -104,6 +106,6 @@ that fits it (fake content).
 
 ![演讲者窗口](docs/presenter.png)
 
-**功能：** 离线单文件播放；按 ? 查看全部快捷键；工具栏默认只露出概览、全屏和 ⋯，有参考图的页面会多出一个红色“参考图”按钮；备注与来源（N）；演讲者窗口（P）；参考图（R）；按内容选择的平静动效；页面内改字（E）并写回源文件；中英一键切换（L）；可选发布 Artifact、PDF 讲义和 A4 讲稿。skill 会在素材、故事线、文字、动效、交付物、PDF 内容几个节点停下来和你确认。
+**功能：** 离线单文件播放；按 ? 查看全部快捷键；左键单击翻下一步/下一页、右键弹出常用菜单（不会抢占卡片、链接和内嵌页面的点击）；工具栏默认只露出概览、全屏和 ⋯，有参考图的页面会多出一个红色“参考图”按钮；备注与来源（N）；演讲者窗口（P）；参考图（R）；按内容选择的平静动效；页面内改字（E）并写回源文件；中英一键切换（L）；可选发布 Artifact、PDF 讲义和 A4 讲稿。skill 会在素材、故事线、文字、动效、交付物、PDF 内容几个节点停下来和你确认。
 
 **试看：** 用浏览器打开 `assets/gallery/preview.html`，按 → 浏览七种场景与对应动效。
