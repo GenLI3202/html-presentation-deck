@@ -718,7 +718,7 @@ body.editing text.edited{text-decoration:underline}
 <section class="slide" data-title="One figure, region by region" data-act="7 · Part by part" data-time="2">
   <div class="kick" data-eid="s17-1">Situation 7<i>·</i>A figure, region by region<i>·</i>region frame</div>
   <h2 class="ttl" data-eid="s17-2">The figure stays, the frame moves</h2>
-  <p class="sub" data-eid="s17-3">Each press frames one region and changes the text beside it. The note box keeps what the room says.</p>
+  <p class="sub" data-eid="s17-3">Each press frames one region and changes the text beside it.</p>
   <div class="body" style="display:grid;grid-template-columns:1.25fr 1fr;gap:40px;margin-top:20px">
     <div class="figspot" style="align-self:start;border:1.5px solid var(--rule)">
       <svg viewBox="0 0 1000 560" role="img" aria-label="Fake control loop with three blocks">
@@ -1102,6 +1102,11 @@ body.editing text.edited{text-decoration:underline}
     if (!d) { d = document.createElement("div"); d.className = "bdots"; d.setAttribute("aria-hidden", "true"); s.appendChild(d); }
     d.replaceChildren(...Array.from({ length: n }, (_, j) => { const i = document.createElement("i"); if (j < k) i.className = "on"; return i; }));
   }
+  /* data-at panels of a slide (or of a copy of it) at step k */
+  function panels(s, k) {
+    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
+    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
+  }
   function set(s, k, instant) {
     const n = count(s);
     k = Math.max(0, Math.min(n, k));
@@ -1111,8 +1116,7 @@ body.editing text.edited{text-decoration:underline}
     const spots = s.querySelectorAll("[data-spot]");
     const lit = Array.from(spots).some(e => +e.dataset.spot === k);
     spots.forEach(e => { const me = +e.dataset.spot === k; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
-    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
-    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
+    panels(s, k);
     dots(s, n, k);
     s.dispatchEvent(new CustomEvent("slidestep", { detail: { step: k, total: n, instant: !!instant } }));
   }
@@ -1173,7 +1177,7 @@ body.editing text.edited{text-decoration:underline}
     if (z && !zl) zoomOpen(z);
   });
 
-  document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); });
+  document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); panels(s, count(s)); });   // a slide not shown yet (print, copies) has its last panel
 
   /* ---- recap: <section class="slide" data-recap="N"> mirrors slide N as it is drawn now (charts, language, edits)
      and marks each [data-morph] item done. It is copied again before each show and after a language change.
@@ -1227,7 +1231,7 @@ body.editing text.edited{text-decoration:underline}
     });
     s.appendChild(ol);
   }));
-  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, recap };
+  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, panels, recap };
 })();
 
 </script>
@@ -1619,6 +1623,9 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
       let n = 0;
       c.querySelectorAll("[data-b]").forEach(e => { n = Math.max(n, +e.dataset.b); e.classList.toggle("in", +e.dataset.b <= step); });
       for (let j = 1; j <= n; j++) c.classList.toggle("st-" + j, j <= step);
+      const spots = c.querySelectorAll("[data-spot]"), lit = Array.from(spots).some(e => +e.dataset.spot === step);
+      spots.forEach(e => { const me = +e.dataset.spot === step; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
+      if (window.DeckAnim && window.DeckAnim.panels) window.DeckAnim.panels(c, step);
     }
     c.querySelectorAll("[data-embed]").forEach(b => { b.replaceChildren(); const p = document.createElement("div"); p.className = "pr-emb"; p.textContent = tr("Interactive view"); b.appendChild(p); });
     const src = slide.querySelectorAll("canvas"), dst = c.querySelectorAll("canvas");

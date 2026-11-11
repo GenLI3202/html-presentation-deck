@@ -78,6 +78,9 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
       let n = 0;
       c.querySelectorAll("[data-b]").forEach(e => { n = Math.max(n, +e.dataset.b); e.classList.toggle("in", +e.dataset.b <= step); });
       for (let j = 1; j <= n; j++) c.classList.toggle("st-" + j, j <= step);
+      const spots = c.querySelectorAll("[data-spot]"), lit = Array.from(spots).some(e => +e.dataset.spot === step);
+      spots.forEach(e => { const me = +e.dataset.spot === step; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
+      if (window.DeckAnim && window.DeckAnim.panels) window.DeckAnim.panels(c, step);
     }
     c.querySelectorAll("[data-embed]").forEach(b => { b.replaceChildren(); const p = document.createElement("div"); p.className = "pr-emb"; p.textContent = tr("Interactive view"); b.appendChild(p); });
     const src = slide.querySelectorAll("canvas"), dst = c.querySelectorAll("canvas");

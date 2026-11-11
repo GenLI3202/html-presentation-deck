@@ -20,6 +20,11 @@
     if (!d) { d = document.createElement("div"); d.className = "bdots"; d.setAttribute("aria-hidden", "true"); s.appendChild(d); }
     d.replaceChildren(...Array.from({ length: n }, (_, j) => { const i = document.createElement("i"); if (j < k) i.className = "on"; return i; }));
   }
+  /* data-at panels of a slide (or of a copy of it) at step k */
+  function panels(s, k) {
+    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
+    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
+  }
   function set(s, k, instant) {
     const n = count(s);
     k = Math.max(0, Math.min(n, k));
@@ -29,8 +34,7 @@
     const spots = s.querySelectorAll("[data-spot]");
     const lit = Array.from(spots).some(e => +e.dataset.spot === k);
     spots.forEach(e => { const me = +e.dataset.spot === k; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
-    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
-    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
+    panels(s, k);
     dots(s, n, k);
     s.dispatchEvent(new CustomEvent("slidestep", { detail: { step: k, total: n, instant: !!instant } }));
   }
@@ -91,7 +95,7 @@
     if (z && !zl) zoomOpen(z);
   });
 
-  document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); });
+  document.querySelectorAll(".slide").forEach(s => { if (s.querySelector("[data-b]")) s.classList.add("has-b"); panels(s, count(s)); });   // a slide not shown yet (print, copies) has its last panel
 
   /* ---- recap: <section class="slide" data-recap="N"> mirrors slide N as it is drawn now (charts, language, edits)
      and marks each [data-morph] item done. It is copied again before each show and after a language change.
@@ -145,5 +149,5 @@
     });
     s.appendChild(ol);
   }));
-  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, recap };
+  window.DeckAnim = { enter, forward, back, zoomed: () => !!zl, zoomClose, step: s => stepOf.get(s) || 0, steps: count, panels, recap };
 })();

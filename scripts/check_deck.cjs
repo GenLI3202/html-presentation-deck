@@ -55,7 +55,8 @@ function measure() {
   const limit = Math.min(take && !tr ? R(take).top : 1e9, src ? R(src).top : 1e9);
   if (tr) {
     const t = R(take), own = e => /^(img|svg|textarea|iframe)$/i.test(e.tagName) || Array.from(e.childNodes).some(n => n.nodeType === 3 && n.textContent.trim());
-    for (const e of slide.querySelectorAll(":scope > .ttl, :scope > .sub, :scope > .body *")) {
+    if (body && R(body).top < t.bottom - 1) issues.push(["overlap", "body", "", "the body starts under the top-right callout: give it a margin-top"]);
+    else for (const e of slide.querySelectorAll(":scope > .ttl, :scope > .sub, :scope > .body *")) {
       if ((e.closest("svg, iframe") && e.tagName.toLowerCase() !== "svg") || !visible(e) || !own(e)) continue;
       let r = R(e);                                            // text: the extent of the words, not of the block
       if (!/^(img|svg|textarea|iframe)$/i.test(e.tagName)) { const g = document.createRange(); g.selectNodeContents(e); const b = g.getBoundingClientRect(); if (b.width) r = b; }
