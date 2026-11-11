@@ -48,7 +48,8 @@
   so the speaker brings it in with one press. Two places: the bottom band (default; `.body.with-take`), or the
   top-right card `class="take tr"` (640 px wide, at the right of the title; no `with-take`). Use `.take.tr` when
   the body needs the full height or the bottom band would cover content. Keep the title short enough that it ends
-  left of the card; check_deck reports text under the card. Vary the place over the deck.
+  left of the card, and start the body below it (a `.sub` line, or `margin-top` on `.body`); check_deck reports
+  both. Vary the place over the deck.
 - Labels are words a listener understands: "Key point", "Next", "Ask", "Why it is hard". Not "So": in the
   uppercase mono label it reads as "S0".
 
@@ -125,7 +126,8 @@ not derive it from the slide number, which changes). The text is saved about a s
 status line under the box says where: "saved in this browser" (preview.html: localStorage, per deck title) or
 "saved online" (Artifact with the db capability, collection `notes`; delivery.md). Keys and clicks in a box do not
 reach the deck. One question per slide with a large box (`flex:1` in a column) works better than six small ones.
-Not tested in the PDF handout: look at the page before you send it.
+The PDF handout prints the box as it is on the build machine (empty, with the placeholder): notes typed in a
+browser or saved online are not in it.
 
 ## Keys and controls
 

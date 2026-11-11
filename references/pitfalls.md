@@ -39,7 +39,6 @@
 | Every slide ended with the same red band | The take was always the bottom band, always visible | Bring it in as the last step; use `.take.tr` where the top right is empty; no take where the slide is a question |
 | Feedback pointed at the wrong slides | A slide was added, so every number after it changed | After each round, report the new numbers ("old 7 → 8") and ask the user to use them |
 | A YouTube video did not play in the slide | The hosted page does not allow players from other sites | A card with the title and the publisher that opens the video in a new tab; needs network in the room |
-| A note box lost its text on the hosted page | No db capability: the page keeps the text in the browser only | Publish with the `notes` db rule (delivery.md); the status line under the box says where the text is |
 | A sentence was copied from a draft plan and was wrong | The plan was not reviewed by the owner | Use only material the user selected (gate 0); mark a claim from an unreviewed draft and ask |
 
 Working habits that avoid most of these:

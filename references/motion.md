@@ -92,6 +92,9 @@ zooms 3–4×, and flies back and forth; people report dizziness. Use it only wh
   Show a repeated element (a matrix, a legend) once, not on both sides of a before/after.
 - Region frame: the frame dims the rest of the figure to 28%. A frame does not stay on the complete slide when a
   later step exists, so end with the take (`data-b` = last frame + 1).
+- The complete slide (jump, edit mode E, PDF) shows the last panel only. Earlier panels are changed in
+  `slides.html`, and they are not in the PDF handout: when their content matters there, put it in the notes or on
+  a supplement page (pdf-storyboard.md).
 - All three keep every element in place. They count as one motion slide each in the "three to five" rule.
 
 ## Progress strip (anim.js)
