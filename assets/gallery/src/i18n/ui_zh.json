@@ -53,7 +53,7 @@
  "{n} changes": "{n} 处修改",
  "{n} no longer match the file": "{n} 处与文件不再一致",
  "saved to this Artifact": "已保存到此 Artifact",
- "saved in this browser": "已保存在此浏览器",
+ "saved in this browser": "已存在本浏览器",
  "Export": "导出",
  "Click again to discard": "再点一次撤销全部",
  "Discard all": "全部撤销",
@@ -99,5 +99,9 @@
  "Next / step": "下一页 / 下一步",
  "Previous / step": "上一页 / 上一步",
  "First slide": "第一页",
- "Click / →": "左键 / →"
+ "Click / →": "左键 / →",
+ "saving…": "保存中…",
+ "saved online": "已在线保存",
+ "not saved online · kept in this browser": "在线保存失败 · 已存在本浏览器",
+ "not saved · copy the text before you close the page": "未保存 · 关闭页面前请先复制文字"
 }

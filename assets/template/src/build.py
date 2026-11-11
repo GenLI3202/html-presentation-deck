@@ -23,7 +23,7 @@ import offline
 SRC = os.path.dirname(os.path.abspath(__file__))
 DECK = os.path.dirname(SRC)
 CSS = ["css/base.css", "css/chrome.css", "css/motion.css", "css/custom.css"]
-ENGINE_AFTER = ["js/anim.js", "js/transition.js", "js/tour.js", "js/presenter.js", "js/editor.js", "js/deck.js"]   # after the deck scripts
+ENGINE_AFTER = ["js/anim.js", "js/transition.js", "js/tour.js", "js/presenter.js", "js/editor.js", "js/nbox.js", "js/deck.js"]   # after the deck scripts
 FORBIDDEN = re.compile(r"claude\.ai|anthropic|\bclaude\b", re.I)
 
 

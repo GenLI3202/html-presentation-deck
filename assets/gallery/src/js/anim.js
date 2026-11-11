@@ -4,13 +4,16 @@
    Spotlight: an element with data-spot="n" is highlighted at step n and its data-spot siblings are dimmed.
    It stays visible at every step. Add a last build (for example the take) after the last spot, so the complete
    slide (jump, print) shows nothing dimmed.
+   Panel: an element with data-at="n" shows only at step n (data-at="0": before the first step). The panel with
+   the highest n stays when later steps pass, so the complete slide shows the last one. A region frame (.fs)
+   does not stay: a later step, usually the take, clears it.
    Zoom: an element with data-zoom="templateId" opens that template in a card that grows out of the element.
    Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide).
    Recap: a slide with data-recap="N" repeats slide N with every data-morph item marked done (back once, at the end). */
 (function () {
   "use strict";
   const stepOf = new Map();
-  const count = s => { let m = 0; s.querySelectorAll("[data-b], [data-spot]").forEach(e => { m = Math.max(m, +(e.dataset.b || e.dataset.spot)); }); return m; };
+  const count = s => { let m = 0; s.querySelectorAll("[data-b], [data-spot], [data-at]").forEach(e => { m = Math.max(m, +(e.dataset.b || e.dataset.spot || e.dataset.at)); }); return m; };
 
   function dots(s, n, k) {
     let d = s.querySelector(".bdots");
@@ -26,6 +29,8 @@
     const spots = s.querySelectorAll("[data-spot]");
     const lit = Array.from(spots).some(e => +e.dataset.spot === k);
     spots.forEach(e => { const me = +e.dataset.spot === k; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
+    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
+    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
     dots(s, n, k);
     s.dispatchEvent(new CustomEvent("slidestep", { detail: { step: k, total: n, instant: !!instant } }));
   }

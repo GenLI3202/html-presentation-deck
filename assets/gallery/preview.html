@@ -302,6 +302,16 @@ h2.ttl{font-size:60px;line-height:1.08;font-weight:600;letter-spacing:-.012em;ma
 .take p{font-size:39px;line-height:1.24;font-weight:600;color:var(--ink);letter-spacing:-.005em}
 .take p b{color:var(--accent);font-weight:700}
 .take .tk-s{display:block;font-size:25px;font-weight:400;color:var(--ink2);margin-top:6px;line-height:1.3}
+/* .take.tr: the same callout as a card at the top right, for slides where the bottom band does not fit the layout.
+   The build dots move up so the two do not meet. */
+.take.tr{left:auto;right:96px;top:104px;bottom:auto;width:640px;grid-template-columns:1fr;gap:4px;padding:14px 22px 16px;border-left-width:8px;box-shadow:0 10px 30px rgba(20,27,36,.10)}
+.take.tr .tk-l{font-size:15px}
+.take.tr p{font-size:25px;line-height:1.25}
+.slide:has(.take.tr) .bdots{top:44px}
+/* Note boxes (js/nbox.js): a text field on the slide for notes taken during the meeting */
+.nbox{display:block;width:100%;min-height:92px;margin-top:10px;resize:vertical;border:2px dashed var(--rule);border-radius:10px;background:#fff;padding:10px 12px;font:400 20px/1.3 var(--sans);color:var(--ink)}
+.nbox:focus{outline:none;border:2px solid var(--accent)}
+.nbox-s{display:block;height:18px;font:400 13px/18px var(--mono);color:var(--ink3);text-align:right}
 
 /* ---------- SVG text: an inherited default, so fill and font-family attributes on elements still win ---------- */
 svg{font-family:var(--sans);fill:var(--ink)}
@@ -518,6 +528,30 @@ body.editing text.edited{text-decoration:underline}
 .spot-on{transform:translateY(-6px);box-shadow:0 0 0 4px var(--accent),0 18px 40px rgba(20,27,36,.12)}
 .b-instant [data-spot]{transition:none!important}
 
+/* ---------- panels: data-at="n" shows only at step n; the last panel stays on the complete slide ---------- */
+[data-at]{opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+[data-at].at{opacity:1;visibility:visible}
+.b-instant [data-at]{transition:none!important}
+/* Sentence focus: a short storyline, one sentence lit per step (data-spot), its detail in a bubble beside it (data-at) */
+.focus-p{margin:0;display:flex;flex-direction:column;gap:16px;font-size:31px;line-height:1.42}
+.sn{display:block;position:relative;padding:8px 14px 8px 54px;border-radius:10px;transition:opacity .35s,background .35s}
+.sn>i{position:absolute;left:10px;top:12px;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font:600 19px/32px var(--num);text-align:center;font-style:normal}
+.sn.spot-on{transform:none;box-shadow:none;background:var(--accent-soft)}
+.sn.spot-on>i{background:var(--accent)}
+.sn.spot-dim{opacity:.3;filter:none}
+.bubs{position:relative;min-height:0}
+.bub{position:absolute;inset:0;background:#fff;border:2.5px solid var(--accent);border-radius:16px;padding:22px 26px;display:flex;flex-direction:column;gap:12px}
+.bub::before{content:"";position:absolute;left:-15px;top:var(--ay,60px);width:26px;height:26px;background:#fff;border-left:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(45deg)}
+.bub.hint{border-style:dashed;border-color:var(--rule)}
+.bub.hint::before{display:none}
+/* Line walk: rows of a model or a list, one framed per step (data-spot) without the lift of a card */
+.ln.spot-on{transform:none;box-shadow:0 0 0 3px var(--accent);background:var(--accent-soft);border-radius:8px}
+.ln.spot-dim{opacity:.38;filter:none}
+/* Region focus: .figspot wraps one figure; each <i class="fs" data-at="n"> frames a region (left, top, width, height in %) and dims the rest */
+.figspot{position:relative;overflow:hidden;border-radius:8px}
+.figspot>img,.figspot>svg{display:block;width:100%;height:auto}
+.figspot .fs{position:absolute;border:5px solid var(--accent);border-radius:8px;box-shadow:0 0 0 4000px rgba(255,255,255,.72);pointer-events:none}
+
 /* ---------- progress strip on the slides of a series (data-strip) ---------- */
 .strip{position:absolute;top:60px;right:200px;display:flex;gap:6px;margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:16px;letter-spacing:.04em}
 .strip li{padding:4px 12px;border-radius:99px;border:1.5px solid var(--rule);color:var(--ink3);background:#fff;white-space:nowrap}
@@ -538,6 +572,7 @@ body.editing text.edited{text-decoration:underline}
 @media (prefers-reduced-motion:reduce){
   [data-spot]{transition:none!important}
   .has-b [data-b],.has-b [data-b] *,.zl-card,.zl-bg,.zl-in{transition:none!important}
+  [data-at],.sn{transition:none!important}
   [data-tour-to].t-next{animation:none}
 }
 
@@ -594,10 +629,11 @@ body.editing text.edited{text-decoration:underline}
       <div class="gx-row"><b data-eid="s2-15">4</b><span data-eid="s2-16">One part of a picture gets its own slide</span><em data-eid="s2-17">Gentle zoom around the part</em><small data-eid="s2-18">Slides 11–12</small></div>
       <div class="gx-row"><b data-eid="s2-19">5</b><span data-eid="s2-20">A process the speaker explains step by step</span><em data-eid="s2-21">Builds, one step per press</em><small data-eid="s2-22">Slide 13</small></div>
       <div class="gx-row"><b data-eid="s2-23">6</b><span data-eid="s2-24">The same chart with new numbers</span><em data-eid="s2-25">Morph: bars and values move to the new values</em><small data-eid="s2-26">Slides 14–15</small></div>
-      <div class="gx-row"><b data-eid="s2-27">7</b><span data-eid="s2-28">A new act or topic starts</span><em data-eid="s2-29">Fade</em><small data-eid="s2-30">Slides 16–17</small></div>
+      <div class="gx-row"><b data-eid="s2-27">7</b><span data-eid="s2-28">A storyline or a figure, explained part by part</span><em data-eid="s2-29">Sentence focus with a detail bubble · region frame</em><small data-eid="s2-30">Slides 16–17</small></div>
+      <div class="gx-row"><b data-eid="s2-31">8</b><span data-eid="s2-32">A new act or topic starts</span><em data-eid="s2-33">Fade</em><small data-eid="s2-34">Slides 18–19</small></div>
     </div>
   </div>
-  <div class="src"><span data-eid="s2-31">Not shown: the camera tour. It moves the whole screen and can make people dizzy. Use it only when asked.</span></div>
+  <div class="src"><span data-eid="s2-35">Not shown: the camera tour. It moves the whole screen and can make people dizzy. Use it only when asked.</span></div>
 </section>
 
 <!-- ===================== 3–7 · SITUATION 1: OVERVIEW → PARTS ===================== -->
@@ -659,7 +695,7 @@ body.editing text.edited{text-decoration:underline}
       <div class="col" data-morph="q3"><span class="done-chip" data-eid="s7-9">✓ Covered</span><h3 data-eid="s7-10">Q3 · Allocation</h3><p class="body-m" data-eid="s7-11">How to split power between battery racks and keep the port reserve?</p></div>
     </div>
   </div>
-  <div class="take"><span class="tk-l" data-eid="s7-12">So</span><p data-eid="s7-13">All three answer <b>one test</b>: control, not capacity.</p></div>
+  <div class="take"><span class="tk-l" data-eid="s7-12">Key point</span><p data-eid="s7-13">All three answer <b>one test</b>: control, not capacity.</p></div>
   <div class="src"><span data-eid="s7-14">Fake content</span></div>
 </section>
 
@@ -753,7 +789,7 @@ body.editing text.edited{text-decoration:underline}
       <div class="card" data-b="5" data-fx="left"><b class="num" data-eid="s13-11">5</b><p data-eid="s13-12">Grid operator sign-off</p></div>
     </div>
   </div>
-  <div class="take" data-b="6" data-fx="push"><span class="tk-l" data-eid="s13-13">So</span><p data-eid="s13-14">Step 4 is where most sites <b>lose weeks</b>.</p></div>
+  <div class="take" data-b="6" data-fx="push"><span class="tk-l" data-eid="s13-13">Key point</span><p data-eid="s13-14">Step 4 is where most sites <b>lose weeks</b>.</p></div>
   <div class="src"><span data-eid="s13-15">Fake content</span></div>
 </section>
 
@@ -789,26 +825,87 @@ body.editing text.edited{text-decoration:underline}
 </section>
 
 <!-- ===================== 16–17 · SITUATION 7: A NEW ACT ===================== -->
-<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="7 · New act" data-time="0.5">
-  <div class="kick" data-eid="s16-1">Situation 7<i>·</i>A new act<i>·</i>fade</div>
-  <div class="gx-act"><b data-eid="s16-2">Act 3</b><span data-eid="s16-3">Our work</span></div>
-  <div class="src"><span data-eid="s16-4">A divider slide: one fade, nothing moves</span></div>
+<!-- ===================== 16–17 · SITUATION 7: PART BY PART ===================== -->
+<section class="slide" data-enter="fade" data-title="The storyline in four sentences" data-act="7 · Part by part" data-time="2">
+  <div class="kick" data-eid="s16-1">Situation 7<i>·</i>A storyline, sentence by sentence<i>·</i>sentence focus</div>
+  <h2 class="ttl" data-eid="s16-2">Four sentences carry the argument</h2>
+  <p class="sub" data-eid="s16-3">Each press lights one sentence and opens its detail on the right.</p>
+  <div class="body" style="display:grid;grid-template-columns:1fr .92fr;gap:40px;margin-top:30px">
+    <p class="focus-p">
+      <span class="sn" data-spot="1" data-eid="s16-4"><i>1</i>A site with fast chargers has short, high load peaks.</span>
+      <span class="sn" data-spot="2" data-eid="s16-5"><i>2</i>The grid fee depends on the highest peak of the year.</span>
+      <span class="sn" data-spot="3" data-eid="s16-6"><i>3</i>A battery can supply the peak, but it must be full at the right time.</span>
+      <span class="sn" data-spot="4" data-eid="s16-7"><i>4</i>The open question is how large the battery must be. <b>We give the sizing rule.</b></span>
+    </p>
+    <div class="bubs">
+      <div class="bub hint" data-at="0"><div class="label" data-eid="s16-8">Press →</div><p class="mut" style="font-size:24px" data-eid="s16-9">One sentence after the other. The detail of each sentence opens here.</p></div>
+      <div class="bub" data-at="1" style="--ay:30px"><div class="label" data-eid="s16-10">1 · Load</div><h3 style="margin:0;font-size:28px" data-eid="s16-11">Peaks of 15 minutes</h3><ul class="ste" style="font-size:23px"><li data-eid="s16-12">Fake site: 8 chargers of 150 kW each.</li><li data-eid="s16-13">Mean load 180 kW, peak 1,050 kW.</li></ul></div>
+      <div class="bub" data-at="2" style="--ay:120px"><div class="label" data-eid="s16-14">2 · Fee</div><h3 style="margin:0;font-size:28px" data-eid="s16-15">One peak sets the fee of the year</h3><ul class="ste" style="font-size:23px"><li data-eid="s16-16">Fake tariff: EUR 120 per kW of the yearly peak.</li><li data-eid="s16-17">A quote from the source fits here, with the paragraph number.</li></ul></div>
+      <div class="bub" data-at="3" style="--ay:215px"><div class="label" data-eid="s16-18">3 · Battery</div><h3 style="margin:0;font-size:28px" data-eid="s16-19">Power is not the limit, energy is</h3><ul class="ste" style="font-size:23px"><li data-eid="s16-20">Two peaks close together empty a small battery.</li><li data-eid="s16-21">A picture of the source can replace this list.</li></ul></div>
+      <div class="bub" data-at="4" style="--ay:330px"><div class="label" data-eid="s16-22">4 · Our work</div><h3 style="margin:0;font-size:28px" data-eid="s16-23">A rule from the load curve</h3><ul class="ste" style="font-size:23px"><li data-eid="s16-24">Input: one year of load at 15-minute steps.</li><li data-eid="s16-25">Output: the smallest battery that holds the peak limit.</li></ul></div>
+    </div>
+  </div>
+  <div class="take tr" data-b="5" data-fx="fade"><span class="tk-l" data-eid="s16-26">Key point</span><p data-eid="s16-27">The fee makes the peak expensive. <b>The battery size is the decision.</b></p></div>
+  <div class="src"><span data-eid="s16-28">Markup: sentences <code>.sn data-spot="n"</code> · bubbles <code>.bub data-at="n"</code> · the take <code>.take.tr data-b="last"</code>. Fake content.</span></div>
 </section>
 
-<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="7 · New act" data-time="1">
-  <div class="kick" data-eid="s17-1">Closing</div>
-  <h2 class="ttl" data-eid="s17-2">Pick the calmest effect that still tells the story</h2>
+<section class="slide" data-title="One figure, region by region" data-act="7 · Part by part" data-time="2">
+  <div class="kick" data-eid="s17-1">Situation 7<i>·</i>A figure, region by region<i>·</i>region frame</div>
+  <h2 class="ttl" data-eid="s17-2">The figure stays, the frame moves</h2>
+  <p class="sub" data-eid="s17-3">Each press frames one region and changes the text beside it. The note box keeps what the room says.</p>
+  <div class="body" style="display:grid;grid-template-columns:1.25fr 1fr;gap:40px;margin-top:20px">
+    <div class="figspot" style="align-self:start;border:1.5px solid var(--rule)">
+      <svg viewBox="0 0 1000 560" role="img" aria-label="Fake control loop with three blocks">
+        <rect width="1000" height="560" fill="#fff"/>
+        <g font-family="IBM Plex Sans, sans-serif" font-size="30" text-anchor="middle" fill="#141b24">
+          <rect x="60" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="180" y="175" data-eid="s17-4">Forecast</text>
+          <rect x="380" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="500" y="175" data-eid="s17-5">Plan</text>
+          <rect x="700" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="820" y="175" data-eid="s17-6">Control</text>
+          <rect x="380" y="340" width="560" height="150" rx="12" fill="#fff" stroke="#141b24" stroke-width="2.5"/><text x="660" y="425" data-eid="s17-7">Battery racks</text>
+          <g fill="none" stroke="#141b24" stroke-width="3"><path d="M300 165H372M620 165H692M820 240V332M380 415H180V248"/></g>
+          <g><path d="M372 165l-14-8v16zM692 165l-14-8v16zM820 332l-8-14h16zM180 248l-8 14h16z"/></g>
+        </g>
+      </svg>
+      <i class="fs" data-at="1" style="left:4%;top:12%;width:28%;height:35%"></i>
+      <i class="fs" data-at="2" style="left:36%;top:12%;width:28%;height:35%"></i>
+      <i class="fs" data-at="3" style="left:36%;top:57%;width:60%;height:35%"></i>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <div class="bubs" style="height:230px;flex:none">
+        <div class="bub hint" data-at="0"><div class="label" data-eid="s17-8">Press →</div><p class="mut" style="font-size:24px" data-eid="s17-9">Three regions, one after the other.</p></div>
+        <div class="bub hint" data-at="1"><div class="label" data-eid="s17-10">1 · Forecast</div><p style="font-size:25px;margin:0" data-eid="s17-11">Load and price for the next 24 hours, updated each hour.</p></div>
+        <div class="bub hint" data-at="2"><div class="label" data-eid="s17-12">2 · Plan</div><p style="font-size:25px;margin:0" data-eid="s17-13">The slow loop sets the power for each 15 minutes.</p></div>
+        <div class="bub hint" data-at="3"><div class="label" data-eid="s17-14">3 · Racks</div><p style="font-size:25px;margin:0" data-eid="s17-15">The fast loop splits the power between the racks. <b>This is the hard part.</b></p></div>
+      </div>
+      <div><div class="label" data-eid="s17-16">Open point · which rack limit is correct?</div>
+        <textarea class="nbox" data-nk="gallery-rack-limit" placeholder="Notes from the meeting…" aria-label="Notes"></textarea></div>
+    </div>
+  </div>
+  <div class="take tr" data-b="4" data-fx="fade"><span class="tk-l" data-eid="s17-17">Key point</span><p data-eid="s17-18">The split between the racks is the <b>hard part</b>.</p></div>
+  <div class="src"><span data-eid="s17-19">Markup: <code>.figspot</code> around the figure · frames <code>i.fs data-at="n"</code> in % · texts <code>data-at="n"</code> · note box <code>textarea.nbox data-nk</code>. Fake content.</span></div>
+</section>
+
+<!-- ===================== 18–19 · SITUATION 8: NEW ACT ===================== -->
+<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="8 · New act" data-time="0.5">
+  <div class="kick" data-eid="s18-1">Situation 8<i>·</i>A new act<i>·</i>fade</div>
+  <div class="gx-act"><b data-eid="s18-2">Act 3</b><span data-eid="s18-3">Our work</span></div>
+  <div class="src"><span data-eid="s18-4">A divider slide: one fade, nothing moves</span></div>
+</section>
+
+<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="8 · New act" data-time="1">
+  <div class="kick" data-eid="s19-1">Closing</div>
+  <h2 class="ttl" data-eid="s19-2">Pick the calmest effect that still tells the story</h2>
   <div class="body with-take">
     <ul class="ste" style="font-size:30px;gap:14px">
-      <li data-eid="s17-3">Keep the screen still. Move only what changes.</li>
-      <li data-eid="s17-4">Never zoom more than about 12% across the whole screen.</li>
-      <li data-eid="s17-5">Do not go back and forth between an overview and its parts. Go back once, at the end.</li>
-      <li data-eid="s17-6">Use motion on three to five slides of a talk, not on every slide.</li>
-      <li data-eid="s17-7">Jumps (overview, links) and reduced-motion settings always switch at once.</li>
+      <li data-eid="s19-3">Keep the screen still. Move only what changes.</li>
+      <li data-eid="s19-4">Never zoom more than about 12% across the whole screen.</li>
+      <li data-eid="s19-5">Do not go back and forth between an overview and its parts. Go back once, at the end.</li>
+      <li data-eid="s19-6">Use motion on three to five slides of a talk, not on every slide.</li>
+      <li data-eid="s19-7">Jumps (overview, links) and reduced-motion settings always switch at once.</li>
     </ul>
   </div>
-  <div class="take"><span class="tk-l" data-eid="s17-8">Test</span><p data-eid="s17-9">If someone looks away, they must still <b>know where they are</b>.</p></div>
-  <div class="src"><span data-eid="s17-10">Not shown: the camera tour (legacy). It moves the whole screen; use it only when asked.</span></div>
+  <div class="take"><span class="tk-l" data-eid="s19-8">Test</span><p data-eid="s19-9">If someone looks away, they must still <b>know where they are</b>.</p></div>
+  <div class="src"><span data-eid="s19-10">Not shown: the camera tour (legacy). It moves the whole screen; use it only when asked.</span></div>
 </section>
 
     </div>
@@ -899,9 +996,13 @@ body.editing text.edited{text-decoration:underline}
     { say: "The same chart, now with 2024 numbers.", cue: ["Press \u2192. The bars and the values move to the 2030 numbers. The layout stays."], land: "Use this when only the numbers change.", limits: [], src: [], figs: [] },
     /* 15 · 2030 */
     { say: "The 2030 numbers.", cue: ["Press \u2190. The bars move back to 2024."], land: "", limits: [], src: [], figs: [] },
-    /* 16 · Divider */
+    /* 16 · Sentence focus */
+    { say: "A short storyline. Each sentence gets its own moment.", cue: ["Clicks: press \u2192 four times. Each press lights one sentence and opens its detail.", "Press \u2192 again. The key point comes in at the top right."], land: "Use this when the argument is a chain of a few sentences.", limits: [], src: [], figs: [] },
+    /* 17 · Region frame */
+    { say: "One figure, explained region by region.", cue: ["Clicks: press \u2192 three times. The frame moves and the text changes. Press \u2192 again: the frame goes and the key point comes in.", "Type in the note box. Space and the arrows do not change the slide while you type."], land: "Use this when the figure is the story and the parts need an order.", limits: [], src: [], figs: [] },
+    /* 18 · Divider */
     { say: "A new act starts. A fade is enough.", cue: [], land: "", limits: [], src: [], figs: [] },
-    /* 17 · Rules */
+    /* 19 · Rules */
     { say: "Five rules for motion in a talk.", cue: ["Read the rules. The test: if someone looks away, they still know where they are."], land: "Pick the calmest effect that still tells the story.", limits: [], src: [], figs: [] }
   ];
 
@@ -1119,13 +1220,16 @@ body.editing text.edited{text-decoration:underline}
    Spotlight: an element with data-spot="n" is highlighted at step n and its data-spot siblings are dimmed.
    It stays visible at every step. Add a last build (for example the take) after the last spot, so the complete
    slide (jump, print) shows nothing dimmed.
+   Panel: an element with data-at="n" shows only at step n (data-at="0": before the first step). The panel with
+   the highest n stays when later steps pass, so the complete slide shows the last one. A region frame (.fs)
+   does not stay: a later step, usually the take, clears it.
    Zoom: an element with data-zoom="templateId" opens that template in a card that grows out of the element.
    Strip: slides with the same data-strip="group" get a progress strip (data-strip-label or data-title per slide).
    Recap: a slide with data-recap="N" repeats slide N with every data-morph item marked done (back once, at the end). */
 (function () {
   "use strict";
   const stepOf = new Map();
-  const count = s => { let m = 0; s.querySelectorAll("[data-b], [data-spot]").forEach(e => { m = Math.max(m, +(e.dataset.b || e.dataset.spot)); }); return m; };
+  const count = s => { let m = 0; s.querySelectorAll("[data-b], [data-spot], [data-at]").forEach(e => { m = Math.max(m, +(e.dataset.b || e.dataset.spot || e.dataset.at)); }); return m; };
 
   function dots(s, n, k) {
     let d = s.querySelector(".bdots");
@@ -1141,6 +1245,8 @@ body.editing text.edited{text-decoration:underline}
     const spots = s.querySelectorAll("[data-spot]");
     const lit = Array.from(spots).some(e => +e.dataset.spot === k);
     spots.forEach(e => { const me = +e.dataset.spot === k; e.classList.toggle("spot-on", me); e.classList.toggle("spot-dim", lit && !me); });
+    const ats = Array.from(s.querySelectorAll("[data-at]")), top = ats.reduce((m, e) => Math.max(m, +e.dataset.at), 0);
+    ats.forEach(e => { const a = +e.dataset.at; e.classList.toggle("at", a === k || (a === top && k > top && !e.classList.contains("fs"))); });
     dots(s, n, k);
     s.dispatchEvent(new CustomEvent("slidestep", { detail: { step: k, total: n, instant: !!instant } }));
   }
@@ -2093,6 +2199,61 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
 
 </script>
 <script>
+/* Note boxes: <textarea class="nbox" data-nk="key" placeholder="Notes from the meeting…" aria-label="Notes">.
+   The speaker types into the slide during the meeting; the text is saved about a second after the last key.
+   Where it is kept: the Artifact database (collection "notes", one document per box) when the page has the db
+   capability; otherwise this browser (localStorage, one entry per deck title); otherwise only until the page closes.
+   Keys and clicks inside a box never reach the deck, so typing a space or an arrow does not change the slide. */
+(function () {
+  "use strict";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("textarea.nbox"));
+  if (!boxes.length) return;
+  var tr = function (s) { return window.t ? window.t(s) : s; };
+  var TITLE = (window.DECK_CONFIG && window.DECK_CONFIG.title) || document.title;
+  var LS = "deck-notes:" + TITLE, db = null, timers = {}, local = {};
+  try { local = JSON.parse(localStorage.getItem(LS) || "{}") || {}; } catch (e) { local = {}; }
+  function status(b, txt) { var s = b.parentNode.querySelector(".nbox-s"); if (s) s.textContent = tr(txt); }
+  function save(b) {
+    var k = b.dataset.nk, v = b.value, kept = true;
+    local[k] = v;
+    try { localStorage.setItem(LS, JSON.stringify(local)); } catch (e) { kept = false; }
+    if (!db) { status(b, kept ? "saved in this browser" : "not saved · copy the text before you close the page"); return; }
+    status(b, "saving…");
+    db.collection("notes").doc(k).set({ k: k, text: v, at: new Date().toISOString() })
+      .then(function () { status(b, "saved online"); })
+      .catch(function () { status(b, kept ? "not saved online · kept in this browser" : "not saved · copy the text before you close the page"); });
+  }
+  boxes.forEach(function (b) {
+    var s = document.createElement("span"); s.className = "nbox-s"; s.setAttribute("aria-live", "polite");
+    b.insertAdjacentElement("afterend", s);
+    if (local[b.dataset.nk]) b.value = local[b.dataset.nk];
+    b.addEventListener("input", function () {
+      clearTimeout(timers[b.dataset.nk]); status(b, "…");
+      timers[b.dataset.nk] = setTimeout(function () { save(b); }, 700);
+    });
+    ["keydown", "keyup", "keypress", "click", "pointerdown", "contextmenu"].forEach(function (ev) {
+      b.addEventListener(ev, function (e) { e.stopPropagation(); });
+    });
+  });
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("db").then(function (d) {
+      if (!d) return;
+      db = d;
+      return d.collection("notes").get().then(function (snap) {
+        var docs = (snap && (snap.docs || snap)) || [];
+        Array.prototype.forEach.call(docs, function (doc) {
+          var data = typeof doc.data === "function" ? doc.data() : doc, id = (data && data.k) || doc.id;
+          boxes.forEach(function (b) {
+            if (b.dataset.nk === id && data && typeof data.text === "string" && document.activeElement !== b) { b.value = data.text; status(b, "saved online"); }
+          });
+        });
+      });
+    }).catch(function () { /* no database in this view: the browser copy stays in use */ });
+  }
+})();
+
+</script>
+<script>
 /* Deck engine: stage scaling, navigation, notes and sources panel, presenter window, reference-figure viewer, overview, lazy embeds. */
 (function () {
   "use strict";
@@ -2503,9 +2664,17 @@ body{overflow:hidden;background:#0c1116;color:#e8edf2;display:grid;grid-template
     const sx = r.width / (win.innerWidth || 1920), sy = r.height / (win.innerHeight || 1080);
     openCtx(r.left + cx * sx, r.top + cy * sy);
   }
-  const INTERACTIVE_SEL = "a, button, input, select, textarea, label, summary, details, dialog, [role='button'], [role='tab'], [role='menuitem'], [data-zoom], [data-goto], [data-tour-to], [data-layer], [data-card], [data-region], [data-back], .zl, .frame, iframe, [contenteditable='true']";
+  const INTERACTIVE_SEL = "a, button, input, select, textarea, label, summary, details, dialog, [role='button'], [role='tab'], [role='menuitem'], [data-zoom], [data-goto], [data-tour-to], [data-layer], [data-card], [data-region], [data-back], .zl, .frame, iframe, .nbox, [contenteditable='true']";
+  /* A click pages only when it is a plain click: not the end of a drag, and not the click that clears a text selection. */
+  let pdSel = false, pdX = 0, pdY = 0;
+  addEventListener("pointerdown", e => {
+    const s0 = window.getSelection && window.getSelection();
+    pdSel = !!(s0 && !s0.isCollapsed && String(s0).trim());
+    pdX = e.clientX; pdY = e.clientY;
+  }, true);
   wrap.addEventListener("click", e => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (pdSel || Math.abs(e.clientX - pdX) + Math.abs(e.clientY - pdY) > 6) { pdSel = false; return; }
     if (ctxOpen() || performance.now() - ctxClosedAt < 250) { closeCtx(); return; }
     if (ED() || viewerOpen() || keysOpen() || $("#overview").classList.contains("open") || A.zoomed()) return;
     const sel = window.getSelection && window.getSelection();

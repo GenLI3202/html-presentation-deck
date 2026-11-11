@@ -2,6 +2,7 @@
    Reports, per slide in its complete state:
      - out:     an element extends past the 1920 × 1080 stage;
      - overlap: body content runs into the .take callout or the .src footer, or the callout into the footer;
+       with a top-right callout (.take.tr): the title, the sub or body content sits under it;
      - clipped: a box with overflow hidden or auto has more content than room;
    and for the deck: page errors, console errors, remote requests, notes count, Claude mentions.
    A deck with several languages is checked in each one (Chinese text runs longer or shorter than English);
@@ -50,7 +51,17 @@ function measure() {
     if (r.right > 1921 || r.bottom > 1081 || r.left < -1 || r.top < -1) issues.push(["out", name(e), text(e), Math.round(r.right) + "×" + Math.round(r.bottom)]);
   }
   const body = slide.querySelector(":scope > .body"), take = slide.querySelector(":scope > .take"), src = slide.querySelector(":scope > .src");
-  const limit = Math.min(take ? R(take).top : 1e9, src ? R(src).top : 1e9);
+  const tr = !!(take && take.classList.contains("tr"));        // top-right callout: it limits nothing below; nothing may sit under it
+  const limit = Math.min(take && !tr ? R(take).top : 1e9, src ? R(src).top : 1e9);
+  if (tr) {
+    const t = R(take), own = e => /^(img|svg|textarea|iframe)$/i.test(e.tagName) || Array.from(e.childNodes).some(n => n.nodeType === 3 && n.textContent.trim());
+    for (const e of slide.querySelectorAll(":scope > .ttl, :scope > .sub, :scope > .body *")) {
+      if ((e.closest("svg, iframe") && e.tagName.toLowerCase() !== "svg") || !visible(e) || !own(e)) continue;
+      let r = R(e);                                            // text: the extent of the words, not of the block
+      if (!/^(img|svg|textarea|iframe)$/i.test(e.tagName)) { const g = document.createRange(); g.selectNodeContents(e); const b = g.getBoundingClientRect(); if (b.width) r = b; }
+      if (r.left < t.right - 1 && r.right > t.left + 1 && r.top < t.bottom - 1 && r.bottom > t.top + 1) { issues.push(["overlap", name(e), text(e), "under the top-right callout"]); break; }
+    }
+  }
   if (body) for (const e of body.querySelectorAll("*")) {
     if (e.closest("svg, iframe") && e.tagName.toLowerCase() !== "svg") continue;
     if (!visible(e)) continue;

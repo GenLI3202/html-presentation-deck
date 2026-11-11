@@ -57,6 +57,30 @@
 .spot-on{transform:translateY(-6px);box-shadow:0 0 0 4px var(--accent),0 18px 40px rgba(20,27,36,.12)}
 .b-instant [data-spot]{transition:none!important}
 
+/* ---------- panels: data-at="n" shows only at step n; the last panel stays on the complete slide ---------- */
+[data-at]{opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+[data-at].at{opacity:1;visibility:visible}
+.b-instant [data-at]{transition:none!important}
+/* Sentence focus: a short storyline, one sentence lit per step (data-spot), its detail in a bubble beside it (data-at) */
+.focus-p{margin:0;display:flex;flex-direction:column;gap:16px;font-size:31px;line-height:1.42}
+.sn{display:block;position:relative;padding:8px 14px 8px 54px;border-radius:10px;transition:opacity .35s,background .35s}
+.sn>i{position:absolute;left:10px;top:12px;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font:600 19px/32px var(--num);text-align:center;font-style:normal}
+.sn.spot-on{transform:none;box-shadow:none;background:var(--accent-soft)}
+.sn.spot-on>i{background:var(--accent)}
+.sn.spot-dim{opacity:.3;filter:none}
+.bubs{position:relative;min-height:0}
+.bub{position:absolute;inset:0;background:#fff;border:2.5px solid var(--accent);border-radius:16px;padding:22px 26px;display:flex;flex-direction:column;gap:12px}
+.bub::before{content:"";position:absolute;left:-15px;top:var(--ay,60px);width:26px;height:26px;background:#fff;border-left:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(45deg)}
+.bub.hint{border-style:dashed;border-color:var(--rule)}
+.bub.hint::before{display:none}
+/* Line walk: rows of a model or a list, one framed per step (data-spot) without the lift of a card */
+.ln.spot-on{transform:none;box-shadow:0 0 0 3px var(--accent);background:var(--accent-soft);border-radius:8px}
+.ln.spot-dim{opacity:.38;filter:none}
+/* Region focus: .figspot wraps one figure; each <i class="fs" data-at="n"> frames a region (left, top, width, height in %) and dims the rest */
+.figspot{position:relative;overflow:hidden;border-radius:8px}
+.figspot>img,.figspot>svg{display:block;width:100%;height:auto}
+.figspot .fs{position:absolute;border:5px solid var(--accent);border-radius:8px;box-shadow:0 0 0 4000px rgba(255,255,255,.72);pointer-events:none}
+
 /* ---------- progress strip on the slides of a series (data-strip) ---------- */
 .strip{position:absolute;top:60px;right:200px;display:flex;gap:6px;margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:16px;letter-spacing:.04em}
 .strip li{padding:4px 12px;border-radius:99px;border:1.5px solid var(--rule);color:var(--ink3);background:#fff;white-space:nowrap}
@@ -77,5 +101,6 @@
 @media (prefers-reduced-motion:reduce){
   [data-spot]{transition:none!important}
   .has-b [data-b],.has-b [data-b] *,.zl-card,.zl-bg,.zl-in{transition:none!important}
+  [data-at],.sn{transition:none!important}
   [data-tour-to].t-next{animation:none}
 }

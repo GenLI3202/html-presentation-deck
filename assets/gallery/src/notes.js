@@ -46,9 +46,13 @@
     { say: "The same chart, now with 2024 numbers.", cue: ["Press \u2192. The bars and the values move to the 2030 numbers. The layout stays."], land: "Use this when only the numbers change.", limits: [], src: [], figs: [] },
     /* 15 · 2030 */
     { say: "The 2030 numbers.", cue: ["Press \u2190. The bars move back to 2024."], land: "", limits: [], src: [], figs: [] },
-    /* 16 · Divider */
+    /* 16 · Sentence focus */
+    { say: "A short storyline. Each sentence gets its own moment.", cue: ["Clicks: press \u2192 four times. Each press lights one sentence and opens its detail.", "Press \u2192 again. The key point comes in at the top right."], land: "Use this when the argument is a chain of a few sentences.", limits: [], src: [], figs: [] },
+    /* 17 · Region frame */
+    { say: "One figure, explained region by region.", cue: ["Clicks: press \u2192 three times. The frame moves and the text changes. Press \u2192 again: the frame goes and the key point comes in.", "Type in the note box. Space and the arrows do not change the slide while you type."], land: "Use this when the figure is the story and the parts need an order.", limits: [], src: [], figs: [] },
+    /* 18 · Divider */
     { say: "A new act starts. A fade is enough.", cue: [], land: "", limits: [], src: [], figs: [] },
-    /* 17 · Rules */
+    /* 19 · Rules */
     { say: "Five rules for motion in a talk.", cue: ["Read the rules. The test: if someone looks away, they still know where they are."], land: "Pick the calmest effect that still tells the story.", limits: [], src: [], figs: [] }
   ];
 

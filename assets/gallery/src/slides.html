@@ -24,7 +24,8 @@
       <div class="gx-row"><b>4</b><span>One part of a picture gets its own slide</span><em>Gentle zoom around the part</em><small>Slides 11–12</small></div>
       <div class="gx-row"><b>5</b><span>A process the speaker explains step by step</span><em>Builds, one step per press</em><small>Slide 13</small></div>
       <div class="gx-row"><b>6</b><span>The same chart with new numbers</span><em>Morph: bars and values move to the new values</em><small>Slides 14–15</small></div>
-      <div class="gx-row"><b>7</b><span>A new act or topic starts</span><em>Fade</em><small>Slides 16–17</small></div>
+      <div class="gx-row"><b>7</b><span>A storyline or a figure, explained part by part</span><em>Sentence focus with a detail bubble · region frame</em><small>Slides 16–17</small></div>
+      <div class="gx-row"><b>8</b><span>A new act or topic starts</span><em>Fade</em><small>Slides 18–19</small></div>
     </div>
   </div>
   <div class="src"><span>Not shown: the camera tour. It moves the whole screen and can make people dizzy. Use it only when asked.</span></div>
@@ -89,7 +90,7 @@
       <div class="col" data-morph="q3"><span class="done-chip">✓ Covered</span><h3>Q3 · Allocation</h3><p class="body-m">How to split power between battery racks and keep the port reserve?</p></div>
     </div>
   </div>
-  <div class="take"><span class="tk-l">So</span><p>All three answer <b>one test</b>: control, not capacity.</p></div>
+  <div class="take"><span class="tk-l">Key point</span><p>All three answer <b>one test</b>: control, not capacity.</p></div>
   <div class="src"><span>Fake content</span></div>
 </section>
 
@@ -183,7 +184,7 @@
       <div class="card" data-b="5" data-fx="left"><b class="num">5</b><p>Grid operator sign-off</p></div>
     </div>
   </div>
-  <div class="take" data-b="6" data-fx="push"><span class="tk-l">So</span><p>Step 4 is where most sites <b>lose weeks</b>.</p></div>
+  <div class="take" data-b="6" data-fx="push"><span class="tk-l">Key point</span><p>Step 4 is where most sites <b>lose weeks</b>.</p></div>
   <div class="src"><span>Fake content</span></div>
 </section>
 
@@ -219,13 +220,74 @@
 </section>
 
 <!-- ===================== 16–17 · SITUATION 7: A NEW ACT ===================== -->
-<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="7 · New act" data-time="0.5">
-  <div class="kick">Situation 7<i>·</i>A new act<i>·</i>fade</div>
+<!-- ===================== 16–17 · SITUATION 7: PART BY PART ===================== -->
+<section class="slide" data-enter="fade" data-title="The storyline in four sentences" data-act="7 · Part by part" data-time="2">
+  <div class="kick">Situation 7<i>·</i>A storyline, sentence by sentence<i>·</i>sentence focus</div>
+  <h2 class="ttl">Four sentences carry the argument</h2>
+  <p class="sub">Each press lights one sentence and opens its detail on the right.</p>
+  <div class="body" style="display:grid;grid-template-columns:1fr .92fr;gap:40px;margin-top:30px">
+    <p class="focus-p">
+      <span class="sn" data-spot="1"><i>1</i>A site with fast chargers has short, high load peaks.</span>
+      <span class="sn" data-spot="2"><i>2</i>The grid fee depends on the highest peak of the year.</span>
+      <span class="sn" data-spot="3"><i>3</i>A battery can supply the peak, but it must be full at the right time.</span>
+      <span class="sn" data-spot="4"><i>4</i>The open question is how large the battery must be. <b>We give the sizing rule.</b></span>
+    </p>
+    <div class="bubs">
+      <div class="bub hint" data-at="0"><div class="label">Press →</div><p class="mut" style="font-size:24px">One sentence after the other. The detail of each sentence opens here.</p></div>
+      <div class="bub" data-at="1" style="--ay:30px"><div class="label">1 · Load</div><h3 style="margin:0;font-size:28px">Peaks of 15 minutes</h3><ul class="ste" style="font-size:23px"><li>Fake site: 8 chargers of 150 kW each.</li><li>Mean load 180 kW, peak 1,050 kW.</li></ul></div>
+      <div class="bub" data-at="2" style="--ay:120px"><div class="label">2 · Fee</div><h3 style="margin:0;font-size:28px">One peak sets the fee of the year</h3><ul class="ste" style="font-size:23px"><li>Fake tariff: EUR 120 per kW of the yearly peak.</li><li>A quote from the source fits here, with the paragraph number.</li></ul></div>
+      <div class="bub" data-at="3" style="--ay:215px"><div class="label">3 · Battery</div><h3 style="margin:0;font-size:28px">Power is not the limit, energy is</h3><ul class="ste" style="font-size:23px"><li>Two peaks close together empty a small battery.</li><li>A picture of the source can replace this list.</li></ul></div>
+      <div class="bub" data-at="4" style="--ay:330px"><div class="label">4 · Our work</div><h3 style="margin:0;font-size:28px">A rule from the load curve</h3><ul class="ste" style="font-size:23px"><li>Input: one year of load at 15-minute steps.</li><li>Output: the smallest battery that holds the peak limit.</li></ul></div>
+    </div>
+  </div>
+  <div class="take tr" data-b="5" data-fx="fade"><span class="tk-l">Key point</span><p>The fee makes the peak expensive. <b>The battery size is the decision.</b></p></div>
+  <div class="src"><span>Markup: sentences <code>.sn data-spot="n"</code> · bubbles <code>.bub data-at="n"</code> · the take <code>.take.tr data-b="last"</code>. Fake content.</span></div>
+</section>
+
+<section class="slide" data-title="One figure, region by region" data-act="7 · Part by part" data-time="2">
+  <div class="kick">Situation 7<i>·</i>A figure, region by region<i>·</i>region frame</div>
+  <h2 class="ttl">The figure stays, the frame moves</h2>
+  <p class="sub">Each press frames one region and changes the text beside it. The note box keeps what the room says.</p>
+  <div class="body" style="display:grid;grid-template-columns:1.25fr 1fr;gap:40px;margin-top:20px">
+    <div class="figspot" style="align-self:start;border:1.5px solid var(--rule)">
+      <svg viewBox="0 0 1000 560" role="img" aria-label="Fake control loop with three blocks">
+        <rect width="1000" height="560" fill="#fff"/>
+        <g font-family="IBM Plex Sans, sans-serif" font-size="30" text-anchor="middle" fill="#141b24">
+          <rect x="60" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="180" y="175">Forecast</text>
+          <rect x="380" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="500" y="175">Plan</text>
+          <rect x="700" y="90" width="240" height="150" rx="12" fill="#eef2f6" stroke="#141b24" stroke-width="2.5"/><text x="820" y="175">Control</text>
+          <rect x="380" y="340" width="560" height="150" rx="12" fill="#fff" stroke="#141b24" stroke-width="2.5"/><text x="660" y="425">Battery racks</text>
+          <g fill="none" stroke="#141b24" stroke-width="3"><path d="M300 165H372M620 165H692M820 240V332M380 415H180V248"/></g>
+          <g><path d="M372 165l-14-8v16zM692 165l-14-8v16zM820 332l-8-14h16zM180 248l-8 14h16z"/></g>
+        </g>
+      </svg>
+      <i class="fs" data-at="1" style="left:4%;top:12%;width:28%;height:35%"></i>
+      <i class="fs" data-at="2" style="left:36%;top:12%;width:28%;height:35%"></i>
+      <i class="fs" data-at="3" style="left:36%;top:57%;width:60%;height:35%"></i>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <div class="bubs" style="height:230px;flex:none">
+        <div class="bub hint" data-at="0"><div class="label">Press →</div><p class="mut" style="font-size:24px">Three regions, one after the other.</p></div>
+        <div class="bub hint" data-at="1"><div class="label">1 · Forecast</div><p style="font-size:25px;margin:0">Load and price for the next 24 hours, updated each hour.</p></div>
+        <div class="bub hint" data-at="2"><div class="label">2 · Plan</div><p style="font-size:25px;margin:0">The slow loop sets the power for each 15 minutes.</p></div>
+        <div class="bub hint" data-at="3"><div class="label">3 · Racks</div><p style="font-size:25px;margin:0">The fast loop splits the power between the racks. <b>This is the hard part.</b></p></div>
+      </div>
+      <div><div class="label">Open point · which rack limit is correct?</div>
+        <textarea class="nbox" data-nk="gallery-rack-limit" placeholder="Notes from the meeting…" aria-label="Notes"></textarea></div>
+    </div>
+  </div>
+  <div class="take tr" data-b="4" data-fx="fade"><span class="tk-l">Key point</span><p>The split between the racks is the <b>hard part</b>.</p></div>
+  <div class="src"><span>Markup: <code>.figspot</code> around the figure · frames <code>i.fs data-at="n"</code> in % · texts <code>data-at="n"</code> · note box <code>textarea.nbox data-nk</code>. Fake content.</span></div>
+</section>
+
+<!-- ===================== 18–19 · SITUATION 8: NEW ACT ===================== -->
+<section class="slide" data-enter="fade" data-title="Act 3 · Our work" data-act="8 · New act" data-time="0.5">
+  <div class="kick">Situation 8<i>·</i>A new act<i>·</i>fade</div>
   <div class="gx-act"><b>Act 3</b><span>Our work</span></div>
   <div class="src"><span>A divider slide: one fade, nothing moves</span></div>
 </section>
 
-<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="7 · New act" data-time="1">
+<section class="slide" data-enter="fade" data-title="Rules for motion" data-act="8 · New act" data-time="1">
   <div class="kick">Closing</div>
   <h2 class="ttl">Pick the calmest effect that still tells the story</h2>
   <div class="body with-take">
