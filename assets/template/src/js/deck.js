@@ -408,9 +408,17 @@
     const sx = r.width / (win.innerWidth || 1920), sy = r.height / (win.innerHeight || 1080);
     openCtx(r.left + cx * sx, r.top + cy * sy);
   }
-  const INTERACTIVE_SEL = "a, button, input, select, textarea, label, summary, details, dialog, [role='button'], [role='tab'], [role='menuitem'], [data-zoom], [data-goto], [data-tour-to], [data-layer], [data-card], [data-region], [data-back], .zl, .frame, iframe, [contenteditable='true']";
+  const INTERACTIVE_SEL = "a, button, input, select, textarea, label, summary, details, dialog, [role='button'], [role='tab'], [role='menuitem'], [data-zoom], [data-goto], [data-tour-to], [data-layer], [data-card], [data-region], [data-back], .zl, .frame, iframe, .nbox, [contenteditable='true']";
+  /* A click pages only when it is a plain click: not the end of a drag, and not the click that clears a text selection. */
+  let pdSel = false, pdX = 0, pdY = 0;
+  addEventListener("pointerdown", e => {
+    const s0 = window.getSelection && window.getSelection();
+    pdSel = !!(s0 && !s0.isCollapsed && String(s0).trim());
+    pdX = e.clientX; pdY = e.clientY;
+  }, true);
   wrap.addEventListener("click", e => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (pdSel || Math.abs(e.clientX - pdX) + Math.abs(e.clientY - pdY) > 6) { pdSel = false; return; }
     if (ctxOpen() || performance.now() - ctxClosedAt < 250) { closeCtx(); return; }
     if (ED() || viewerOpen() || keysOpen() || $("#overview").classList.contains("open") || A.zoomed()) return;
     const sel = window.getSelection && window.getSelection();
