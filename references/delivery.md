@@ -56,6 +56,18 @@ Where edits go, and how they reach the sources:
   `notes.js`; others to `src/i18n/<lang>.txt` and `src/notes_<lang>.js`. After an English edit, the script lists
   the Chinese lines to review (languages.md).
 
+## Note boxes on the Artifact
+
+Note boxes (`textarea.nbox`, deck-anatomy.md) keep their text in the browser when the deck is `preview.html`.
+This path is tested: typing, saving, reload. On the Artifact they write to the db collection `notes`, one
+document per box (`{k, text, at}`); declare the capability on publish, together with the `edits` rule when the
+text editor is also wanted:
+`capabilities: {"db": {"rules": [{"path": "notes", "read": "view", "write": "admin"}]}, "user": {}}`.
+Online saving was not tested when this was written: read the capability description for the current rule
+syntax, publish, type into one box on the hosted page, reload, and tell the user the result before the meeting.
+Without the capability the status line reads "saved in this browser" and the text stays on that device.
+After the meeting, read the collection (ArtifactData `list` on `notes`) and give the user the notes as text.
+
 ## Speaker script (ask first)
 
 `node pdf/make_script.cjs` writes `<name>-script.pdf` and `.html`: A4, one page per slide, with Say, Points,

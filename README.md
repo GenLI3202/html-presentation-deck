@@ -44,6 +44,8 @@ a scratch folder when it needs it). The first build downloads the fonts once.
   red "Reference figures" button on slides that have them.
 - Click to go forward, right-click for a quick menu (previous, overview, notes, presenter, full screen). Clicks on
   cards, links and embedded pages are never taken over.
+- Note boxes on a slide for notes typed during the meeting; the conclusion callout as its own step, at the bottom
+  or the top right; sentence focus, line walk and region frame for content explained part by part.
 - Calm motion matched to the content: morph, push, fade, gentle zoom, spotlight, progress strip, builds, zoom details.
 - Edit the wording in the page (E) and merge the edits back into the sources.
 - Optional language switch (L), for example English and Chinese, without edit conflicts.

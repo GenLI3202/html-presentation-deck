@@ -99,6 +99,18 @@ Add click cues to the notes of every slide with motion ("Clicks: press → three
 - Open `preview.html` from disk with the network off once (the checker does this).
 - Read the notes panel on each slide once. Check the evidence tags against the footer.
 
+## 6b · Feedback rounds
+
+The user often gives feedback by voice, slide by slide, while you already work on the first part.
+- Start with the engine and the slides named first; send search work (facts, pictures, the text of a source) to a
+  subagent and do the judging yourself.
+- When a round adds or removes a slide, every later number changes. Close the round with the changes per slide
+  under the new numbers, the mapping ("old 7 → 8"), and what was not tested (for example the hosted page).
+- Feedback on one slide is often a rule for the deck ("the red band at the bottom of every slide is monotonous").
+  Apply it to every slide, and say so.
+- Offer note boxes for slides that collect answers in the meeting (open points, decisions); one question per
+  slide when the answers will be long.
+
 ## 7 · Deliver (gate)
 
 `preview.html` is always delivered: one file, works offline, double-click to play. Then ask, in one message:

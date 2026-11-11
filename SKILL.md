@@ -31,8 +31,11 @@ The deck is HTML, not PowerPoint: a fixed 1920×1080 stage, one `<section class=
 4. **Compile, do not research.** Use the selected materials. Light gap research is allowed (a missing source link,
    a number check, an evidence tag). Tell the user about every new claim and tag it.
 5. **Reuse interactive pages** as embeds with injected CSS. Do not redraw what already exists.
-6. **Conclusions stand out:** the `.take` callout (large type on light red), never a dark bar. The closing slide
-   gives insights that change what we do (insight → number → decision), not a summary.
+6. **Conclusions stand out:** the `.take` callout (large type on light red), never a dark bar. It comes in as its
+   own last step (`data-b`, fade), and its place follows the layout: the bottom band, or the top-right card
+   `.take.tr` when the bottom is full or the top right is empty. Do not put the same band on every slide. Label it
+   in words ("Key point", "Next", "Ask"), never "So". The closing slide gives insights that change what we do
+   (insight → number → decision), not a summary.
 7. **Two layers.** The slide carries the claim, the key numbers and "press R"; reference figures carry the depth.
    Content slides use numbered blocks with point-stating headings and dividers; every figure has a caption.
 
@@ -48,6 +51,7 @@ The deck is HTML, not PowerPoint: a fixed 1920×1080 stage, one `<section class=
 | 4 Notes | `notes.js`: Say / Points / End with / Limits / Sources / reference figures, in STE. | Review the notes of key slides. |
 | 5 Motion | Match each candidate slide to its content situation (motion.md table; show the gallery). Start with about three. | Pick the slides and effects. |
 | 6 Verify | Checker, contact sheet, click-through of every build, zoom and tour, presenter window. | — |
+| 6b Feedback | After each round of changes, list them per slide with the new slide numbers; say what was not tested. | Which numbering does the next round use? |
 | 7 Deliver | `preview.html` (single offline file) always. | Also publish an Artifact? Make a PDF handout? Export a speaker script? |
 | 8 PDF | Storyboard the interactive slides into a contents list, then configure `pdf` in the config. | Approve the contents list before building it. |
 
@@ -61,6 +65,7 @@ install once with `npm i --prefix <scratch dir> puppeteer-core@23.11.1`, then ru
 ```bash
 python3 $SK/scripts/init_deck.py <deck folder> --title "Title" [--lang zh] [--project-root <repo>]
 python3 <deck>/src/figs_gen.py                 # after changing reference figures
+python3 <deck>/src/tex_fill.py                 # after changing a formula on a slide (<span class="tx" data-tex="…">)
 python3 <deck>/src/build.py                    # writes index.html (Artifact) and preview.html (offline)
 node $SK/scripts/check_deck.cjs <deck> <out> [--slides 3,6]   # overflow, overlap, align, errors, network, Claude mentions, contact.png, full-size shots
 node <deck>/pdf/make_pdf.cjs                   # PDF handout from deck.config.json "pdf"
@@ -81,11 +86,12 @@ wording online, declare the `db` and `user` capabilities on the first publish (d
 - [references/embeds.md](references/embeds.md): reusing interactive pages; CSS injection; offline inlining.
 - [references/notes-figures.md](references/notes-figures.md): notes.js schema, sources, reference figures, diagram rules.
 - [references/motion.md](references/motion.md): situation → effect table (morph, push, fade, gentle zoom, spotlight,
-  progress strip, builds, zoom details); the gallery deck `assets/gallery/preview.html` shows each one.
+  sentence focus, line walk, region frame, progress strip, builds, zoom details); the gallery deck
+  `assets/gallery/preview.html` shows each one.
 - [references/delivery.md](references/delivery.md): presenter window, offline file, Artifact, speaker script.
 - [references/pdf-storyboard.md](references/pdf-storyboard.md): how interactive content becomes PDF pages.
 - [references/languages.md](references/languages.md): language switch (L): translation files, review, why edits never collide.
 - [references/pitfalls.md](references/pitfalls.md): problems already hit and their fixes. Read before debugging.
 
-Reference deck: `assets/gallery/` (17 slides, fake content) shows the motion patterns and the house style.
+Reference deck: `assets/gallery/` (19 slides, fake content) shows the motion patterns and the house style.
 Read it for patterns; do not copy its content.

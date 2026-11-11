@@ -34,6 +34,13 @@
 | Edit text did nothing useful on the Artifact | No db capability: browser storage only, downloads blocked | The editor turns itself off; publish with db + user to edit online |
 | Clicking a tab or scene link in an embed showed the deck's title slide inside the frame | Under `file://` the srcdoc page resolves `href="#x"` against the deck URL | In the embed: `preventDefault()` on `a[href^="#"]`, then route in script |
 | Click-to-advance fired on a card or control | The control was not in the engine's interactive list | Add its selector to `INTERACTIVE_SEL` in `deck.js` |
+| The slide changed when the speaker marked a sentence and then clicked | The click that clears a selection arrives with the selection already empty; the end of a drag is also a click | The engine remembers the selection at pointerdown and ignores that click and any drag over 6 px |
+| The owner asked what "S0" means | The take label "So" in uppercase mono type | Label the take "Key point", "Next", "Ask" |
+| Every slide ended with the same red band | The take was always the bottom band, always visible | Bring it in as the last step; use `.take.tr` where the top right is empty; no take where the slide is a question |
+| Feedback pointed at the wrong slides | A slide was added, so every number after it changed | After each round, report the new numbers ("old 7 → 8") and ask the user to use them |
+| A YouTube video did not play in the slide | The hosted page does not allow players from other sites | A card with the title and the publisher that opens the video in a new tab; needs network in the room |
+| A note box lost its text on the hosted page | No db capability: the page keeps the text in the browser only | Publish with the `notes` db rule (delivery.md); the status line under the box says where the text is |
+| A sentence was copied from a draft plan and was wrong | The plan was not reviewed by the owner | Use only material the user selected (gate 0); mark a claim from an unreviewed draft and ask |
 
 Working habits that avoid most of these:
 - Build and run `check_deck.cjs` after each batch of changes, not at the end.
