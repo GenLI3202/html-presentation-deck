@@ -47,7 +47,7 @@ The deck is HTML, not PowerPoint: a fixed 1920×1080 stage, one `<section class=
 | 1 Storyline | Core argument (about 3 claims) → acts → slide list with minutes per slide and the material per slide. Positioning talks: check horizontal, vertical, lateral views and feasibility. Plan the reference figures. | Approve the structure and the time budget. |
 | 2 Slide text | Per slide: title (states the finding), sub, body points, take, footer sources + evidence tags. STE. | "ok" per slide or per act, then implement. |
 | 2b Languages | Only when the talk needs a second language: term list first, then translate with `i18n.py todo`. | Approve the term list; review the translated deck. |
-| 3 Build | `init_deck.py`, write `slides.html`, configure embeds, draw figures, build, run `check_deck.cjs`. | — |
+| 3 Build | `init_deck.py`, write `slides.html`, configure embeds, draw figures (an illustration: illustrations.md), build, run `check_deck.cjs`. | — |
 | 4 Notes | `notes.js`: Say / Points / End with / Limits / Sources / reference figures, in STE. | Review the notes of key slides. |
 | 5 Motion | Match each candidate slide to its content situation (motion.md table; show the gallery). Start with about three. | Pick the slides and effects. |
 | 6 Verify | Checker, contact sheet, click-through of every build, zoom and tour, presenter window. | — |
@@ -91,6 +91,8 @@ wording online, declare the `db` and `user` capabilities on the first publish (d
 - [references/delivery.md](references/delivery.md): presenter window, offline file, Artifact, speaker script.
 - [references/pdf-storyboard.md](references/pdf-storyboard.md): how interactive content becomes PDF pages.
 - [references/languages.md](references/languages.md): language switch (L): translation files, review, why edits never collide.
+- [references/illustrations.md](references/illustrations.md): optional illustrations drawn by Codex (needs a ChatGPT plan),
+  placed under HTML labels and spotlights. Tell the user once that this option exists.
 - [references/pitfalls.md](references/pitfalls.md): problems already hit and their fixes. Read before debugging.
 
 Reference deck: `assets/gallery/` (19 slides, fake content) shows the motion patterns and the house style.

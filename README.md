@@ -54,6 +54,13 @@ a scratch folder when it needs it). The first build downloads the fonts once.
 The skill works with you at fixed gates: materials, storyline, slide text (ASD-STE100 English by default), motion,
 deliverables and PDF contents. It does not add pages or extras without asking.
 
+## Optional: illustrations drawn by Codex
+
+A slide can get an illustration in the deck's own colours (no text in the picture; labels and spotlights are added
+on top). The drawing is done by the separate `codex-imagegen` skill, which needs the
+[Codex CLI](https://github.com/openai/codex) signed in with a ChatGPT plan. Without it, the agent writes the prompt
+for you to paste into ChatGPT. Details: `references/illustrations.md`.
+
 ## Present like PowerPoint: a presenter view on a second screen
 
 Press **F** for full screen on the projector, then **P** to open the presenter window on your laptop, like the
