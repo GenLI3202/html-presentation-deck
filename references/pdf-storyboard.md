@@ -8,7 +8,7 @@ show the default state on the slide page, and the key states on supplement pages
 | Live deck | PDF |
 |---|---|
 | Builds | the slide in its complete state |
-| Embed frame | a snapshot of its default state (`frames`) |
+| Embed frame | a snapshot of its default state: **automatic** (see below); a `frames` entry only for another state |
 | States behind tabs, toggles, sliders, selections | supplement pages after the slide, two large images each, with captions that say which state |
 | Zoom details | one page each after the slide; `data-goto` buttons become internal links |
 | Live figure (drag, run) | its default state on the slide; a static worked example as a supplement or reference figure |
@@ -54,6 +54,18 @@ Never add links to the live deck, Artifact URLs or anything that names Claude.
 - Maps and WebGL need a longer `wait` (5–7 s). Set `DUMP=<folder>` to save each capture and look at it.
 - `howTo: null` and `appendix: false` switch those pages off.
 
+## Embedded frames are automatic
+
+Chrome prints an iframe from srcdoc or a Blob URL as an empty box. make_pdf.cjs therefore takes a screenshot of
+every visible `.frame[data-embed]` in the deck, after the frame has content, and prints the image in its place. No
+config is needed, and a new embed slide is covered without a change to `pdf`.
+- It waits up to `embedWait` (default 8000 ms) for content, then `embedSettle` (default 900 ms) for charts and fonts.
+  Raise both for maps and WebGL.
+- A `frames` entry for the same slide and frame (`index`, default 0) wins: use it for a state other than the default.
+- `"autoFrames": false` switches it off.
+- The run ends with `captured … (N embedded frames automatic)`. A line "embedded frame prints empty on slide N" means
+  a frame still has no image: fix it before you deliver the PDF.
+
 ## Check
 
-`pdfinfo` for the page count; `pdftoppm -r 30 -png` and look at every page; `pdftotext … | grep -ci claude` must be 0.
+`pdfinfo` for the page count; `pdftoppm -r 30 -png` and look at every page, and at full size every page with an embed; `pdftotext … | grep -ci claude` must be 0.

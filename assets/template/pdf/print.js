@@ -1,6 +1,7 @@
 /* Print layout for the PDF handout. Injected by make_pdf.cjs into preview.html after the deck has loaded.
    Reads window.__SNAPS (captures, id -> data URL), window.__PRINT (deck.config.json "pdf") and window.NOTES.
-     frames       [{ slide, selector, shot, alt }]  interactive frames become images of one state
+     frames       [{ slide, selector, index, shot, alt }]  interactive frames become images of one state
+                  (make_pdf.cjs adds one entry per embedded frame by itself; index = n-th match, default 0)
      remove       [selector]                        elements to drop before printing
      supplements  [{ after, title, sub, items: [[shot, caption], …] }]  two images per page after slide "after"
      zoomPages    true: each data-zoom detail becomes a page after its slide; data-goto buttons become links
@@ -31,7 +32,7 @@
   /* 2 · interactive frames become images */
   (C.frames || []).forEach(f => {
     const s = slides[f.slide - 1]; if (!s) return;
-    const fr = s.querySelector(f.selector || ".frame"); const src = S[f.shot];
+    const fr = s.querySelectorAll(f.selector || ".frame")[f.index || 0]; const src = S[f.shot];
     if (!fr || !src) { console.warn("print: frame on slide " + f.slide + " has no capture " + f.shot); return; }
     fr.replaceChildren();
     const im = new Image(); im.src = src; im.alt = tt(f.alt) || ""; im.className = "snap"; fr.appendChild(im);

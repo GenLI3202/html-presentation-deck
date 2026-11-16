@@ -53,7 +53,7 @@ The deck is HTML, not PowerPoint: a fixed 1920×1080 stage, one `<section class=
 | 6 Verify | Checker, contact sheet, click-through of every build, zoom and tour, presenter window. | — |
 | 6b Feedback | After each round of changes, list them per slide with the new slide numbers; say what was not tested. | Which numbering does the next round use? |
 | 7 Deliver | `preview.html` (single offline file) always. | Also publish an Artifact? Make a PDF handout? Export a speaker script? |
-| 8 PDF | Storyboard the interactive slides into a contents list, then configure `pdf` in the config. | Approve the contents list before building it. |
+| 8 PDF | Storyboard the interactive slides into a contents list, then configure `pdf` in the config. Embed frames print as automatic snapshots; check that the run reports no "prints empty". | Approve the contents list before building it. |
 
 Details per step: [references/workflow.md](references/workflow.md).
 

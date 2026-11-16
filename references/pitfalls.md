@@ -25,6 +25,8 @@
 | A screenshot showed two slides on top of each other | It was taken during a transition | Call `DeckTransition.finish()` after `show()` before measuring or capturing |
 | A data morph looked like a jump | An ease-out curve does most of the change in the first 100 ms | Morph uses ease-in-out over 650 ms and cross-fades each pair |
 | Interactive content lost in the PDF | One flattened view | Storyboard: snapshot + supplement pages + detail pages |
+| Embed area printed as an empty box in the PDF | Chrome does not print an iframe that comes from srcdoc or a Blob URL; a manual `frames` entry existed only for some slides, and a capture with a wrong slide number fails with only a console warning | make_pdf.cjs now snapshots every visible `.frame[data-embed]` by itself (waits until the frame has content, hides the deck controls first) and warns "prints empty" for any frame left without an image. Keep manual `frames` only for a non-default state |
+| The hint bar ("← → or click to move") appeared inside a frame snapshot | Element screenshot of the deck includes fixed controls over the slide | make_pdf.cjs hides `#hint`, `.dctl`, panels and dots (HIDE_UI) on every deck page before it takes a screenshot |
 | Formulas showed as ASCII and wrapped | Plain text maths | `figs_gen.tex()` (KaTeX at build time); `\mathrm{}` for named superscripts |
 | Icons rendered as black blobs | `svg{fill:var(--ink)}` beats a `fill="none"` attribute | `svg.ico{fill:none}`; `figs_gen.icon()` sets it |
 | An embed's script broke after data was added | HTML with quotes inside a JSON string | Keep HTML fragments in `<template>` blocks |
